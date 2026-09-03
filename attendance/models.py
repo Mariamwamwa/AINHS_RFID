@@ -82,6 +82,7 @@ class Attendance(models.Model):
     STATUS_CHOICES = [
         ('present', 'Present'),
         ('absent', 'Absent'),
+        ('late', 'Late'),
         ('excused', 'Excused'),
     ]
     

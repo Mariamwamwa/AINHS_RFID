@@ -1,0 +1,31 @@
+{% extends "Authentication/Base.html" %}
+{% load static %}
+
+{% block title %}
+Home | RFID Attendance System
+{% endblock %}
+
+{% block extra_css %}
+
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="home-section">
+
+```
+<h1>Welcome to RFID Attendance System</h1>
+
+<p>
+    Student Attendance Management System
+</p>
+
+<a href=" " class="btn">
+    View Attendance
+</a>
+```
+
+</section>
+
+{% endblock %}

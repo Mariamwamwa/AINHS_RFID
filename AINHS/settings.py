@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'AIHNS.wsgi.application'
+WSGI_APPLICATION = 'AINHS.wsgi.application'
 
 
 # Database

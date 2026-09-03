@@ -1,0 +1,96 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}RFID Attendance System{% endblock %}
+    </title>
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+    <header>
+
+        <!-- Logo / System Name -->
+        <div class="logo">
+
+            <img
+                src="{% static 'images/logo.png' %}"
+                alt="RFID Attendance System Logo"
+                class="logo-image"
+            >
+
+            <div class="logo-text">
+                <h2>RFID Attendance System</h2>
+                <span>Student Attendance Management</span>
+            </div>
+
+        </div>
+
+
+        <!-- Navigation -->
+        <nav>
+
+            <a href="{% url 'home' %}" class="home-btn">
+                Home
+            </a>
+
+            <a href=" " class="nav-attendance">
+                Attendance
+            </a>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+    <main>
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+    <footer>
+
+        <div>
+            © 2026 RFID Attendance System
+        </div>
+
+        <div>
+            Developed by <span>Your Team</span>
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================================
+         PAGE JAVASCRIPT
+         ===================================================== -->
+    {% block extra_js %}
+    {% endblock %}
+
+</body>
+
+</html>
