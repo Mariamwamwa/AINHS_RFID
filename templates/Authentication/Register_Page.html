@@ -1,1095 +1,482 @@
+{% extends 'AUTHENTICATION/Base.html' %}
+{% load static %}
 
-/* =========================================================
-   COLOR PALETTE
-   ========================================================= */
+{% block title %}
+Create Account | AINHS Attendance System
+{% endblock %}
 
-:root {
 
-    /* PRIMARY COLORS */
-    --primary-purple: #6F42C1;
-    --primary-blue: #007BFF;
+{% block extra_css %}
 
-    /* SUPPORTING COLORS */
-    --aqua: #00CCCC;
-    --cyan: #0DCAF0;
-    --teal: #17A2B8;
+<link
+    rel="stylesheet"
+    href="{% static 'css/Authentication_UI/Register_Page.css' %}"
+>
 
-    /* NEUTRAL COLORS */
-    --white: #FFFFFF;
-    --dark: #212529;
-    --gray: #6C757D;
+{% endblock %}
 
-    --light-bg: #F7F9FC;
-}
 
+{% block content %}
 
-/* =========================================================
-   GLOBAL
-   ========================================================= */
+<!-- =========================================================
+     REGISTER SECTION
+     ========================================================= -->
 
-* {
+<section class="register-section">
 
-    margin: 0;
-    padding: 0;
+    <!-- Background Decorations -->
 
-    box-sizing: border-box;
+    <div class="decoration decoration-one"></div>
 
-    font-family: Arial, Helvetica, sans-serif;
-}
+    <div class="decoration decoration-two"></div>
 
 
-html,
-body {
+    <!-- Registration Card -->
 
-    width: 100%;
-    height: 100%;
+    <div class="register-card">
 
-    overflow: hidden;
-}
 
+        <!-- =================================================
+             REGISTER HEADER
+             ================================================= -->
 
-body {
+        <div class="register-header">
 
-    display: flex;
+            <h1>
+                Create Account
+            </h1>
 
-    flex-direction: column;
+            <p>
+                Register an account.
+            </p>
 
-    background: var(--light-bg);
+        </div>
 
-    color: var(--dark);
-}
 
+        <!-- =================================================
+             REGISTRATION FORM
+             ================================================= -->
 
-/* =========================================================
-   HEADER
-   ========================================================= */
+        <form
+            action="#"
+            method="POST"
+        >
 
-header {
+            {% csrf_token %}
 
-    height: 75px;
-    min-height: 75px;
 
-    background: linear-gradient(
-        135deg,
-        #0DCAF0 0%,
-        #007BFF 55%,
-        #6F42C1 100%
-    );
+            <!-- =============================================
+                 TWO COLUMN FORM
+                 ============================================= -->
 
-    display: flex;
+            <div class="form-columns">
 
-    align-items: center;
 
-    justify-content: space-between;
+                <!-- =========================================
+                     LEFT COLUMN
+                     ========================================= -->
 
-    padding: 0 3%;
+                <div class="form-column">
 
-    position: relative;
 
-    z-index: 10;
+                    <!-- ID NUMBER -->
 
-    box-shadow:
-        0 4px 15px rgba(0, 123, 255, 0.15);
-}
+                    <div class="form-group">
 
+                        <label for="id-number">
+                            ID No.
+                        </label>
 
-/* =========================================================
-   LOGO
-   ========================================================= */
+                        <input
+                            type="text"
+                            id="id-number"
+                            name="id_number"
+                            placeholder="Enter ID number"
+                            required
+                        >
 
-.logo {
+                    </div>
 
-    display: flex;
 
-    align-items: center;
+                    <!-- ROLE + DEPARTMENT -->
 
-    gap: 12px;
-}
+                    <div class="form-row">
 
 
-.logo-image {
+                        <!-- ROLE -->
 
-    width: 52px;
-    height: 52px;
+                        <div class="form-group">
 
-    object-fit: cover;
+                            <label for="role">
+                                Role
+                            </label>
 
-    border-radius: 50%;
+                            <select
+                                id="role"
+                                name="role"
+                                required
+                            >
 
-    border: 3px solid var(--white);
+                                <option
+                                    value=""
+                                    disabled
+                                    selected
+                                >
+                                    Select role
+                                </option>
 
-    box-shadow:
-        0 3px 10px rgba(0, 0, 0, 0.20);
+                                <option value="ADMIN">
+                                    ADMIN
+                                </option>
 
-    display: block;
-}
+                                <option value="TEACHER">
+                                    TEACHER
+                                </option>
 
+                            </select>
 
-.logo-text h2 {
+                        </div>
 
-    font-size: 20px;
 
-    color: var(--white);
+                        <!-- DEPARTMENT -->
 
-    margin-bottom: 2px;
-}
+                        <div class="form-group">
 
+                            <label for="department">
+                                Department
+                            </label>
 
-.logo-text span {
+                            <select
+                                id="department"
+                                name="department"
+                                required
+                            >
 
-    font-size: 11px;
+                                <option
+                                    value=""
+                                    disabled
+                                    selected
+                                >
+                                    Select department
+                                </option>
 
-    color: rgba(255, 255, 255, 0.85);
-}
+                                <option value="JHS">
+                                    JHS
+                                </option>
 
+                                <option value="SHS">
+                                    SHS
+                                </option>
 
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
+                            </select>
 
-nav {
+                        </div>
 
-    display: flex;
+                    </div>
 
-    align-items: center;
 
-    gap: 10px;
-}
+                    <!-- LAST NAME -->
 
+                    <div class="form-group">
 
-nav a {
+                        <label for="last-name">
+                            Last Name
+                        </label>
 
-    text-decoration: none;
+                        <input
+                            type="text"
+                            id="last-name"
+                            name="last_name"
+                            placeholder="Enter last name"
+                            required
+                        >
 
-    padding: 10px 20px;
+                    </div>
 
-    border-radius: 7px;
 
-    font-size: 14px;
+                    <!-- FIRST NAME -->
 
-    font-weight: 600;
+                    <div class="form-group">
 
-    transition: all 0.3s ease;
-}
+                        <label for="first-name">
+                            First Name
+                        </label>
 
+                        <input
+                            type="text"
+                            id="first-name"
+                            name="first_name"
+                            placeholder="Enter first name"
+                            required
+                        >
 
-/* =========================================================
-   HOME BUTTON
-   ========================================================= */
+                    </div>
 
-.home-btn {
 
-    color: #FFFFFF;
+                    <!-- MIDDLE NAME -->
 
-    border: 1px solid rgba(255, 255, 255, 0.75);
+                    <div class="form-group">
 
-    background: rgba(255, 255, 255, 0.12);
+                        <label for="middle-name">
+                            Middle Name
+                        </label>
 
-    backdrop-filter: blur(5px);
-}
+                        <input
+                            type="text"
+                            id="middle-name"
+                            name="middle_name"
+                            placeholder="Enter middle name"
+                        >
 
+                    </div>
 
-.home-btn:hover {
+                </div>
 
-    background: #FFFFFF;
 
-    color: #6F42C1;
+                <!-- =========================================
+                     RIGHT COLUMN
+                     ========================================= -->
 
-    transform: translateY(-1px);
-}
+                <div class="form-column">
 
 
-/* =========================================================
-   ATTENDANCE HEADER BUTTON
-   ========================================================= */
+                    <!-- USERNAME -->
 
-.nav-attendance {
+                    <div class="form-group">
 
-    color: #FFFFFF;
+                        <label for="username">
+                            Username
+                        </label>
 
-    border: 1px solid rgba(255, 255, 255, 0.75);
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Create a username"
+                            required
+                        >
 
-    background: rgba(255, 255, 255, 0.12);
+                    </div>
 
-    backdrop-filter: blur(5px);
-}
 
+                    <!-- PASSWORD -->
 
-.nav-attendance:hover {
+                    <div class="form-group">
 
-    background: #FFFFFF;
+                        <label for="password">
+                            Password
+                        </label>
 
-    color: #6F42C1;
+                        <div class="password-input">
 
-    transform: translateY(-1px);
-}
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Create a password"
+                                required
+                            >
 
+                            <button
+                                type="button"
+                                class="show-password"
+                                onclick="togglePassword('password', this)"
+                                aria-label="Show password"
+                            >
 
+                                <span class="material-icons">
+                                    lock
+                                </span>
 
-/* =========================================================
-   MAIN
-   ========================================================= */
+                            </button>
 
-main {
+                        </div>
 
-    flex: 1;
+                    </div>
 
-    min-height: 0;
 
-    overflow: hidden;
-}
+                    <!-- CONFIRM PASSWORD -->
 
+                    <div class="form-group">
 
-/* =========================================================
-   REGISTER SECTION
-   ========================================================= */
+                        <label for="confirm-password">
+                            Confirm Password
+                        </label>
 
-.register-section {
+                        <div class="password-input">
 
-    width: 100%;
-    height: 100%;
+                            <input
+                                type="password"
+                                id="confirm-password"
+                                name="confirm_password"
+                                placeholder="Confirm your password"
+                                required
+                            >
 
-    min-height: 0;
+                            <button
+                                type="button"
+                                class="show-password"
+                                onclick="togglePassword('confirm-password', this)"
+                                aria-label="Show password"
+                            >
 
-    position: relative;
+                                <span class="material-icons">
+                                    lock
+                                </span>
 
-    display: flex;
+                            </button>
 
-    align-items: center;
+                        </div>
 
-    justify-content: center;
+                    </div>
 
-    padding: 15px 20px;
 
-    overflow: hidden;
+                    <!-- SECURITY QUESTION -->
 
-    background:
+                    <div class="form-group">
 
-        radial-gradient(
-            circle at 10% 20%,
-            rgba(111, 66, 193, 0.10),
-            transparent 28%
-        ),
+                        <label for="security-question">
+                            Security Question
+                        </label>
 
-        radial-gradient(
-            circle at 90% 80%,
-            rgba(13, 202, 240, 0.12),
-            transparent 30%
-        ),
+                        <select
+                            id="security-question"
+                            name="security_question"
+                            required
+                        >
 
-        var(--light-bg);
-}
+                            <option
+                                value=""
+                                disabled
+                                selected
+                            >
+                                Select security question
+                            </option>
 
+                            <option value="birthplace">
+                                What is your place of birth?
+                            </option>
 
-/* =========================================================
-   DECORATIONS
-   ========================================================= */
+                            <option value="mother-maiden-name">
+                                What is your mother's maiden name?
+                            </option>
 
-.decoration {
+                            <option value="childhood-nickname">
+                                What was your childhood nickname?
+                            </option>
 
-    position: absolute;
+                            <option value="favorite-teacher">
+                                Who was your favorite teacher?
+                            </option>
 
-    border-radius: 50%;
+                            <option value="favorite-place">
+                                What is your favorite place?
+                            </option>
 
-    pointer-events: none;
-}
+                        </select>
 
+                    </div>
 
-.decoration-one {
 
-    width: 300px;
-    height: 300px;
+                    <!-- SECURITY ANSWER -->
 
-    top: -130px;
-    left: -100px;
+                    <div class="form-group">
 
-    background: rgba(111, 66, 193, 0.08);
-}
+                        <label for="security-answer">
+                            Security Answer
+                        </label>
 
+                        <input
+                            type="text"
+                            id="security-answer"
+                            name="security_answer"
+                            placeholder="Enter your answer"
+                            required
+                        >
 
-.decoration-two {
+                    </div>
 
-    width: 250px;
-    height: 250px;
+                </div>
 
-    right: -90px;
-    bottom: -100px;
+            </div>
 
-    background: rgba(0, 204, 204, 0.10);
-}
 
+            <!-- =================================================
+                 CREATE ACCOUNT BUTTON
+                 ================================================= -->
 
-/* =========================================================
-   REGISTER CARD
-   ========================================================= */
+            <button
+                type="submit"
+                class="create-account-btn"
+            >
+                Create Account
+            </button>
 
-.register-card {
 
-    width: 100%;
+            <!-- =================================================
+                 BACK TO LOGIN
+                 ================================================= -->
 
-    max-width: 780px;
+            <div class="back-login">
 
-    padding: 22px 35px;
+                <span>
+                    Already have an account?
+                </span>
 
-    background: rgba(255, 255, 255, 0.96);
+                <a href="{% url 'login' %}">
+                    Login here
+                </a>
 
-    border: 1px solid rgba(111, 66, 193, 0.10);
+            </div>
 
-    border-radius: 18px;
+        </form>
 
-    box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.10);
+    </div>
 
-    position: relative;
+</section>
 
-    z-index: 2;
-}
 
+<!-- =========================================================
+     JAVASCRIPT
+     ========================================================= -->
 
-/* =========================================================
-   REGISTER HEADER
-   ========================================================= */
+<script>
 
-.register-header {
+function togglePassword(inputId, button) {
 
-    text-align: center;
+    const password =
+        document.getElementById(inputId);
 
-    margin-bottom: 14px;
-}
+    const icon =
+        button.querySelector(".material-icons");
 
 
-.register-icon {
+    if (password.type === "password") {
 
-    width: 48px;
-    height: 48px;
+        password.type = "text";
 
-    margin: 0 auto 10px;
+        icon.textContent = "lock_open";
 
-    display: flex;
+        button.setAttribute(
+            "aria-label",
+            "Hide password"
+        );
 
-    align-items: center;
+    } else {
 
-    justify-content: center;
+        password.type = "password";
 
-    border-radius: 14px;
+        icon.textContent = "lock";
 
-    background: linear-gradient(
-        135deg,
-        var(--primary-purple),
-        var(--primary-blue)
-    );
+        button.setAttribute(
+            "aria-label",
+            "Show password"
+        );
 
-    color: var(--white);
-
-    font-size: 22px;
-
-    box-shadow:
-        0 8px 20px rgba(111, 66, 193, 0.20);
-}
-
-
-.register-header h1 {
-
-    font-size: 25px;
-
-    color: var(--dark);
-
-    margin-bottom: 5px;
-}
-
-
-.register-header p {
-
-    color: var(--gray);
-
-    font-size: 12px;
-
-    line-height: 1.5;
-}
-
-
-/* =========================================================
-   FORM
-   ========================================================= */
-
-.form-group {
-
-    margin-bottom: 11px;
-}
-
-
-.form-group label {
-
-    display: block;
-
-    margin-bottom: 5px;
-
-    color: var(--dark);
-
-    font-size: 13px;
-
-    font-weight: 600;
-}
-
-/* =========================================================
-   TWO COLUMN REGISTRATION FORM
-   ========================================================= */
-
-.form-columns {
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 0 20px;
-
-    width: 100%;
-}
-
-.form-column {
-
-    min-width: 0;
-}
-
-/* =========================================================
-   ROLE + DEPARTMENT ROW
-   ========================================================= */
-
-.form-row {
-
-    display: grid;
-
-    grid-template-columns: 1fr 1fr;
-
-    gap: 12px;
-
-    width: 100%;
-}
-
-/* =========================================================
-   SELECT DROPDOWNS
-   ========================================================= */
-
-select {
-
-    width: 100%;
-
-    height: 40px;
-
-    padding: 0 13px;
-
-    border: 1px solid #DDE2E7;
-
-    border-radius: 7px;
-
-    background: var(--white);
-
-    color: var(--dark);
-
-    font-size: 13px;
-
-    outline: none;
-
-    cursor: pointer;
-
-    transition: all 0.3s ease;
-}
-
-
-select:focus {
-
-    border-color: var(--primary-blue);
-
-    box-shadow:
-        0 0 0 3px rgba(0, 123, 255, 0.10);
-}
-
-
-select:invalid {
-
-    color: #A0A7AE;
-}
-
-
-select option {
-
-    color: var(--dark);
-
-    background: var(--white);
-}
-
-/* =========================================================
-   INPUTS
-   ========================================================= */
-
-input {
-
-    width: 100%;
-
-    height: 40px;
-
-    padding: 0 13px;
-
-    border: 1px solid #DDE2E7;
-
-    border-radius: 7px;
-
-    background: var(--white);
-
-    color: var(--dark);
-
-    font-size: 13px;
-
-    outline: none;
-
-    transition: all 0.3s ease;
-}
-
-
-input::placeholder {
-
-    color: #A0A7AE;
-}
-
-
-input:focus {
-
-    border-color: var(--primary-blue);
-
-    box-shadow:
-        0 0 0 3px rgba(0, 123, 255, 0.10);
-}
-
-
-/* =========================================================
-   PASSWORD INPUT
-   ========================================================= */
-
-.password-input {
-
-    position: relative;
-}
-
-
-.password-input input {
-
-    padding-right: 45px;
-}
-
-
-.show-password {
-
-    position: absolute;
-
-    right: 6px;
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    width: 32px;
-    height: 32px;
-
-    border: none;
-
-    background: transparent;
-
-    cursor: pointer;
-
-    font-size: 15px;
-
-    opacity: 0.65;
-}
-
-
-.show-password:hover {
-
-    opacity: 1;
-}
-
-/* Material Lock Icon Size */
-.show-password .material-icons {
-    font-size: 18px;
-}
-
-
-
-
-
-/* =========================================================
-   CREATE ACCOUNT BUTTON
-   ========================================================= */
-
-.create-account-btn {
-
-    width: 100%;
-
-    height: 44px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background: linear-gradient(
-        135deg,
-        var(--primary-purple),
-        var(--primary-blue)
-    );
-
-    color: var(--white);
-
-    font-size: 13px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: all 0.3s ease;
-
-    box-shadow:
-        0 7px 20px rgba(0, 123, 255, 0.20);
-}
-
-
-.create-account-btn:hover {
-
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 10px 25px rgba(0, 123, 255, 0.30);
-}
-
-
-.create-account-btn:active {
-
-    transform: translateY(0);
-}
-
-
-/* =========================================================
-   BACK TO LOGIN
-   ========================================================= */
-
-.back-login {
-
-    margin-top: 13px;
-
-    padding-top: 11px;
-
-    border-top: 1px solid #E9ECEF;
-
-    text-align: center;
-
-    color: var(--gray);
-
-    font-size: 11px;
-
-    line-height: 1.6;
-}
-
-
-.back-login a {
-
-    color: var(--primary-purple);
-
-    font-weight: 600;
-
-    text-decoration: none;
-
-    margin-left: 3px;
-
-    transition: 0.3s ease;
-}
-
-
-.back-login a:hover {
-
-    color: var(--primary-blue);
-
-    text-decoration: underline;
-}
-
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-footer {
-
-    height: 60px;
-    min-height: 60px;
-
-    padding: 0 7%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    background: var(--white);
-
-    border-top: 1px solid #E9ECEF;
-
-    color: var(--gray);
-
-    font-size: 11px;
-}
-
-
-footer span {
-
-    color: var(--primary-purple);
-
-    font-weight: bold;
-}
-
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-    header {
-
-        padding: 0 5%;
     }
 
-    .form-columns {
-
-        grid-template-columns: 1fr;
-
-        gap: 0;
-    }
-
-    .register-card {
-
-        max-width: 410px;
-
-        padding: 24px 30px;
-    }
-
-
-    footer {
-
-        padding: 0 5%;
-
-        text-align: center;
-    }
 }
 
+</script>
 
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 500px) {
-
-    header {
-
-        height: 65px;
-        min-height: 65px;
-    }
-
-
-    .logo-image {
-
-        width: 42px;
-        height: 42px;
-
-        border-width: 2px;
-    }
-
-
-    .logo-text h2 {
-
-        font-size: 17px;
-    }
-
-
-    .logo-text span {
-
-        display: none;
-    }
-
-
-    nav {
-
-        gap: 5px;
-    }
-
-
-    nav a {
-
-        padding: 8px 10px;
-
-        font-size: 11px;
-    }
-
-
-    .register-section {
-
-        padding: 10px 15px;
-    }
-
-
-    .register-card {
-
-        max-width: 400px;
-
-        padding: 21px 20px;
-
-        border-radius: 15px;
-    }
-
-
-    .register-header {
-
-        margin-bottom: 14px;
-    }
-
-
-    .register-icon {
-
-        width: 43px;
-        height: 43px;
-
-        margin-bottom: 7px;
-
-        font-size: 19px;
-    }
-
-
-    .register-header h1 {
-
-        font-size: 22px;
-    }
-
-
-    .register-header p {
-
-        font-size: 11px;
-    }
-
-
-    .form-group {
-
-        margin-bottom: 9px;
-    }
-
-
-    .form-group label {
-
-        margin-bottom: 4px;
-
-        font-size: 12px;
-    }
-
-    .form-columns {
-
-        grid-template-columns: 1fr;
-    }
-
-
-    select {
-
-        height: 38px;
-
-        font-size: 12px;
-    }
-
-
-    input {
-
-        height: 38px;
-
-        font-size: 12px;
-    }
-
-
-    .terms {
-
-        margin: 4px 0 10px;
-    }
-
-
-    .create-account-btn {
-
-        height: 41px;
-
-        font-size: 12px;
-    }
-
-
-    .back-login {
-
-        margin-top: 10px;
-
-        padding-top: 9px;
-    }
-
-
-    footer {
-
-        height: 50px;
-        min-height: 50px;
-
-        flex-direction: column;
-
-        justify-content: center;
-
-        gap: 3px;
-
-        padding: 8px 10px;
-
-        font-size: 9px;
-    }
-}
-
-
-/* =========================================================
-   SHORT SCREEN
-   ========================================================= */
-
-@media (max-height: 700px) {
-
-    header {
-
-        height: 65px;
-        min-height: 65px;
-    }
-
-
-    footer {
-
-        height: 50px;
-        min-height: 50px;
-    }
-
-
-    .register-section {
-
-        padding: 7px 15px;
-    }
-
-
-    .register-card {
-
-        padding: 17px 32px;
-    }
-
-
-    .register-header {
-
-        margin-bottom: 8px;
-    }
-
-
-    .register-icon {
-
-        width: 40px;
-        height: 40px;
-
-        margin-bottom: 5px;
-
-        font-size: 18px;
-    }
-
-
-    .register-header h1 {
-
-        font-size: 22px;
-
-        margin-bottom: 3px;
-    }
-
-
-    .register-header p {
-
-        font-size: 10px;
-    }
-
-
-    .form-group {
-
-        margin-bottom: 7px;
-    }
-
-
-    .form-group label {
-
-        margin-bottom: 3px;
-
-        font-size: 11px;
-    }
-
-    .form-columns {
-
-        gap: 0 16px;
-    }
-
-
-    select {
-
-        height: 36px;
-
-        font-size: 11px;
-    }
-
-
-    input {
-
-        height: 36px;
-
-        font-size: 11px;
-    }
-
-
-    .terms {
-
-        margin: 3px 0 8px;
-    }
-
-
-    .terms label {
-
-        font-size: 10px;
-    }
-
-
-    .create-account-btn {
-
-        height: 38px;
-
-        font-size: 11px;
-    }
-
-
-    .back-login {
-
-        margin-top: 8px;
-
-        padding-top: 7px;
-
-        font-size: 10px;
-    }
-}
-
-
-/* =========================================================
-   HIDE BROWSER PASSWORD / UNLOCK ICON
-   ========================================================= */
-
-input[type="password"]::-ms-reveal,
-input[type="password"]::-ms-clear {
-    display: none !important;
-}
-
-input[type="password"]::-webkit-credentials-auto-fill-button {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
-
-
-
+{% endblock %}

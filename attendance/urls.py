@@ -22,4 +22,5 @@ urlpatterns = [
     path('teacher/class-record/', views.teacher_class_record, name='teacher_class_record'),
     path('teacher/class-attendance/', views.teacher_class_attendance, name='teacher_class_attendance'),
     path('teacher/security/', views.teacher_security, name='teacher_security'),
+    
 ]

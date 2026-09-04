@@ -2,95 +2,97 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>
-        {% block title %}RFID Attendance System{% endblock %}
-    </title>
+    <title>{% block title %}AINHS Attendance System{% endblock %}</title>
+    <link
+        href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet"
+    >
 
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+   <link rel="stylesheet" href="{% static 'css/Authentication_UI/Base.css' %}">
 
-    {% block extra_css %}
-    {% endblock %}
+    {% block extra_css %}{% endblock %}
 </head>
 
 <body>
 
-    <!-- =====================================================
-         HEADER
-         ===================================================== -->
+    <!-- ================= HEADER ================= -->
     <header>
 
-        <!-- Logo / System Name -->
         <div class="logo">
 
             <img
                 src="{% static 'images/logo.png' %}"
-                alt="RFID Attendance System Logo"
+                alt="AINHS Logo"
                 class="logo-image"
             >
 
             <div class="logo-text">
-                <h2>RFID Attendance System</h2>
-                <span>Student Attendance Management</span>
+                <h2>AINHS Attendance</h2>
+                <span>RFID Attendance Management System</span>
             </div>
 
         </div>
 
-
-        <!-- Navigation -->
         <nav>
-
             <a href="{% url 'home' %}" class="home-btn">
                 Home
             </a>
 
-            <a href=" " class="nav-attendance">
-                Attendance
+            <a href="{% url 'login' %}" class="nav-login">
+                Login
             </a>
 
+            <a href="{% url 'attendance' %}" class="nav-attendance">
+                Attendance
+            </a>
         </nav>
 
     </header>
 
 
-    <!-- =====================================================
-         MAIN CONTENT
-         ===================================================== -->
-    <main>
+    <!-- ================= PAGE CONTENT ================= -->
 
+    <main>
         {% block content %}
         {% endblock %}
-
     </main>
 
 
-    <!-- =====================================================
-         FOOTER
-         ===================================================== -->
+    <!-- ================= FOOTER ================= -->
+
     <footer>
 
-        <div>
-            © 2026 RFID Attendance System
+        <div class="copyright">
+
+            © 2026
+
+            <span class="footer-brand">
+                AINHS Attendance System
+            </span>.
+
+            All Rights Reserved.
+
         </div>
 
-        <div>
-            Developed by <span>Your Team</span>
+        <div class="footer-links">
+
+            <span>
+                RFID Technology
+            </span>
+
+            <span class="separator"></span>
+
+            <span>
+                Attendance Management
+            </span>
+
         </div>
 
     </footer>
 
-
-    <!-- =====================================================
-         PAGE JAVASCRIPT
-         ===================================================== -->
-    {% block extra_js %}
-    {% endblock %}
-
 </body>
-
 </html>

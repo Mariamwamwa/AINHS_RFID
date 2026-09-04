@@ -1,0 +1,178 @@
+
+
+/* =========================
+   HERO SECTION
+   ========================= */
+
+.hero {
+    position: relative;
+    min-height: calc(100vh - 150px);
+    width: 100%;
+    overflow: hidden;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* =========================
+   HERO BACKGROUND
+   ========================= */
+
+.hero-background {
+    position: absolute;
+    inset: 0;
+
+    background-image: url("../../images/ainhs.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    z-index: 0;
+}
+
+
+/* =========================
+   WHITE FADE OVERLAY
+   ========================= */
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.96) 0%,
+            rgba(255, 255, 255, 0.82) 35%,
+            rgba(255, 255, 255, 0.40) 65%,
+            rgba(255, 255, 255, 0.15) 100%
+        );
+
+    z-index: 1;
+}
+
+
+/* =========================
+   HERO CONTENT
+   ========================= */
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+
+    width: 90%;
+    max-width: 1200px;
+
+    padding: 60px 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+
+/* =========================
+   SCHOOL TITLE
+   ========================= */
+
+.hero-content h1 {
+    margin: 0;
+
+    font-size: clamp(3rem, 6vw, 6rem);
+    line-height: 1.05;
+
+    font-weight: 800;
+    letter-spacing: -2px;
+
+    color: #222;
+}
+
+
+/* =========================
+   PURPLE TEXT
+   ========================= */
+
+.hero-content h1 .purple {
+    color: #6F42C1;
+}
+
+
+/* =========================
+   BLUE TEXT
+   ========================= */
+
+.hero-content h1 .blue {
+    color: #007BFF;
+}
+
+
+/* =========================
+   SCHOOL MOTTO
+   ========================= */
+
+.school-motto {
+    margin-top: 25px;
+    margin-bottom: 0;
+
+    font-size: clamp(1rem, 1.5vw, 1.35rem);
+
+    color: #555;
+
+    font-style: italic;
+    letter-spacing: 0.5px;
+}
+
+
+/* =========================
+   RESPONSIVE DESIGN
+   ========================= */
+
+@media (max-width: 768px) {
+
+    .hero {
+        min-height: calc(100vh - 120px);
+    }
+
+    .hero-overlay {
+        background:
+            linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0.94),
+                rgba(255, 255, 255, 0.65)
+            );
+    }
+
+    .hero-content {
+        width: 100%;
+        padding: 40px 30px;
+    }
+
+    .hero-content h1 {
+        font-size: clamp(2.5rem, 10vw, 4rem);
+        letter-spacing: -1px;
+    }
+
+    .school-motto {
+        font-size: 1rem;
+        margin-top: 18px;
+    }
+}
+
+
+@media (max-width: 480px) {
+
+    .hero-content {
+        padding: 30px 20px;
+    }
+
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+
+    .school-motto {
+        font-size: 0.9rem;
+    }
+}

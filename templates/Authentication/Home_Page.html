@@ -1,30 +1,41 @@
-{% extends "Authentication/Base.html" %}
+{% extends 'AUTHENTICATION/Base.html' %}
 {% load static %}
 
 {% block title %}
-Home | RFID Attendance System
+Attendance System | AINHS
 {% endblock %}
 
 {% block extra_css %}
-
-<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<link rel="stylesheet" href="{% static 'css/Authentication_UI/Home_Page.css' %}">
 {% endblock %}
 
 {% block content %}
 
-<section class="home-section">
+<section class="hero">
 
-```
-<h1>Welcome to RFID Attendance System</h1>
+    <!-- Background image -->
+    <div class="hero-background"></div>
 
-<p>
-    Student Attendance Management System
-</p>
+    <!-- White fade overlay -->
+    <div class="hero-overlay"></div>
 
-<a href=" " class="btn">
-    View Attendance
-</a>
-```
+    <!-- Hero Content -->
+    <div class="hero-content">
+
+        <h1>
+            Alabat
+            <span class="purple">Island</span>
+            <br>
+
+            <span class="blue">National</span>
+            High School
+        </h1>
+
+        <p class="school-motto">
+            “A School Shining From a Distance”
+        </p>
+
+    </div>
 
 </section>
 

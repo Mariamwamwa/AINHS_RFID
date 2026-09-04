@@ -1,1783 +1,848 @@
-/* =========================================================
-   COLOR PALETTE
-   ========================================================= */
+{% extends 'AUTHENTICATION/Base.html' %}
+{% load static %}
 
-:root {
+{% block title %}Login | AINHS Attendance System{% endblock %}
 
-    /* PRIMARY COLORS */
-    --primary-purple: #6F42C1;
-    --primary-blue: #007BFF;
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/Authentication_UI/Login_Page.css' %}"
+>
+{% endblock %}
+{% block content %}
 
-    /* SUPPORTING COLORS */
-    --aqua: #00CCCC;
-    --cyan: #0DCAF0;
-    --teal: #17A2B8;
+<!-- ================= LOGIN SECTION ================= -->
 
-    /* NEUTRAL COLORS */
-    --white: #FFFFFF;
-    --dark: #212529;
-    --gray: #6C757D;
+<section class="login-section">
 
-    --light-bg: #F7F9FC;
+<!-- Background decoration -->
+<div class="decoration decoration-one"></div>
+<div class="decoration decoration-two"></div>
+
+<!-- Login Card -->
+<div class="login-card">
+
+    <div class="login-header">
+
+        <div class="login-icon">
+            🔐
+        </div>
+
+        <h1>Welcome Back!</h1>
+
+        <p>
+            Sign in to access the AINHS Attendance System.
+        </p>
+
+    </div>
+
+    <!-- Login Form -->
+    <form action="#" method="POST">
+
+        {% csrf_token %}
+
+        <!-- ACCOUNT TYPE -->
+        <div class="form-group">
+
+            <label for="role">
+                Account Type
+            </label>
+
+            <select
+                id="role"
+                name="role"
+                required
+            >
+                <option value="" disabled selected>
+                    Select account type
+                </option>
+
+                <option value="admin">
+                    Administrator
+                </option>
+
+                <option value="teacher">
+                    Teacher
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- USERNAME -->
+        <div class="form-group">
+
+            <label for="username">
+                Username
+            </label>
+
+            <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Enter your username"
+                required
+            >
+
+        </div>
+
+
+        <!-- PASSWORD -->
+        <div class="form-group">
+
+            <div class="password-label">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <a
+                    href="#"
+                    onclick="openForgotPassword(event)"
+                >
+                    Forgot Password?
+                </a>
+
+            </div>
+
+            <div class="password-input">
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+                <button
+                    type="button"
+                    class="show-password"
+                    onclick="togglePassword('password', this)"
+                    aria-label="Show password"
+                >
+                    <span class="material-icons">
+                        lock
+                    </span>
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- REMEMBER ME -->
+        <div class="remember">
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="remember"
+                >
+
+                Remember me
+
+            </label>
+
+        </div>
+
+
+        <!-- LOGIN BUTTON -->
+        <button
+            type="submit"
+            class="login-btn"
+        >
+            Login
+        </button>
+
+
+        <!-- REGISTRATION -->
+        <div class="admin-registration">
+
+            <span>
+                Don't have an account?
+            </span>
+
+            <a href="{% url 'register' %}">
+                Create Account
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+</section>
+
+<!-- =========================================================
+     FORGOT PASSWORD POP-UP
+     STEP 1: ENTER USERNAME
+     ========================================================= -->
+
+<div
+    id="forgotPasswordModal"
+    class="forgot-modal"
+>
+
+```
+<div class="forgot-modal-content">
+
+    <!-- CLOSE BUTTON -->
+    <button
+        type="button"
+        class="forgot-close"
+        onclick="closeForgotPassword()"
+        aria-label="Close"
+    >
+        &times;
+    </button>
+
+
+    <!-- LOCK ICON -->
+    <div class="forgot-icon">
+
+        <span class="material-icons">
+            lock_reset
+        </span>
+
+    </div>
+
+
+    <!-- TITLE -->
+    <h2>
+        Forgot Password?
+    </h2>
+
+
+    <!-- DESCRIPTION -->
+    <p>
+        Enter your username to verify your account.
+    </p>
+
+
+    <!-- USERNAME FORM -->
+    <form
+        id="forgotPasswordForm"
+        onsubmit="verifyUsername(event)"
+    >
+
+        <div class="forgot-input-group">
+
+            <span class="material-icons">
+                person
+            </span>
+
+            <input
+                type="text"
+                id="forgotUsername"
+                name="forgotUsername"
+                placeholder="Enter your username"
+                required
+            >
+
+        </div>
+
+
+        <!-- CONTINUE BUTTON -->
+        <button
+            type="submit"
+            class="send-reset-btn"
+        >
+            Continue
+        </button>
+
+
+        <!-- CANCEL BUTTON -->
+        <button
+            type="button"
+            class="cancel-btn"
+            onclick="closeForgotPassword()"
+        >
+            Cancel
+        </button>
+
+    </form>
+
+</div>
+```
+
+</div>
+
+<!-- =========================================================
+     SECURITY QUESTION POP-UP
+     STEP 2
+     ========================================================= -->
+
+<div
+    id="securityQuestionModal"
+    class="forgot-modal"
+>
+
+```
+<div class="forgot-modal-content">
+
+    <!-- CLOSE BUTTON -->
+    <button
+        type="button"
+        class="forgot-close"
+        onclick="closeSecurityQuestion()"
+        aria-label="Close"
+    >
+        &times;
+    </button>
+
+
+    <!-- SECURITY ICON -->
+    <div class="forgot-icon">
+
+        <span class="material-icons">
+            security
+        </span>
+
+    </div>
+
+
+    <!-- TITLE -->
+    <h2>
+        Verify Your Account
+    </h2>
+
+
+    <!-- DESCRIPTION -->
+    <p>
+        Answer your security question to continue.
+    </p>
+
+
+    <!-- SECURITY QUESTION FORM -->
+    <form
+        id="securityQuestionForm"
+        onsubmit="verifySecurityAnswer(event)"
+    >
+
+        <!-- SECURITY QUESTION -->
+        <div class="forgot-question">
+
+            <label for="securityQuestion">
+                Security Question
+            </label>
+
+            <select
+                id="securityQuestion"
+                name="securityQuestion"
+                required
+            >
+
+                <option value="" disabled selected>
+                    Select your security question
+                </option>
+
+                <option value="birthplace">
+                    What is your place of birth?
+                </option>
+
+                <option value="mother-maiden-name">
+                    What is your mother's maiden name?
+                </option>
+
+                <option value="childhood-nickname">
+                    What was your childhood nickname?
+                </option>
+
+                <option value="favorite-teacher">
+                    Who was your favorite teacher?
+                </option>
+
+                <option value="favorite-place">
+                    What is your favorite place?
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- SECURITY ANSWER -->
+        <div class="forgot-input-group">
+
+            <input
+                type="text"
+                id="securityAnswer"
+                name="securityAnswer"
+                placeholder="Enter your security answer"
+                required
+            >
+
+        </div>
+
+
+        <!-- VERIFY BUTTON -->
+        <button
+            type="submit"
+            class="send-reset-btn"
+        >
+            Verify Answer
+        </button>
+
+
+        <!-- BACK BUTTON -->
+        <button
+            type="button"
+            class="cancel-btn"
+            onclick="backToUsername()"
+        >
+            Back
+        </button>
+
+    </form>
+
+</div>
+```
+
+</div>
+
+<!-- =========================================================
+     SET NEW PASSWORD POP-UP
+     STEP 3
+     ========================================================= -->
+
+<div
+    id="newPasswordModal"
+    class="forgot-modal"
+>
+
+```
+<div class="forgot-modal-content">
+
+    <!-- CLOSE BUTTON -->
+    <button
+        type="button"
+        class="forgot-close"
+        onclick="closeNewPassword()"
+        aria-label="Close"
+    >
+        &times;
+    </button>
+
+
+    <!-- PASSWORD ICON -->
+    <div class="forgot-icon">
+
+        <span class="material-icons">
+            lock_reset
+        </span>
+
+    </div>
+
+
+    <!-- TITLE -->
+    <h2>
+        Set New Password
+    </h2>
+
+
+    <!-- DESCRIPTION -->
+    <p>
+        Create a new password for your account.
+    </p>
+
+
+    <!-- NEW PASSWORD FORM -->
+    <form
+        id="newPasswordForm"
+        onsubmit="resetPassword(event)"
+    >
+
+        <!-- NEW PASSWORD -->
+        <div class="forgot-input-group password-input">
+
+            <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                placeholder="Enter new password"
+                required
+            >
+
+            <button
+                type="button"
+                class="show-password"
+                onclick="toggleNewPassword('newPassword', this)"
+            >
+                <span class="material-icons">
+                    lock
+                </span>
+            </button>
+
+        </div>
+
+
+        <!-- CONFIRM PASSWORD -->
+        <div class="forgot-input-group password-input">
+
+            <input
+                type="password"
+                id="confirmNewPassword"
+                name="confirmNewPassword"
+                placeholder="Confirm new password"
+                required
+            >
+
+            <button
+                type="button"
+                class="show-password"
+                onclick="toggleNewPassword('confirmNewPassword', this)"
+            >
+                <span class="material-icons">
+                    lock
+                </span>
+            </button>
+
+        </div>
+
+
+        <!-- SAVE PASSWORD -->
+        <button
+            type="submit"
+            class="send-reset-btn"
+        >
+            Save New Password
+        </button>
+
+
+        <!-- CANCEL -->
+        <button
+            type="button"
+            class="cancel-btn"
+            onclick="closeNewPassword()"
+        >
+            Cancel
+        </button>
+
+    </form>
+
+</div>
+```
+
+</div>
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+/* =====================================================
+   SHOW / HIDE PASSWORD
+   ===================================================== */
+
+function togglePassword(inputId, button) {
+
+    const password =
+        document.getElementById(inputId);
+
+    const icon =
+        button.querySelector(".material-icons");
+
+    if (password.type === "password") {
+
+        password.type = "text";
+
+        icon.textContent = "lock_open";
+
+        button.setAttribute(
+            "aria-label",
+            "Hide password"
+        );
+
+    } else {
+
+        password.type = "password";
+
+        icon.textContent = "lock";
+
+        button.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+    }
+
 }
 
 
-/* =========================================================
-   GLOBAL
-   ========================================================= */
+/* =====================================================
+   OPEN FORGOT PASSWORD
+   ===================================================== */
 
-* {
-    margin: 0;
-    padding: 0;
+function openForgotPassword(event) {
 
-    box-sizing: border-box;
+    event.preventDefault();
 
-    font-family: Arial, Helvetica, sans-serif;
+    document
+        .getElementById("forgotPasswordModal")
+        .classList.add("show");
+
 }
 
 
-html,
-body {
-    width: 100%;
-    height: 100%;
+/* =====================================================
+   CLOSE FORGOT PASSWORD
+   ===================================================== */
 
-    overflow: hidden;
+function closeForgotPassword() {
+
+    document
+        .getElementById("forgotPasswordModal")
+        .classList.remove("show");
+
 }
 
 
-body {
+/* =====================================================
+   VERIFY USERNAME
+   ===================================================== */
 
-    display: flex;
+function verifyUsername(event) {
 
-    flex-direction: column;
+    event.preventDefault();
 
-    background: var(--light-bg);
+    const username =
+        document
+            .getElementById("forgotUsername")
+            .value
+            .trim();
 
-    color: var(--dark);
+    if (username === "") {
+        return;
+    }
+
+    closeForgotPassword();
+
+    document
+        .getElementById("securityQuestionModal")
+        .classList.add("show");
+
 }
 
 
-/* =========================================================
-   HEADER
-   ========================================================= */
+/* =====================================================
+   VERIFY SECURITY QUESTION
+   ===================================================== */
 
-header {
+function verifySecurityAnswer(event) {
 
-    height: 75px;
-    min-height: 75px;
+    event.preventDefault();
 
-    background: linear-gradient(
-        135deg,
-        #0DCAF0 0%,
-        #007BFF 55%,
-        #6F42C1 100%
+    const question =
+        document
+            .getElementById("securityQuestion")
+            .value;
+
+    const answer =
+        document
+            .getElementById("securityAnswer")
+            .value
+            .trim();
+
+    if (question === "" || answer === "") {
+
+        alert(
+            "Please select your security question and enter your answer."
+        );
+
+        return;
+    }
+
+    closeSecurityQuestion();
+
+    document
+        .getElementById("newPasswordModal")
+        .classList.add("show");
+
+}
+
+
+/* =====================================================
+   CLOSE SECURITY QUESTION
+   ===================================================== */
+
+function closeSecurityQuestion() {
+
+    document
+        .getElementById("securityQuestionModal")
+        .classList.remove("show");
+
+}
+
+
+/* =====================================================
+   BACK TO USERNAME
+   ===================================================== */
+
+function backToUsername() {
+
+    closeSecurityQuestion();
+
+    document
+        .getElementById("forgotPasswordModal")
+        .classList.add("show");
+
+}
+
+
+/* =====================================================
+   RESET PASSWORD
+   ===================================================== */
+
+function resetPassword(event) {
+
+    event.preventDefault();
+
+    const newPassword =
+        document
+            .getElementById("newPassword")
+            .value;
+
+    const confirmPassword =
+        document
+            .getElementById("confirmNewPassword")
+            .value;
+
+
+    if (newPassword !== confirmPassword) {
+
+        alert(
+            "Passwords do not match. Please try again."
+        );
+
+        return;
+    }
+
+
+    if (newPassword.length < 8) {
+
+        alert(
+            "Password must be at least 8 characters long."
+        );
+
+        return;
+    }
+
+
+    alert(
+        "Your password has been successfully changed."
     );
 
-    display: flex;
 
-    align-items: center;
+    closeNewPassword();
 
-    justify-content: space-between;
+    document
+        .getElementById("forgotPasswordForm")
+        .reset();
 
-    padding: 0 3%;
+    document
+        .getElementById("securityQuestionForm")
+        .reset();
 
-    position: relative;
+    document
+        .getElementById("newPasswordForm")
+        .reset();
 
-    z-index: 10;
-
-    box-shadow:
-        0 4px 15px rgba(0, 123, 255, 0.15);
 }
 
 
-/* =========================================================
-   LOGO
-   ========================================================= */
+/* =====================================================
+   CLOSE NEW PASSWORD
+   ===================================================== */
 
-.logo {
+function closeNewPassword() {
 
-    display: flex;
+    document
+        .getElementById("newPasswordModal")
+        .classList.remove("show");
 
-    align-items: center;
-
-    gap: 12px;
 }
 
 
-.logo-image {
+/* =====================================================
+   CLOSE WHEN CLICKING OUTSIDE
+   ===================================================== */
 
-    width: 52px;
-    height: 52px;
+window.addEventListener("click", function(event) {
 
-    object-fit: cover;
+    const forgotModal =
+        document.getElementById("forgotPasswordModal");
 
-    border-radius: 50%;
+    const securityModal =
+        document.getElementById("securityQuestionModal");
 
-    border: 3px solid var(--white);
+    const newPasswordModal =
+        document.getElementById("newPasswordModal");
 
-    box-shadow:
-        0 3px 10px rgba(0, 0, 0, 0.20);
 
-    display: block;
-}
+    if (event.target === forgotModal) {
+        closeForgotPassword();
+    }
 
+    if (event.target === securityModal) {
+        closeSecurityQuestion();
+    }
 
-.logo-text h2 {
+    if (event.target === newPasswordModal) {
+        closeNewPassword();
+    }
 
-    font-size: 20px;
+});
 
-    color: var(--white);
 
-    margin-bottom: 2px;
-}
+/* =====================================================
+   CLOSE WITH ESC KEY
+   ===================================================== */
 
+window.addEventListener("keydown", function(event) {
 
-.logo-text span {
+    if (event.key === "Escape") {
 
-    font-size: 11px;
+        closeForgotPassword();
+        closeSecurityQuestion();
+        closeNewPassword();
 
-    color: rgba(255, 255, 255, 0.85);
-}
+    }
 
+});
 
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
 
-nav {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-}
-
-
-nav a {
-
-    text-decoration: none;
-
-    padding: 10px 20px;
-
-    border-radius: 7px;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    transition: all 0.3s ease;
-}
-
-
-/* =========================================================
-   HOME BUTTON
-   ========================================================= */
-
-.home-btn {
-
-    color: #FFFFFF;
-
-    border: 1px solid rgba(255, 255, 255, 0.75);
-
-    background: rgba(255, 255, 255, 0.12);
-
-    backdrop-filter: blur(5px);
-}
-
-
-.home-btn:hover {
-
-    background: #FFFFFF;
-
-    color: #6F42C1;
-
-    transform: translateY(-1px);
-}
-
-
-/* =========================================================
-   ATTENDANCE HEADER BUTTON
-   ========================================================= */
-
-.nav-attendance {
-
-    color: #FFFFFF;
-
-    border: 1px solid rgba(255, 255, 255, 0.75);
-
-    background: rgba(255, 255, 255, 0.12);
-
-    backdrop-filter: blur(5px);
-}
-
-
-.nav-attendance:hover {
-
-    background: #FFFFFF;
-
-    color: #6F42C1;
-
-    transform: translateY(-1px);
-}
-
-
-/* =========================================================
-   MAIN
-   ========================================================= */
-
-main {
-
-    flex: 1;
-
-    min-height: 0;
-
-    overflow: hidden;
-}
-
-
-/* =========================================================
-   LOGIN SECTION
-   ========================================================= */
-
-.login-section {
-
-    width: 100%;
-    height: 100%;
-
-    min-height: 0;
-
-    position: relative;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 15px 20px;
-
-    overflow: hidden;
-
-    background:
-
-        radial-gradient(
-            circle at 10% 20%,
-            rgba(111, 66, 193, 0.10),
-            transparent 28%
-        ),
-
-        radial-gradient(
-            circle at 90% 80%,
-            rgba(13, 202, 240, 0.12),
-            transparent 30%
-        ),
-
-        var(--light-bg);
-}
-
-
-/* =========================================================
-   DECORATIONS
-   ========================================================= */
-
-.decoration {
-
-    position: absolute;
-
-    border-radius: 50%;
-
-    pointer-events: none;
-}
-
-
-.decoration-one {
-
-    width: 300px;
-    height: 300px;
-
-    top: -130px;
-    left: -100px;
-
-    background: rgba(111, 66, 193, 0.08);
-}
-
-
-.decoration-two {
-
-    width: 250px;
-    height: 250px;
-
-    right: -90px;
-    bottom: -100px;
-
-    background: rgba(0, 204, 204, 0.10);
-}
-
-
-/* =========================================================
-   LOGIN CARD
-   ========================================================= */
-
-.login-card {
-
-    width: 100%;
-
-    max-width: 400px;
-
-    padding: 25px 35px;
-
-    background: rgba(255, 255, 255, 0.96);
-
-    border: 1px solid rgba(111, 66, 193, 0.10);
-
-    border-radius: 18px;
-
-    box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.10);
-
-    position: relative;
-
-    z-index: 2;
-}
-
-
-/* =========================================================
-   LOGIN HEADER
-   ========================================================= */
-
-.login-header {
-
-    text-align: center;
-
-    margin-bottom: 18px;
-}
-
-
-.login-icon {
-
-    width: 48px;
-    height: 48px;
-
-    margin: 0 auto 10px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    border-radius: 14px;
-
-    background: linear-gradient(
-        135deg,
-        var(--primary-purple),
-        var(--primary-blue)
-    );
-
-    color: var(--white);
-
-    font-size: 22px;
-
-    box-shadow:
-        0 8px 20px rgba(111, 66, 193, 0.20);
-}
-
-
-.login-header h1 {
-
-    font-size: 27px;
-
-    color: var(--dark);
-
-    margin-bottom: 5px;
-}
-
-
-.login-header p {
-
-    color: var(--gray);
-
-    font-size: 13px;
-
-    line-height: 1.4;
-}
-
-
-/* =========================================================
-   FORM
-   ========================================================= */
-
-.form-group {
-
-    margin-bottom: 13px;
-}
-
-
-.form-group label {
-
-    display: block;
-
-    margin-bottom: 5px;
-
-    color: var(--dark);
-
-    font-size: 13px;
-
-    font-weight: 600;
-}
-
-
-/* =========================================================
-   INPUTS
-   ========================================================= */
-
-input,
-select {
-
-    width: 100%;
-
-    height: 42px;
-
-    padding: 0 13px;
-
-    border: 1px solid #DDE2E7;
-
-    border-radius: 7px;
-
-    background: var(--white);
-
-    color: var(--dark);
-
-    font-size: 13px;
-
-    outline: none;
-
-    transition: all 0.3s ease;
-}
-
-
-input::placeholder {
-
-    color: #A0A7AE;
-}
-
-
-input:focus,
-select:focus {
-
-    border-color: var(--primary-blue);
-
-    box-shadow:
-        0 0 0 3px rgba(0, 123, 255, 0.10);
-}
-
-
-/* =========================================================
-   PASSWORD LABEL
-   ========================================================= */
-
-.password-label {
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-}
-
-
-.password-label label {
-
-    margin-bottom: 5px;
-}
-
-
-.password-label a {
-
-    margin-bottom: 5px;
-
-    color: var(--primary-blue);
-
-    font-size: 11px;
-
-    text-decoration: none;
-}
-
-
-.password-label a:hover {
-
-    color: var(--primary-purple);
-
-    text-decoration: underline;
-}
-
-
-/* =========================================================
-   PASSWORD INPUT
-   ========================================================= */
-
-.password-input {
-
-    position: relative;
-}
-
-
-.password-input input {
-
-    padding-right: 45px;
-}
-
-
-.show-password {
-
-    position: absolute;
-
-    right: 6px;
-    top: 50%;
-
-    transform: translateY(-50%);
-
-    width: 32px;
-    height: 32px;
-
-    border: none;
-
-    background: transparent;
-
-    cursor: pointer;
-
-    font-size: 15px;
-
-    opacity: 0.65;
-}
-
-
-.show-password:hover {
-
-    opacity: 1;
-}
-
-
-/* Material Lock Icon Size */
-
-.show-password .material-icons {
-
-    font-size: 18px;
-}
-
-/* =========================================================
+/* =====================================================
    NEW PASSWORD SHOW / HIDE
-   ========================================================= */
+   ===================================================== */
 
-.forgot-input-group.password-input {
+function toggleNewPassword(inputId, button) {
 
-    position: relative;
+    const input =
+        document.getElementById(inputId);
 
-    padding-right: 45px;
-}
+    const icon =
+        button.querySelector(".material-icons");
 
 
-.forgot-input-group.password-input input {
+    if (input.type === "password") {
 
-    padding-right: 0;
-}
+        input.type = "text";
 
+        icon.textContent = "lock_open";
 
-.forgot-input-group.password-input .show-password {
+    } else {
 
-    position: absolute;
+        input.type = "password";
 
-    right: 6px;
-    top: 50%;
+        icon.textContent = "lock";
 
-    transform: translateY(-50%);
-
-    width: 32px;
-    height: 32px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border: none;
-
-    background: transparent;
-
-    color: var(--gray);
-
-    cursor: pointer;
-
-    opacity: 0.65;
-
-    padding: 0;
-}
-
-
-.forgot-input-group.password-input .show-password:hover {
-
-    opacity: 1;
-
-    color: var(--primary-purple);
-}
-
-
-.forgot-input-group.password-input .show-password .material-icons {
-
-    margin: 0;
-
-    font-size: 18px;
-}
-
-
-/* =========================================================
-   REMEMBER ME
-   ========================================================= */
-
-.remember {
-
-    margin: 2px 0 13px;
-}
-
-
-.remember label {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 7px;
-
-    color: var(--gray);
-
-    font-size: 12px;
-
-    cursor: pointer;
-}
-
-
-.remember input {
-
-    width: 15px;
-    height: 15px;
-
-    accent-color: var(--primary-purple);
-}
-
-
-/* =========================================================
-   LOGIN BUTTON
-   ========================================================= */
-
-.login-btn {
-
-    width: 100%;
-
-    height: 44px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background: linear-gradient(
-        135deg,
-        var(--primary-purple),
-        var(--primary-blue)
-    );
-
-    color: var(--white);
-
-    font-size: 14px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: all 0.3s ease;
-
-    box-shadow:
-        0 7px 20px rgba(0, 123, 255, 0.20);
-}
-
-
-.login-btn:hover {
-
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 10px 25px rgba(0, 123, 255, 0.30);
-}
-
-
-.login-btn:active {
-
-    transform: translateY(0);
-}
-
-
-/* =========================================================
-   ADMIN REGISTRATION
-   ========================================================= */
-
-.admin-registration {
-
-    display: block;
-
-    margin-top: 14px;
-
-    padding-top: 12px;
-
-    border-top: 1px solid #E9ECEF;
-
-    text-align: center;
-
-    font-size: 11px;
-
-    line-height: 1.6;
-
-    color: var(--gray);
-}
-
-
-.admin-registration a {
-
-    display: block;
-
-    margin-top: 2px;
-
-    color: var(--primary-purple);
-
-    font-weight: 600;
-
-    text-decoration: none;
-
-    transition: 0.3s ease;
-}
-
-
-.admin-registration a:hover {
-
-    color: var(--primary-blue);
-
-    text-decoration: underline;
-}
-
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-footer {
-
-    height: 60px;
-    min-height: 60px;
-
-    padding: 0 7%;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: space-between;
-
-    background: var(--white);
-
-    border-top: 1px solid #E9ECEF;
-
-    color: var(--gray);
-
-    font-size: 11px;
-}
-
-
-footer span {
-
-    color: var(--primary-purple);
-
-    font-weight: bold;
-}
-
-
-/* =========================================================
-   FORGOT PASSWORD POP-UP
-   ========================================================= */
-
-.forgot-modal {
-
-    display: none;
-
-    position: fixed !important;
-
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-
-    width: 100vw !important;
-    height: 100vh !important;
-
-    z-index: 99999 !important;
-
-    background: rgba(0, 0, 0, 0.45);
-
-    align-items: center;
-    justify-content: center;
-
-    padding: 20px;
-
-    box-sizing: border-box;
-
-    overflow-y: hidden;
-}
-
-
-/* SHOW POP-UP */
-
-.forgot-modal.show {
-
-    display: flex !important;
-}
-
-
-/* =========================================================
-   FORGOT PASSWORD CONTENT
-   ========================================================= */
-
-.forgot-modal-content {
-
-    position: relative;
-
-    width: 100%;
-
-    max-width: 380px;
-
-    margin: auto;
-
-    padding: 28px;
-
-    box-sizing: border-box;
-
-    background: var(--white);
-
-    border-radius: 14px;
-
-    text-align: center;
-
-    box-shadow:
-        0 15px 40px rgba(0, 0, 0, 0.25);
-
-    z-index: 100000;
-
-    animation: forgotModalOpen 0.25s ease;
-}
-
-
-/* =========================================================
-   POP-UP ANIMATION
-   ========================================================= */
-
-@keyframes forgotModalOpen {
-
-    from {
-
-        opacity: 0;
-
-        transform:
-            translateY(-15px)
-            scale(0.97);
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform:
-            translateY(0)
-            scale(1);
-    }
-}
-
-
-/* =========================================================
-   CLOSE BUTTON
-   ========================================================= */
-
-.forgot-close {
-
-    position: absolute;
-
-    top: 10px;
-    right: 14px;
-
-    width: 30px;
-    height: 30px;
-
-    padding: 0;
-
-    border: none;
-
-    background: transparent;
-
-    color: #777;
-
-    font-size: 27px;
-
-    line-height: 30px;
-
-    cursor: pointer;
-
-    transition: all 0.2s ease;
-}
-
-
-.forgot-close:hover {
-
-    color: var(--primary-purple);
-
-    transform: scale(1.05);
-}
-
-
-/* =========================================================
-   FORGOT PASSWORD LOCK ICON
-   ========================================================= */
-
-.forgot-icon {
-
-    width: 52px;
-    height: 52px;
-
-    margin: 0 auto 14px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    border-radius: 50%;
-
-    background: rgba(111, 66, 193, 0.10);
-}
-
-
-.forgot-icon .material-icons {
-
-    font-size: 24px;
-
-    color: var(--primary-purple);
-}
-
-
-/* =========================================================
-   FORGOT PASSWORD TITLE
-   ========================================================= */
-
-.forgot-modal-content h2 {
-
-    margin: 0 0 8px;
-
-    color: var(--dark);
-
-    font-size: 21px;
-
-    font-weight: 700;
-}
-
-
-/* =========================================================
-   FORGOT PASSWORD DESCRIPTION
-   ========================================================= */
-
-.forgot-modal-content p {
-
-    margin: 0 auto 20px;
-
-    max-width: 310px;
-
-    color: var(--gray);
-
-    font-size: 13px;
-
-    line-height: 1.5;
-}
-
-
-/* =========================================================
-   FORGOT PASSWORD INPUT
-   ========================================================= */
-
-.forgot-input-group {
-
-    display: flex;
-
-    align-items: center;
-
-    width: 100%;
-
-    height: 44px;
-
-    margin-bottom: 14px;
-
-    padding: 0 11px;
-
-    box-sizing: border-box;
-
-    border: 1px solid #DDE2E7;
-
-    border-radius: 8px;
-
-    background: var(--white);
-
-    transition: all 0.3s ease;
-}
-
-
-.forgot-input-group:focus-within {
-
-    border-color: var(--primary-blue);
-
-    box-shadow:
-        0 0 0 3px rgba(0, 123, 255, 0.10);
-}
-
-
-/* INPUT ICON */
-
-.forgot-input-group .material-icons {
-
-    margin-right: 8px;
-
-    color: var(--primary-purple);
-
-    font-size: 18px;
-}
-
-
-/* INPUT FIELD */
-
-.forgot-input-group input {
-
-    width: 100%;
-
-    height: 100%;
-
-    padding: 0;
-
-    border: none;
-
-    outline: none;
-
-    background: transparent;
-
-    color: var(--dark);
-
-    font-size: 13px;
-
-    box-shadow: none;
-}
-
-
-.forgot-input-group input:focus {
-
-    border: none;
-
-    box-shadow: none;
-}
-
-
-.forgot-input-group input::placeholder {
-
-    color: #A0A7AE;
-}
-
-/* =========================================================
-SECURITY QUESTION
-========================================================= */
-
-.forgot-question {
-
-```
-width: 100%;
-
-margin-bottom: 14px;
-
-text-align: left;
-```
-
-}
-
-.forgot-question label {
-
-```
-display: block;
-
-margin-bottom: 5px;
-
-color: var(--dark);
-
-font-size: 12px;
-
-font-weight: 600;
-```
-
-}
-
-.forgot-question select {
-
-```
-width: 100%;
-
-height: 44px;
-
-padding: 0 11px;
-
-border: 1px solid #DDE2E7;
-
-border-radius: 8px;
-
-background: var(--white);
-
-color: var(--dark);
-
-font-size: 13px;
-
-outline: none;
-
-cursor: pointer;
-
-transition: all 0.3s ease;
-```
-
-}
-
-.forgot-question select:focus {
-
-```
-border-color: var(--primary-blue);
-
-box-shadow:
-    0 0 0 3px rgba(0, 123, 255, 0.10);
-```
-
-}
-
-/* =========================================================
-SECURITY ANSWER
-========================================================= */
-
-#securityAnswer {
-
-```
-padding-left: 0;
-```
-
-}
-
-/* =========================================================
-NEW PASSWORD INPUTS
-========================================================= */
-
-#newPassword,
-#confirmNewPassword {
-
-```
-padding-left: 0;
-```
-
-}
-
-/* =========================================================
-POP-UP SELECT PLACEHOLDER
-========================================================= */
-
-.forgot-question select:invalid {
-
-```
-color: #A0A7AE;
-```
-
-}
-
-.forgot-question select option {
-
-```
-color: var(--dark);
-
-background: var(--white);
-```
-
-}
-
-/* =========================================================
-PASSWORD POP-UP SPACING
-========================================================= */
-
-#newPasswordModal .forgot-input-group {
-
-```
-margin-bottom: 12px;
-```
-
-}
-
-/* =========================================================
-SECURITY QUESTION POP-UP SPACING
-========================================================= */
-
-#securityQuestionModal .forgot-modal-content p {
-
-```
-margin-bottom: 17px;
-```
-
-}
-
-/* =========================================================
-NEW PASSWORD POP-UP SPACING
-========================================================= */
-
-#newPasswordModal .forgot-modal-content p {
-
-```
-margin-bottom: 17px;
-```
-
-}
-
-/* =========================================================
-MOBILE POP-UP ADJUSTMENTS
-========================================================= */
-
-@media (max-width: 500px) {
-
-```
-.forgot-question select {
-
-    height: 42px;
-
-    font-size: 12px;
-}
-
-
-.forgot-question label {
-
-    font-size: 11px;
-}
-
-
-#securityQuestionModal .forgot-modal-content,
-#newPasswordModal .forgot-modal-content {
-
-    padding: 23px 20px;
-}
-```
-
-}
-
-/* =========================================================
-SHORT SCREEN POP-UP ADJUSTMENTS
-========================================================= */
-
-@media (max-height: 700px) {
-
-
-.forgot-modal-content {
-
-    padding: 23px 26px;
-}
-
-
-.forgot-icon {
-
-    width: 48px;
-    height: 48px;
-
-    margin-bottom: 10px;
-}
-
-
-.forgot-icon .material-icons {
-
-    font-size: 22px;
-}
-
-
-.forgot-modal-content h2 {
-
-    font-size: 20px;
-
-    margin-bottom: 6px;
-}
-
-
-.forgot-modal-content p {
-
-    margin-bottom: 14px;
-
-    font-size: 12px;
-}
-
-
-.forgot-question {
-
-    margin-bottom: 10px;
-}
-
-
-.forgot-question select {
-
-    height: 40px;
-}
-
-
-.forgot-input-group {
-
-    height: 40px;
-
-    margin-bottom: 10px;
-}
-
-
-.send-reset-btn {
-
-    height: 40px;
-}
-
-
-.cancel-btn {
-
-    height: 37px;
-
-    margin-top: 5px;
-}
-
-
-}
-
-/* =========================================================
-   SEND RESET BUTTON
-   ========================================================= */
-
-.send-reset-btn {
-
-    width: 100%;
-
-    height: 43px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background: linear-gradient(
-        135deg,
-        var(--primary-purple),
-        var(--primary-blue)
-    );
-
-    color: var(--white);
-
-    font-size: 14px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: all 0.3s ease;
-
-    box-shadow:
-        0 7px 20px rgba(0, 123, 255, 0.18);
-}
-
-
-.send-reset-btn:hover {
-
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 9px 23px rgba(0, 123, 255, 0.25);
-}
-
-
-.send-reset-btn:active {
-
-    transform: translateY(0);
-}
-
-
-/* =========================================================
-   CANCEL BUTTON
-   ========================================================= */
-
-.cancel-btn {
-
-    width: 100%;
-
-    height: 40px;
-
-    margin-top: 8px;
-
-    border: none;
-
-    border-radius: 7px;
-
-    background: transparent;
-
-    color: var(--gray);
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition: all 0.2s ease;
-}
-
-
-.cancel-btn:hover {
-
-    background: #F5F5F5;
-
-    color: var(--primary-purple);
-}
-
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (max-width: 700px) {
-
-    header {
-
-        padding: 0 5%;
-    }
-
-
-    .login-card {
-
-        max-width: 430px;
-
-        padding: 25px 30px;
-    }
-
-
-    footer {
-
-        padding: 0 5%;
-
-        text-align: center;
-    }
-}
-
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
-@media (max-width: 500px) {
-
-    header {
-
-        height: 65px;
-        min-height: 65px;
-    }
-
-
-    .logo-image {
-
-        width: 42px;
-        height: 42px;
-
-        border-width: 2px;
-    }
-
-
-    .logo-text h2 {
-
-        font-size: 17px;
-    }
-
-
-    .logo-text span {
-
-        display: none;
-    }
-
-
-    nav a {
-
-        padding: 8px 10px;
-
-        font-size: 11px;
-    }
-
-
-    .login-section {
-
-        padding: 10px 15px;
-    }
-
-
-    .login-card {
-
-        padding: 22px 20px;
-
-        border-radius: 15px;
-    }
-
-
-    .login-header {
-
-        margin-bottom: 15px;
-    }
-
-
-    .login-icon {
-
-        width: 44px;
-        height: 44px;
-
-        margin-bottom: 8px;
-
-        font-size: 20px;
-    }
-
-
-    .login-header h1 {
-
-        font-size: 24px;
-    }
-
-
-    .login-header p {
-
-        font-size: 12px;
-    }
-
-
-    .form-group {
-
-        margin-bottom: 10px;
-    }
-
-
-    input,
-    select {
-
-        height: 40px;
-
-        font-size: 12px;
-    }
-
-
-    .remember {
-
-        margin-bottom: 11px;
-    }
-
-
-    .login-btn {
-
-        height: 42px;
-    }
-
-
-    .admin-registration {
-
-        margin-top: 11px;
-
-        padding-top: 10px;
-    }
-
-
-    footer {
-
-        height: 50px;
-        min-height: 50px;
-
-        flex-direction: column;
-
-        justify-content: center;
-
-        gap: 3px;
-
-        padding: 8px 10px;
-
-        font-size: 9px;
-    }
-
-
-    /* FORGOT PASSWORD MOBILE */
-
-    .forgot-modal {
-
-        padding: 15px;
-    }
-
-
-    .forgot-modal-content {
-
-        max-width: 350px;
-
-        padding: 25px 20px;
     }
 
 }
 
+</script>
 
-/* =========================================================
-   SHORT SCREEN / LAPTOP
-   ========================================================= */
-
-@media (max-height: 700px) {
-
-    header {
-
-        height: 65px;
-        min-height: 65px;
-    }
-
-
-    footer {
-
-        height: 50px;
-        min-height: 50px;
-    }
-
-
-    .login-section {
-
-        padding: 8px 15px;
-    }
-
-
-    .login-card {
-
-        padding: 18px 32px;
-    }
-
-
-    .login-header {
-
-        margin-bottom: 12px;
-    }
-
-
-    .login-icon {
-
-        width: 42px;
-        height: 42px;
-
-        margin-bottom: 6px;
-
-        font-size: 19px;
-    }
-
-
-    .login-header h1 {
-
-        font-size: 24px;
-
-        margin-bottom: 3px;
-    }
-
-
-    .login-header p {
-
-        font-size: 11px;
-    }
-
-
-    .form-group {
-
-        margin-bottom: 9px;
-    }
-
-
-    .form-group label {
-
-        margin-bottom: 4px;
-
-        font-size: 12px;
-    }
-
-
-    input,
-    select {
-
-        height: 38px;
-
-        font-size: 12px;
-    }
-
-
-    .remember {
-
-        margin: 1px 0 9px;
-    }
-
-
-    .login-btn {
-
-        height: 40px;
-    }
-
-
-    .admin-registration {
-
-        margin-top: 9px;
-
-        padding-top: 8px;
-
-        font-size: 10px;
-    }
-
-}
-
-
-/* =========================================================
-   BROWSER PASSWORD REVEAL BUTTON
-   ========================================================= */
-
-/* Hide Microsoft Edge's built-in password reveal/clear button */
-
-input[type="password"]::-ms-reveal,
-input[type="password"]::-ms-clear {
-
-    display: none;
-}
-
-
-/* Hide browser credential/reveal button where supported */
-
-input[type="password"]::-webkit-credentials-auto-fill-button {
-
-    display: none !important;
-
-    visibility: hidden;
-
-    pointer-events: none;
-}
-
-
-/* =========================================================
-   HIDE BROWSER PASSWORD / UNLOCK ICON
-   ========================================================= */
-
-input[type="password"]::-ms-reveal,
-input[type="password"]::-ms-clear {
-
-    display: none !important;
-}
-
-
-input[type="password"]::-webkit-credentials-auto-fill-button {
-
-    display: none !important;
-
-    visibility: hidden !important;
-
-    pointer-events: none !important;
-}
+{% endblock %}
