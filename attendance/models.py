@@ -3,6 +3,27 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 
 
+class Admin(models.Model):
+    DEPARTMENT_CHOICES = [
+        ('SHS', 'Senior High School'),
+        ('JHS', 'Junior High School'),
+    ]
+    
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_profile')
+    admin_id = models.CharField(max_length=20, unique=True)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    middle_name = models.CharField(max_length=100, blank=True, null=True)
+    department = models.CharField(max_length=10, choices=DEPARTMENT_CHOICES)
+    security_question = models.CharField(max_length=200)
+    security_answer = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.last_name}, {self.first_name} ({self.admin_id})"
+
+
 class Teacher(models.Model):
     DEPARTMENT_CHOICES = [
         ('SHS', 'Senior High School'),
@@ -14,14 +35,14 @@ class Teacher(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
-    age = models.IntegerField()
-    sex = models.CharField(max_length=10)
-    birthday = models.DateField()
-    email = models.EmailField()
-    contact = models.CharField(max_length=20)
+    age = models.IntegerField(null=True, blank=True) 
+    sex = models.CharField(max_length=10, blank=True, null=True)  
+    birthday = models.DateField(null=True, blank=True)  
+    email = models.EmailField(blank=True, null=True)  
+    contact = models.CharField(max_length=20, blank=True, null=True) 
     department = models.CharField(max_length=10, choices=DEPARTMENT_CHOICES)
-    grade = models.CharField(max_length=10)
-    section = models.CharField(max_length=20)
+    grade = models.CharField(max_length=10, blank=True, null=True)  
+    section = models.CharField(max_length=20, blank=True, null=True)  
     security_question = models.CharField(max_length=200)
     security_answer = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -29,8 +50,7 @@ class Teacher(models.Model):
 
     def __str__(self):
         return f"{self.last_name}, {self.first_name} ({self.teacher_id})"
-
-
+    
 class Student(models.Model):
     DEPARTMENT_CHOICES = [
         ('SHS', 'Senior High School'),

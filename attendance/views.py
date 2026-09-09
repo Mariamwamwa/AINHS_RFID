@@ -11,16 +11,32 @@ def login_page(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        role = request.POST.get('role')  
         
         user = authenticate(request, username=username, password=password)
         
         if user is not None:
             login(request, user)
-                       
-            if user.is_superuser or user.is_staff:
-                return redirect('admin_dashboard')  
+
+            if role == 'admin':
+                if user.is_superuser or user.is_staff:
+                    return redirect('admin_dashboard')
+                else:
+                    messages.error(request, 'You are not authorized as admin.')
+                    return redirect('login')
+            
+            elif role == 'teacher':
+                try:
+                    teacher = Teacher.objects.get(user=user)
+                    return redirect('teacher_dashboard')
+                except Teacher.DoesNotExist:
+                    messages.error(request, 'No teacher profile found.')
+                    return redirect('login')
+            
             else:
-                return redirect('teacher_dashboard')  
+                messages.error(request, 'Please select an account type.')
+                return redirect('login')
+                
         else:
             messages.error(request, 'Invalid username or password.')
             return render(request, 'Authentication/Login_Page.html')
@@ -41,25 +57,38 @@ def register_page(request):
         confirm_password = request.POST.get('confirm_password')
         security_question = request.POST.get('security_question')
         security_answer = request.POST.get('security_answer')
-        
+
         if password != confirm_password:
             messages.error(request, 'Passwords do not match.')
             return render(request, 'Authentication/Register_Page.html')
-        
+
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Username already exists.')
             return render(request, 'Authentication/Register_Page.html')
-        
+
         if role == 'TEACHER' and Teacher.objects.filter(teacher_id=id_number).exists():
             messages.error(request, 'Teacher ID already exists.')
             return render(request, 'Authentication/Register_Page.html')
         
-        user = User.objects.create_user(
-            username=username,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-        )
+        if role == 'ADMIN':
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                is_staff=True,      
+                is_superuser=True,  
+            )
+        else:  # TEACHER
+            # TEACHER: normal user
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                first_name=first_name,
+                last_name=last_name,
+                is_staff=False,     
+                is_superuser=False, 
+            )
         
         if role == 'TEACHER':
             Teacher.objects.create(
