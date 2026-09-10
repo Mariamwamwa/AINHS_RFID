@@ -1,0 +1,1644 @@
+/* =========================================================
+   COLOR PALETTE
+   ========================================================= */
+
+:root {
+
+    /* PRIMARY COLORS */
+    --primary-purple: #6F42C1;
+    --primary-blue: #007BFF;
+
+    /* SUPPORTING COLORS */
+    --aqua: #00CCCC;
+    --cyan: #0DCAF0;
+    --teal: #17A2B8;
+
+    /* NEUTRAL COLORS */
+    --white: #FFFFFF;
+    --dark: #212529;
+    --gray: #6C757D;
+
+    --light-bg: #F7F9FC;
+}
+
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    background: var(--light-bg);
+    color: var(--dark);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+header {
+
+    height: 75px;
+
+    background: linear-gradient(
+        135deg,
+        #0DCAF0 0%,
+        #007BFF 55%,
+        #6F42C1 100%
+    );
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 3%;
+
+    position: relative;
+    z-index: 10;
+
+    box-shadow:
+        0 4px 15px rgba(0, 123, 255, 0.15);
+}
+
+
+/* =========================================================
+   LOGO
+   ========================================================= */
+
+.logo {
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.logo-image {
+
+    width: 52px;
+    height: 52px;
+
+    object-fit: cover;
+
+    border-radius: 50%;
+
+    border: 3px solid #FFFFFF;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.20);
+
+    display: block;
+}
+
+
+/* =========================================================
+   LOGO TEXT
+   ========================================================= */
+
+.logo-text h2 {
+
+    font-size: 20px;
+
+    color: #FFFFFF;
+
+    margin-bottom: 2px;
+}
+
+
+.logo-text span {
+
+    font-size: 11px;
+
+    color: rgba(255, 255, 255, 0.85);
+}
+
+
+/* =========================================================
+   NAVIGATION
+   ========================================================= */
+
+nav {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+nav a {
+
+    text-decoration: none;
+
+    padding: 5px 10px;
+
+    border-radius: 15px;
+
+    background: transparent;
+
+    font-size: 14px;
+
+    font-weight: 500;
+
+    color: #FFFFFF;
+
+    transition: color 0.25s ease;
+}
+
+
+/* =========================================================
+   HOME NAVIGATION
+   ========================================================= */
+
+.home-btn {
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   LOGIN NAVIGATION
+   ========================================================= */
+
+.nav-login {
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   ATTENDANCE NAVIGATION
+   ========================================================= */
+
+.nav-attendance {
+    color: #FFFFFF;
+}
+
+
+/* =========================================================
+   NAVIGATION HOVER / ACTIVE
+   ========================================================= */
+
+.home-btn:hover,
+.nav-login:hover,
+.nav-attendance:hover,
+.nav-attendance.active {
+
+    color: #6F42C1;
+
+    background: #FFFFFF;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+main {
+
+    flex: 1;
+
+    min-height: 0;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   ATTENDANCE SECTION
+   ========================================================= */
+
+.attendance-section {
+
+    width: 100%;
+
+    height: 100%;
+
+    min-height: 0;
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 25px 3%;
+
+    overflow: hidden;
+
+    background:
+
+        radial-gradient(
+            circle at 8% 20%,
+            rgba(111, 66, 193, 0.10),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 92% 80%,
+            rgba(13, 202, 240, 0.12),
+            transparent 30%
+        ),
+
+        var(--light-bg);
+}
+
+
+/* =========================================================
+   HIDDEN RFID INPUT
+   ========================================================= */
+
+.rfid-hidden-input {
+
+    position: fixed;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    left: -100px;
+    top: -100px;
+
+    border: none;
+    outline: none;
+}
+
+
+/* =========================================================
+   WAITING STATE
+   ========================================================= */
+
+.waiting-state {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: var(--gray);
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.waiting-state .material-icons {
+
+    font-size: 55px;
+
+    margin-bottom: 12px;
+
+    color: var(--primary-purple);
+
+    opacity: 0.65;
+}
+
+
+.waiting-state p {
+
+    color: var(--dark);
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+    margin-bottom: 5px;
+}
+
+
+.waiting-subtext {
+
+    color: var(--gray);
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   TEST STUDENT BUTTON
+   ========================================================= */
+
+.test-student-btn {
+
+    margin-top: 15px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 5px;
+
+    padding: 6px 11px;
+
+    border: 1px solid #DDE2E7;
+
+    border-radius: 6px;
+
+    background: var(--white);
+
+    color: var(--gray);
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+
+.test-student-btn .material-icons {
+
+    margin: 0;
+
+    font-size: 14px;
+
+    color: var(--primary-purple);
+
+    opacity: 1;
+}
+
+
+.test-student-btn:hover {
+
+    border-color: var(--primary-purple);
+
+    color: var(--primary-purple);
+
+    background: rgba(111, 66, 193, 0.05);
+}
+
+
+/* =========================================================
+   DECORATIONS
+   ========================================================= */
+
+.attendance-section::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    top: -150px;
+    left: -100px;
+
+    border-radius: 50%;
+
+    background: rgba(111, 66, 193, 0.06);
+
+    pointer-events: none;
+}
+
+
+.attendance-section::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 280px;
+    height: 280px;
+
+    right: -120px;
+    bottom: -130px;
+
+    border-radius: 50%;
+
+    background: rgba(0, 204, 204, 0.07);
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   STUDENT CARD
+   ========================================================= */
+
+.student-card {
+
+    width: 55%;
+
+    /*
+       Compact centered card.
+       This prevents the card from stretching
+       across the entire screen.
+    */
+    max-width: 960px;
+
+    min-height: 520px;
+
+    padding: 30px 36px;
+
+    margin: 0 auto;
+
+    background: rgba(255, 255, 255, 0.97);
+
+    border: 1px solid rgba(111, 66, 193, 0.10);
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.10);
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+/* =========================================================
+   STUDENT CARD HEADER
+   ========================================================= */
+
+.student-card-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding-bottom: 17px;
+
+    margin-bottom: 22px;
+
+    border-bottom: 1px solid #E9ECEF;
+}
+
+
+.student-card-header > div:first-child {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.student-card-header > div:first-child > .material-icons {
+
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: rgba(111, 66, 193, 0.10);
+
+    color: var(--primary-purple);
+
+    font-size: 24px;
+}
+
+
+.student-card-header h2 {
+
+    color: var(--dark);
+
+    font-size: 25px;
+
+    margin-bottom: 4px;
+}
+
+
+.student-card-header p {
+
+    color: var(--gray);
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   ATTENDANCE BADGE
+   ========================================================= */
+
+.attendance-badge {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 9px 14px;
+
+    border-radius: 20px;
+
+    background: rgba(0, 204, 204, 0.10);
+
+    color: var(--teal);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.attendance-badge .material-icons {
+
+    font-size: 18px;
+}
+
+
+.attendance-badge.recorded {
+
+    background: rgba(0, 204, 204, 0.14);
+
+    color: var(--teal);
+}
+
+
+/* =========================================================
+   STUDENT CONTENT
+   ========================================================= */
+
+.student-content {
+
+    display: grid;
+
+    /*
+       Fixed picture column and controlled
+       information column.
+    */
+    grid-template-columns: 310px 1fr;
+
+    gap: 30px;
+
+    align-items: start;
+
+    width: 100%;
+}
+
+
+/* =========================================================
+   STUDENT PICTURE
+   ========================================================= */
+
+.student-picture-container {
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: flex-start;
+
+    align-items: center;
+
+    width: 100%;
+}
+
+
+.student-picture {
+
+    width: 300px;
+
+    height: 370px;
+
+    padding: 5px;
+
+    background: linear-gradient(
+        135deg,
+        var(--primary-purple),
+        var(--primary-blue)
+    );
+
+    border-radius: 15px;
+
+    box-shadow:
+        0 10px 25px rgba(0, 123, 255, 0.18);
+
+    flex-shrink: 0;
+}
+
+
+.student-picture img {
+
+    width: 100%;
+
+    height: 100%;
+
+    display: block;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+    background: var(--light-bg);
+}
+
+
+/* =========================================================
+   STUDENT INFORMATION
+   ========================================================= */
+
+.student-information {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+
+    width: 100%;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   STUDENT INFORMATION GROUP
+   ========================================================= */
+
+.student-info-group {
+
+    display: grid;
+
+    /*
+       Compact label + value.
+       The value does not stretch to fill
+       the remaining card width.
+    */
+    grid-template-columns: 125px 360px;
+
+    align-items: center;
+
+    gap: 8px;
+
+    width: fit-content;
+}
+
+
+.student-info-group label {
+
+    margin: 0;
+
+    color: var(--gray);
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   STUDENT VALUE
+   ========================================================= */
+
+.student-value {
+
+    width: 360px;
+
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 15px;
+
+    border: 1px solid #E4E8EC;
+
+    border-radius: 11px;
+
+    background: #FBFCFD;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    color: var(--dark);
+
+    min-width: 0;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   RECORDED DATE / TIME
+   ========================================================= */
+
+.recorded-datetime {
+
+    width: 100%;
+
+    margin-top: 15px;
+
+    text-align: center;
+}
+
+
+.recorded-datetime #recordedDate {
+
+    color: var(--dark);
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+
+.recorded-datetime #recordedTime {
+
+    color: var(--primary-purple);
+
+    font-size: 31px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   TIME RECORDED
+   ========================================================= */
+
+.attendance-time {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    margin-top: 18px;
+
+    padding-top: 13px;
+
+    border-top: 1px solid #E9ECEF;
+
+    color: var(--gray);
+
+    font-size: 11px;
+}
+
+
+.attendance-time > .material-icons {
+
+    color: var(--primary-blue);
+
+    font-size: 18px;
+}
+
+
+.attendance-time div {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+}
+
+
+.attendance-time strong {
+
+    color: var(--dark);
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+
+    height: 60px;
+
+    min-height: 60px;
+
+    padding: 0 7%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    background: var(--white);
+
+    border-top: 1px solid #E9ECEF;
+
+    color: var(--gray);
+
+    font-size: 11px;
+}
+
+
+footer span {
+
+    color: var(--primary-purple);
+
+    font-weight: bold;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .attendance-section {
+
+        padding: 20px 3%;
+    }
+
+
+    .scanner-card {
+
+        padding: 23px 18px;
+    }
+
+
+    .student-card {
+
+        max-width: 850px;
+
+        padding: 25px 25px;
+
+        min-height: 480px;
+    }
+
+
+    .student-card-header h2 {
+
+        font-size: 22px;
+    }
+
+
+    .student-card-header p {
+
+        font-size: 12px;
+    }
+
+
+    .student-content {
+
+        grid-template-columns: 225px minmax(0, 1fr);
+
+        gap: 20px;
+    }
+
+
+    .student-picture {
+
+        width: 205px;
+
+        height: 280px;
+    }
+
+
+    .student-information {
+
+        width: 100%;
+
+        gap: 11px;
+    }
+
+
+    .student-info-group {
+
+        grid-template-columns: 95px 310px;
+
+        gap: 8px;
+
+        width: fit-content;
+    }
+
+
+    .student-info-group label {
+
+        font-size: 12px;
+    }
+
+
+    .student-value {
+
+        width: 310px;
+
+        height: 44px;
+
+        padding: 0 12px;
+
+        font-size: 14px;
+    }
+
+
+    .recorded-datetime #recordedDate {
+
+        font-size: 16px;
+    }
+
+
+    .recorded-datetime #recordedTime {
+
+        font-size: 27px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    header {
+
+        padding: 0 5%;
+    }
+
+
+    nav {
+
+        gap: 16px;
+    }
+
+
+    nav a {
+
+        font-size: 14px;
+
+        padding: 4px 0;
+    }
+
+
+    .attendance-section {
+
+        align-content: center;
+
+        gap: 12px;
+
+        padding: 12px 15px;
+
+        overflow: hidden;
+    }
+
+
+    .scanner-card {
+
+        padding: 15px 18px;
+    }
+
+
+    .scanner-icon {
+
+        width: 48px;
+
+        height: 48px;
+
+        margin-bottom: 8px;
+
+        border-radius: 13px;
+    }
+
+
+    .scanner-icon .material-icons {
+
+        font-size: 27px;
+    }
+
+
+    .scanner-card h1 {
+
+        font-size: 20px;
+
+        margin-bottom: 4px;
+    }
+
+
+    .scanner-description {
+
+        margin-bottom: 10px;
+
+        font-size: 10px;
+    }
+
+
+    .rfid-status {
+
+        margin-bottom: 9px;
+
+        font-size: 10px;
+    }
+
+
+    .rfid-input {
+
+        height: 40px;
+    }
+
+
+    .scanner-hint {
+
+        margin-top: 6px;
+
+        font-size: 9px;
+    }
+
+
+    .student-card {
+
+        padding: 15px;
+
+        min-height: 0;
+
+        max-width: none;
+    }
+
+
+    .student-card-header {
+
+        padding-bottom: 10px;
+
+        margin-bottom: 12px;
+    }
+
+
+    .student-card-header h2 {
+
+        font-size: 18px;
+    }
+
+
+    .student-card-header p {
+
+        font-size: 10px;
+    }
+
+
+    .student-card-header > div:first-child > .material-icons {
+
+        width: 34px;
+
+        height: 34px;
+
+        font-size: 19px;
+    }
+
+
+    .attendance-badge {
+
+        padding: 5px 8px;
+
+        font-size: 8px;
+    }
+
+
+    .attendance-badge .material-icons {
+
+        font-size: 13px;
+    }
+
+
+    .student-content {
+
+        grid-template-columns: 90px minmax(0, 1fr);
+
+        gap: 13px;
+    }
+
+
+    .student-picture {
+
+        width: 85px;
+
+        height: 105px;
+    }
+
+
+    .student-information {
+
+        width: 100%;
+
+        gap: 6px;
+    }
+
+
+    .student-info-group {
+
+        grid-template-columns: 55px minmax(0, 1fr);
+
+        gap: 5px;
+
+        width: 100%;
+    }
+
+
+    .student-info-group label {
+
+        margin-bottom: 2px;
+
+        font-size: 8px;
+    }
+
+
+    .student-value {
+
+        width: 100%;
+
+        height: 30px;
+
+        min-height: 30px;
+
+        padding: 0 7px;
+
+        font-size: 10px;
+
+        border-radius: 8px;
+    }
+
+
+    .recorded-datetime {
+
+        margin-top: 8px;
+    }
+
+
+    .recorded-datetime #recordedDate {
+
+        font-size: 12px;
+    }
+
+
+    .recorded-datetime #recordedTime {
+
+        font-size: 20px;
+    }
+
+
+    .attendance-time {
+
+        margin-top: 10px;
+
+        padding-top: 8px;
+
+        font-size: 9px;
+    }
+
+
+    .attendance-time strong {
+
+        font-size: 10px;
+    }
+
+
+    footer {
+
+        height: 50px;
+
+        min-height: 50px;
+
+        flex-direction: column;
+
+        justify-content: center;
+
+        gap: 3px;
+
+        padding: 7px 10px;
+
+        font-size: 9px;
+    }
+
+}
+
+
+/* =========================================================
+   SHORT SCREEN / LAPTOP
+   ========================================================= */
+
+@media (max-height: 700px) {
+
+    header {
+
+        height: 65px;
+
+        min-height: 65px;
+    }
+
+
+    footer {
+
+        height: 50px;
+
+        min-height: 50px;
+    }
+
+
+    .attendance-section {
+
+        padding: 15px 3%;
+
+        gap: 15px;
+    }
+
+
+    .scanner-card {
+
+        padding: 18px 20px;
+    }
+
+
+    .scanner-icon {
+
+        width: 52px;
+
+        height: 52px;
+
+        margin-bottom: 8px;
+
+        border-radius: 13px;
+    }
+
+
+    .scanner-icon .material-icons {
+
+        font-size: 29px;
+    }
+
+
+    .scanner-card h1 {
+
+        font-size: 20px;
+
+        margin-bottom: 4px;
+    }
+
+
+    .scanner-description {
+
+        margin-bottom: 10px;
+
+        font-size: 10px;
+    }
+
+
+    .rfid-status {
+
+        margin-bottom: 9px;
+    }
+
+
+    .rfid-input {
+
+        height: 40px;
+    }
+
+
+    /* =====================================================
+       STUDENT CARD - SHORT SCREEN
+       ===================================================== */
+
+    .student-card {
+
+        max-width: 960px;
+
+        min-height: 480px;
+
+        padding: 22px 28px;
+    }
+
+
+    .student-card-header {
+
+        padding-bottom: 12px;
+
+        margin-bottom: 16px;
+    }
+
+
+    .student-card-header h2 {
+
+        font-size: 22px;
+    }
+
+
+    .student-card-header p {
+
+        font-size: 12px;
+    }
+
+
+    .student-content {
+
+        grid-template-columns: 265px 1fr;
+
+        gap: 22px;
+    }
+
+
+    .student-picture {
+
+        width: 240px;
+
+        height: 295px;
+    }
+
+
+    .student-information {
+
+        gap: 10px;
+
+        width: 100%;
+    }
+
+
+    .student-info-group {
+
+        grid-template-columns: 100px 350px;
+
+        gap: 9px;
+
+        width: fit-content;
+    }
+
+
+    .student-info-group label {
+
+        font-size: 12px;
+
+        margin-bottom: 3px;
+    }
+
+
+    .student-value {
+
+        width: 350px;
+
+        height: 44px;
+
+        min-height: 44px;
+
+        padding: 0 13px;
+
+        font-size: 14px;
+
+        border-radius: 10px;
+    }
+
+
+    .recorded-datetime {
+
+        margin-top: 10px;
+    }
+
+
+    .recorded-datetime #recordedDate {
+
+        font-size: 16px;
+
+        margin-bottom: 4px;
+    }
+
+
+    .recorded-datetime #recordedTime {
+
+        font-size: 28px;
+    }
+
+
+    .attendance-time {
+
+        margin-top: 10px;
+
+        padding-top: 8px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SHORT SCREEN
+   ========================================================= */
+
+@media (max-height: 600px) {
+
+    .attendance-section {
+
+        padding: 8px 2%;
+
+        gap: 12px;
+    }
+
+
+    .scanner-card {
+
+        padding: 13px 18px;
+    }
+
+
+    .scanner-icon {
+
+        width: 42px;
+
+        height: 42px;
+
+        margin-bottom: 5px;
+    }
+
+
+    .scanner-icon .material-icons {
+
+        font-size: 24px;
+    }
+
+
+    .scanner-card h1 {
+
+        font-size: 18px;
+    }
+
+
+    .scanner-description {
+
+        display: none;
+    }
+
+
+    .rfid-status {
+
+        margin-bottom: 7px;
+    }
+
+
+    .rfid-input {
+
+        height: 36px;
+    }
+
+
+    .scanner-hint {
+
+        display: none;
+    }
+
+
+    /* =====================================================
+       STUDENT CARD - VERY SHORT SCREEN
+       ===================================================== */
+
+    .student-card {
+
+        padding: 16px 20px;
+
+        max-width: 900px;
+
+        min-height: 430px;
+    }
+
+
+    .student-card-header {
+
+        margin-bottom: 10px;
+
+        padding-bottom: 8px;
+    }
+
+
+    .student-card-header h2 {
+
+        font-size: 19px;
+    }
+
+
+    .student-card-header p {
+
+        font-size: 11px;
+    }
+
+
+    .student-content {
+
+        grid-template-columns: 210px minmax(0, 1fr);
+
+        gap: 18px;
+    }
+
+
+    .student-picture {
+
+        width: 190px;
+
+        height: 230px;
+    }
+
+
+    .student-information {
+
+        row-gap: 5px;
+
+        gap: 6px;
+    }
+
+
+    .student-info-group {
+
+        grid-template-columns: 82px 290px;
+
+        gap: 7px;
+
+        width: fit-content;
+    }
+
+
+    .student-info-group label {
+
+        font-size: 9px;
+    }
+
+
+    .student-value {
+
+        width: 290px;
+
+        height: 35px;
+
+        min-height: 35px;
+
+        font-size: 11px;
+
+        padding: 0 10px;
+    }
+
+
+    .recorded-datetime #recordedDate {
+
+        font-size: 13px;
+    }
+
+
+    .recorded-datetime #recordedTime {
+
+        font-size: 22px;
+    }
+
+
+    .attendance-time {
+
+        display: none;
+    }
+
+}
+
+
