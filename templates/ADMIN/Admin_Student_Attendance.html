@@ -1,0 +1,681 @@
+
+{% extends 'IN_BASE/Admin_Base.html' %}
+{% load static %}
+
+{% block title %}Student Attendance | AINHS Attendance System{% endblock %}
+
+{% block page_heading %}
+<h2>Student Attendance</h2>
+{% endblock %}
+
+{% block page_subheading %}
+<p>View and manage daily student attendance records.</p>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ADMIN/Admin_Student_Attendance.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="student-attendance-page">
+
+    <!-- PAGE HEADER -->
+    <div class="attendance-page-header">
+        <h3>
+            <i class="fas fa-clipboard-check"></i>
+            Student Attendance
+        </h3>
+
+        <div class="attendance-header-actions">
+            <button type="button" class="attendance-btn attendance-btn-primary"
+                    id="addStudentBtn">
+                <i class="fas fa-user-plus"></i> Add Student
+            </button>
+
+            <button type="button" class="attendance-btn attendance-btn-outline"
+                    id="exportBtn">
+                <i class="fas fa-file-export"></i> Export
+            </button>
+
+            <button type="button" class="attendance-btn attendance-btn-outline"
+                    id="resetBtn">
+                <i class="fas fa-undo"></i> Reset All
+            </button>
+        </div>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="attendance-stats">
+        <div class="attendance-stat-card">
+            <div class="number" id="totalStudents">0</div>
+            <div class="label">Total Students</div>
+        </div>
+
+        <div class="attendance-stat-card">
+            <div class="number green" id="presentToday">0</div>
+            <div class="label">Present</div>
+        </div>
+
+        <div class="attendance-stat-card">
+            <div class="number red" id="absentToday">0</div>
+            <div class="label">Absent</div>
+        </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="attendance-filter-bar">
+        <div class="attendance-filter-group">
+            <label for="filterDept">
+                <i class="fas fa-building"></i> Dept
+            </label>
+            <select id="filterDept">
+                <option value="all">All</option>
+                <option value="JHS">JHS</option>
+                <option value="SHS">SHS</option>
+            </select>
+        </div>
+
+        <div class="attendance-filter-group">
+            <label for="filterGrade">
+                <i class="fas fa-layer-group"></i> Grade
+            </label>
+            <select id="filterGrade">
+                <option value="all">All</option>
+                <option value="7">Grade 7</option>
+                <option value="8">Grade 8</option>
+                <option value="9">Grade 9</option>
+                <option value="10">Grade 10</option>
+                <option value="11">Grade 11</option>
+                <option value="12">Grade 12</option>
+            </select>
+        </div>
+
+        <div class="attendance-filter-group">
+            <label for="attDate">
+                <i class="fas fa-calendar-day"></i> Date
+            </label>
+            <input type="date" id="attDate">
+        </div>
+
+        <div class="attendance-search-group">
+            <div class="attendance-search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="search" id="searchInput"
+                       placeholder="Search student..."
+                       aria-label="Search student or section">
+            </div>
+        </div>
+    </div>
+
+    <!-- BULK ACTIONS -->
+    <div class="attendance-bulk-actions">
+        <span class="bulk-label">
+            <i class="fas fa-tasks"></i> Bulk Actions:
+        </span>
+
+        <button type="button"
+                class="attendance-btn attendance-btn-success attendance-btn-sm"
+                id="allPresentBtn">
+            <i class="fas fa-check"></i> All Present
+        </button>
+
+        <button type="button"
+                class="attendance-btn attendance-btn-danger attendance-btn-sm"
+                id="allAbsentBtn">
+            <i class="fas fa-times"></i> All Absent
+        </button>
+
+        <button type="button"
+                class="attendance-btn attendance-btn-outline attendance-btn-sm"
+                id="clearTimesBtn">
+            <i class="fas fa-eraser"></i> Clear Times
+        </button>
+    </div>
+
+    <!-- ATTENDANCE TABLE -->
+    <div class="attendance-container">
+        <div class="attendance-table-header">
+            <h3>
+                <i class="fas fa-users"></i>
+                Attendance Log
+            </h3>
+
+            <span class="attendance-result-count" id="resultCount">
+                0 students
+            </span>
+        </div>
+
+        <div class="attendance-table-wrapper">
+            <table class="attendance-table" id="attendanceTable">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Grade &amp; Section</th>
+                        <th>Time In (AM)</th>
+                        <th>Time Out (AM)</th>
+                        <th>Time In (PM)</th>
+                        <th>Time Out (PM)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody id="attendanceBody">
+                    <tr>
+                        <td colspan="7" class="attendance-empty-cell">
+                            No students found.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ADD STUDENT MODAL -->
+    <div class="attendance-modal-overlay" id="modalOverlay"
+         aria-hidden="true">
+        <div class="attendance-modal" role="dialog" aria-modal="true"
+             aria-labelledby="addStudentModalTitle">
+
+            <h2 id="addStudentModalTitle">
+                <i class="fas fa-user-plus"></i> Add Student
+            </h2>
+
+            <p class="modal-subtitle">Fill in the student details.</p>
+
+            <form id="addStudentForm">
+                <label for="formName">Student Name</label>
+                <input type="text" id="formName"
+                       placeholder="Full name" required>
+
+                <label for="formGrade">Grade Level</label>
+                <select id="formGrade" required>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                </select>
+
+                <label for="formSection">Section</label>
+                <input type="text" id="formSection"
+                       placeholder="e.g. Einstein, STEM A" required>
+
+                <div class="attendance-modal-actions">
+                    <button type="button"
+                            class="attendance-btn attendance-btn-outline"
+                            id="cancelModalBtn">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="attendance-btn attendance-btn-primary">
+                        <i class="fas fa-save"></i> Add Student
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="attendance-toast" id="attendanceToast"
+         role="status" aria-live="polite">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Action completed!</span>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
+
+    // =========================================================
+    // DATA - BROWSER DEMO ONLY
+    // =========================================================
+
+    const STUDENTS_KEY = "ainhs_attendance_demo_students";
+    const RECORDS_KEY = "ainhs_attendance_demo_records";
+
+    const sampleStudents = [
+        { id: 1, name: "Juan Dela Cruz", grade: "7", section: "Einstein" },
+        { id: 2, name: "Maria Santos", grade: "7", section: "Einstein" },
+        { id: 3, name: "Jose Rizal", grade: "7", section: "Newton" },
+        { id: 4, name: "Andres Bonifacio", grade: "7", section: "Newton" },
+        { id: 5, name: "Apolinario Mabini", grade: "7", section: "Galileo" },
+        { id: 6, name: "Emilio Aguinaldo", grade: "8", section: "Mabini" },
+        { id: 7, name: "Gabriela Silang", grade: "8", section: "Mabini" },
+        { id: 8, name: "Lapu-Lapu", grade: "8", section: "Bonifacio" },
+        { id: 9, name: "Ferdinand Magellan", grade: "8", section: "Bonifacio" },
+        { id: 10, name: "Jose P. Laurel", grade: "9", section: "Rizal" },
+        { id: 11, name: "Manuel L. Quezon", grade: "9", section: "Rizal" },
+        { id: 12, name: "Sergio Osmeña", grade: "9", section: "Luna" },
+        { id: 13, name: "Ramon Magsaysay", grade: "10", section: "Aquino" },
+        { id: 14, name: "Corazon Aquino", grade: "10", section: "Aquino" },
+        { id: 15, name: "Benigno Aquino III", grade: "10", section: "Magsaysay" },
+        { id: 16, name: "Albert Einstein", grade: "11", section: "STEM A" },
+        { id: 17, name: "Marie Curie", grade: "11", section: "STEM A" },
+        { id: 18, name: "Ada Lovelace", grade: "11", section: "ABM A" },
+        { id: 19, name: "Alan Turing", grade: "11", section: "ABM A" },
+        { id: 20, name: "Sigmund Freud", grade: "11", section: "HUMSS A" },
+        { id: 21, name: "Neil Armstrong", grade: "12", section: "STEM B" },
+        { id: 22, name: "Buzz Aldrin", grade: "12", section: "STEM B" },
+        { id: 23, name: "Warren Buffett", grade: "12", section: "ABM B" },
+        { id: 24, name: "Oprah Winfrey", grade: "12", section: "ABM B" },
+        { id: 25, name: "Martin Luther King", grade: "12", section: "HUMSS B" }
+    ];
+
+    const $ = id => document.getElementById(id);
+
+    function loadStored(key, fallback) {
+        try {
+            const stored = localStorage.getItem(key);
+            if (stored === null) return fallback;
+            const parsed = JSON.parse(stored);
+
+            if (Array.isArray(fallback)) {
+                return Array.isArray(parsed) ? parsed : fallback;
+            }
+
+            return parsed && typeof parsed === "object" &&
+                   !Array.isArray(parsed) ? parsed : fallback;
+        } catch (error) {
+            return fallback;
+        }
+    }
+
+    let students = loadStored(
+        STUDENTS_KEY,
+        sampleStudents.map(student => ({ ...student }))
+    );
+
+    let attendance = loadStored(RECORDS_KEY, {});
+
+    function persist() {
+        try {
+            localStorage.setItem(STUDENTS_KEY, JSON.stringify(students));
+            localStorage.setItem(RECORDS_KEY, JSON.stringify(attendance));
+            return true;
+        } catch (error) {
+            showToast("Changes could not be saved in this browser.", "error");
+            return false;
+        }
+    }
+
+    function localDate() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+    $("attDate").value = localDate();
+
+    const timeFields = [
+        "timeInAM",
+        "timeOutAM",
+        "timeInPM",
+        "timeOutPM"
+    ];
+
+    function emptyRecord() {
+        return {
+            timeInAM: "",
+            timeOutAM: "",
+            timeInPM: "",
+            timeOutPM: ""
+        };
+    }
+
+    function recordKey(studentId, date) {
+        return `${studentId}_${date}`;
+    }
+
+    function getRecord(studentId, date) {
+        return attendance[recordKey(studentId, date)] || emptyRecord();
+    }
+
+    function getStatus(record) {
+        return timeFields.some(field => Boolean(record[field]))
+            ? "present"
+            : "absent";
+    }
+
+    function escapeHTML(value) {
+        return String(value).replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[character]);
+    }
+
+    // =========================================================
+    // FILTERING AND TABLE
+    // =========================================================
+
+    function getFilteredStudents() {
+        const dept = $("filterDept").value;
+        const grade = $("filterGrade").value;
+        const search = $("searchInput").value.trim().toLowerCase();
+
+        return students.filter(student => {
+            const studentDept = Number(student.grade) <= 10 ? "JHS" : "SHS";
+
+            return (dept === "all" || dept === studentDept) &&
+                   (grade === "all" || grade === String(student.grade)) &&
+                   (
+                       !search ||
+                       student.name.toLowerCase().includes(search) ||
+                       student.section.toLowerCase().includes(search)
+                   );
+        }).sort((a, b) =>
+            Number(a.grade) - Number(b.grade) ||
+            a.name.localeCompare(b.name)
+        );
+    }
+
+    function updateStats(filtered, date) {
+        let present = 0;
+        let absent = 0;
+
+        filtered.forEach(student => {
+            if (getStatus(getRecord(student.id, date)) === "present") {
+                present++;
+            } else {
+                absent++;
+            }
+        });
+
+        $("totalStudents").textContent = filtered.length;
+        $("presentToday").textContent = present;
+        $("absentToday").textContent = absent;
+    }
+
+    function renderAttendance() {
+        const filtered = getFilteredStudents();
+        const date = $("attDate").value || localDate();
+
+        $("resultCount").textContent =
+            `${filtered.length} student${filtered.length === 1 ? "" : "s"}`;
+
+        updateStats(filtered, date);
+
+        if (!filtered.length) {
+            $("attendanceBody").innerHTML = `
+                <tr>
+                    <td colspan="7" class="attendance-empty-cell">
+                        <i class="fas fa-users"></i>
+                        <span>No students found matching the filters.</span>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        $("attendanceBody").innerHTML = filtered.map(student => {
+            const record = getRecord(student.id, date);
+            const status = getStatus(record);
+
+            const timeCells = timeFields.map(field => `
+                <td>
+                    <input
+                        type="time"
+                        class="attendance-time-input"
+                        data-student-id="${student.id}"
+                        data-field="${field}"
+                        value="${escapeHTML(record[field] || "")}"
+                        aria-label="${field} for ${escapeHTML(student.name)}"
+                    >
+                </td>
+            `).join("");
+
+            return `
+                <tr>
+                    <td class="attendance-student-name">
+                        ${escapeHTML(student.name)}
+                    </td>
+                    <td class="attendance-grade-section">
+                        Grade ${escapeHTML(student.grade)} -
+                        ${escapeHTML(student.section)}
+                    </td>
+                    ${timeCells}
+                    <td>
+                        <span class="attendance-status-badge ${status}">
+                            ${status === "present" ? "Present" : "Absent"}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        }).join("");
+    }
+
+    $("attendanceBody").addEventListener("change", function (event) {
+        const input = event.target.closest(".attendance-time-input");
+        if (!input) return;
+
+        const studentId = input.dataset.studentId;
+        const field = input.dataset.field;
+        const date = $("attDate").value || localDate();
+
+        if (!timeFields.includes(field)) return;
+
+        const key = recordKey(studentId, date);
+        attendance[key] = {
+            ...emptyRecord(),
+            ...(attendance[key] || {}),
+            [field]: input.value
+        };
+
+        if (persist()) {
+            showToast("Attendance updated!", "success");
+        }
+
+        renderAttendance();
+    });
+
+    ["filterDept", "filterGrade", "attDate"].forEach(id => {
+        $(id).addEventListener("change", renderAttendance);
+    });
+
+    $("searchInput").addEventListener("input", renderAttendance);
+
+    // =========================================================
+    // BULK ACTIONS
+    // Applies to students matching the current filters.
+    // =========================================================
+
+    function bulkUpdate(action) {
+        const filtered = getFilteredStudents();
+        const date = $("attDate").value || localDate();
+
+        if (!filtered.length) {
+            showToast("No students match the current filters.", "error");
+            return;
+        }
+
+        const actionLabels = {
+            present: "mark all filtered students present",
+            absent: "mark all filtered students absent",
+            clear: "clear attendance times for all filtered students"
+        };
+
+        if (!confirm(
+            `Are you sure you want to ${actionLabels[action]} on ${date}?`
+        )) return;
+
+        filtered.forEach(student => {
+            const key = recordKey(student.id, date);
+
+            if (action === "present") {
+                // These are demo times, not actual RFID scan timestamps.
+                attendance[key] = {
+                    timeInAM: "07:30",
+                    timeOutAM: "11:30",
+                    timeInPM: "12:30",
+                    timeOutPM: "16:30"
+                };
+            } else {
+                attendance[key] = emptyRecord();
+            }
+        });
+
+        if (persist()) {
+            showToast(`${filtered.length} student records updated.`, "success");
+        }
+
+        renderAttendance();
+    }
+
+    $("allPresentBtn").addEventListener("click", () => bulkUpdate("present"));
+    $("allAbsentBtn").addEventListener("click", () => bulkUpdate("absent"));
+    $("clearTimesBtn").addEventListener("click", () => bulkUpdate("clear"));
+
+    $("resetBtn").addEventListener("click", function () {
+        if (!confirm(
+            "Reset ALL attendance records for ALL dates? This cannot be undone."
+        )) return;
+
+        attendance = {};
+
+        if (persist()) {
+            showToast("All attendance records have been reset.", "success");
+        }
+
+        renderAttendance();
+    });
+
+    // =========================================================
+    // ADD STUDENT MODAL
+    // =========================================================
+
+    function openModal() {
+        $("addStudentForm").reset();
+        $("modalOverlay").classList.add("active");
+        $("modalOverlay").setAttribute("aria-hidden", "false");
+        $("formName").focus();
+    }
+
+    function closeModal() {
+        $("modalOverlay").classList.remove("active");
+        $("modalOverlay").setAttribute("aria-hidden", "true");
+    }
+
+    $("addStudentBtn").addEventListener("click", openModal);
+    $("cancelModalBtn").addEventListener("click", closeModal);
+
+    $("modalOverlay").addEventListener("click", function (event) {
+        if (event.target === this) closeModal();
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") closeModal();
+    });
+
+    $("addStudentForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (!this.reportValidity()) return;
+
+        const name = $("formName").value.trim();
+        const grade = $("formGrade").value;
+        const section = $("formSection").value.trim();
+
+        if (!name || !section) {
+            showToast("Please enter the student's name and section.", "error");
+            return;
+        }
+
+        const duplicate = students.some(student =>
+            student.name.trim().toLowerCase() === name.toLowerCase() &&
+            String(student.grade) === grade &&
+            student.section.trim().toLowerCase() === section.toLowerCase()
+        );
+
+        if (duplicate) {
+            showToast("Student already exists in this section.", "error");
+            return;
+        }
+
+        students.push({
+            id: Date.now() + Math.floor(Math.random() * 1000),
+            name,
+            grade,
+            section
+        });
+
+        if (persist()) {
+            showToast(`Student "${name}" added to the demo list.`, "success");
+        }
+
+        renderAttendance();
+        closeModal();
+    });
+
+    // =========================================================
+    // EXPORT ATTENDANCE FOR SELECTED DATE
+    // =========================================================
+
+    $("exportBtn").addEventListener("click", function () {
+        const date = $("attDate").value || localDate();
+
+        const data = students.map(student => {
+            const record = getRecord(student.id, date);
+
+            return {
+                Name: student.name,
+                Grade: student.grade,
+                Section: student.section,
+                "Time In (AM)": record.timeInAM || "",
+                "Time Out (AM)": record.timeOutAM || "",
+                "Time In (PM)": record.timeInPM || "",
+                "Time Out (PM)": record.timeOutPM || "",
+                Status: getStatus(record) === "present" ? "Present" : "Absent"
+            };
+        });
+
+        const blob = new Blob(
+            [JSON.stringify(data, null, 2)],
+            { type: "application/json" }
+        );
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = `attendance_${date}.json`;
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast("Attendance exported successfully!", "success");
+    });
+
+    // =========================================================
+    // TOAST
+    // =========================================================
+
+    function showToast(message, type = "success") {
+        const toast = $("attendanceToast");
+
+        $("toastMessage").textContent = message;
+        toast.className = `attendance-toast show ${type}`;
+
+        clearTimeout(toast.hideTimer);
+
+        toast.hideTimer = setTimeout(function () {
+            toast.classList.remove("show");
+        }, 2500);
+    }
+
+    renderAttendance();
+});
+</script>
+{% endblock %}

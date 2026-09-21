@@ -1,0 +1,592 @@
+
+{% extends 'IN_BASE/Admin_Base.html' %}
+{% load static %}
+
+{% block title %}Register Student - RFID Attendance Management System{% endblock %}
+
+{% block page_heading %}
+<h2>Register Student</h2>
+{% endblock %}
+
+{% block page_subheading %}
+<p>Register a new student in the system.</p>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ADMIN/Admin_Register_RFID.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="register-student-content">
+
+    <!-- PAGE INTRODUCTION -->
+    <div class="page-intro">
+        <div class="intro-icon">
+            <i class="fa-solid fa-user-plus"></i>
+        </div>
+        <div class="intro-text">
+            <h3>Student Information</h3>
+            <p>Enter the student's information and class assignment.</p>
+        </div>
+    </div>
+
+    <form class="form-card" id="registerStudentForm" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- PERSONAL INFORMATION -->
+        <section class="form-section">
+            <div class="section-title">
+                <i class="fa-solid fa-user"></i>
+                <span>Personal Information</span>
+            </div>
+
+            <div class="form-grid personal-grid">
+
+                <!-- RFID CARD -->
+                <div class="rfid-card-field">
+                    <div class="rfid-card-header">
+                        <div>
+                            <label for="rfid">RFID Card <span class="required">*</span></label>
+                            <p class="rfid-help">Tap the student's RFID card on the scanner.</p>
+                        </div>
+                        <button type="button" class="scan-rfid-btn" id="scanRfidBtn">
+                            <i class="fa-solid fa-wifi"></i>
+                            <span>Scan RFID Card</span>
+                        </button>
+                    </div>
+
+                    <div class="rfid-status-box" id="rfidStatusBox" role="status" aria-live="polite">
+                        <div class="rfid-status-icon" id="rfidStatusIcon">
+                            <i class="fa-solid fa-id-card"></i>
+                        </div>
+                        <div class="rfid-status-content">
+                            <strong id="rfidStatusTitle">Ready to scan</strong>
+                            <span id="rfidStatusText">
+                                Click "Scan RFID Card" and tap the student's card.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="rfid-input-row">
+                        <div class="input-wrapper rfid-input-wrapper">
+                            <i class="fa-solid fa-fingerprint"></i>
+                            <input
+                                type="text"
+                                id="rfid"
+                                name="rfid"
+                                placeholder="RFID UID will appear here"
+                                readonly
+                                required
+                            >
+                        </div>
+                        <button
+                            type="button"
+                            class="clear-rfid-btn"
+                            id="clearRfidBtn"
+                            title="Clear RFID"
+                            aria-label="Clear RFID"
+                        >
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STUDENT IMAGE AND LRN -->
+                <div class="student-image-lrn-field">
+                    <div class="form-group image-form-group">
+                        <label for="studentImage">
+                            Upload Image <span class="required">*</span>
+                        </label>
+
+                        <div class="image-upload-wrapper">
+                            <div class="image-preview" id="imagePreview">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+
+                            <div class="image-upload-content">
+                                <label for="studentImage" class="image-upload-btn">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <span>Choose File</span>
+                                </label>
+
+                                <input
+                                    type="file"
+                                    id="studentImage"
+                                    name="studentImage"
+                                    accept="image/*"
+                                    required
+                                >
+
+                                <div class="file-name" id="fileName">No file chosen</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group lrn-form-group">
+                        <label for="lrn">LRN <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-id-card"></i>
+                            <input
+                                type="text"
+                                id="lrn"
+                                name="lrn"
+                                placeholder="Enter LRN"
+                                required
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PERSONAL DETAILS -->
+                <div class="personal-details-grid">
+                    <div class="form-group">
+                        <label for="lastName">Last Name <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="lastName" name="lastName"
+                                   placeholder="Enter last name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="firstName">First Name <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="firstName" name="firstName"
+                                   placeholder="Enter first name" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="middleName">
+                            Middle Name <span class="optional">(Optional)</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user"></i>
+                            <input type="text" id="middleName" name="middleName"
+                                   placeholder="Enter middle name">
+                        </div>
+                    </div>
+
+                    <div class="age-sex-field">
+                        <div class="age-sex-wrapper">
+                            <div class="form-group age-field">
+                                <label for="age">Age</label>
+                                <div class="input-wrapper">
+                                    <i class="fa-solid fa-calendar-days"></i>
+                                    <input type="number" id="age" name="age"
+                                           min="1" max="100" placeholder="Age">
+                                </div>
+                            </div>
+
+                            <div class="form-group sex-field">
+                                <label for="sex">Sex</label>
+                                <div class="input-wrapper select-wrapper">
+                                    <i class="fa-solid fa-venus-mars"></i>
+                                    <select id="sex" name="sex">
+                                        <option value="">Select Sex</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-envelope"></i>
+                            <input type="email" id="email" name="email"
+                                   placeholder="Enter email address" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact">
+                            Contact Number <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-phone"></i>
+                            <input type="tel" id="contact" name="contact"
+                                   placeholder="Enter contact number" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="barangay">Barangay <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <input type="text" id="barangay" name="barangay"
+                                   placeholder="Enter barangay" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="municipality">
+                            Municipality <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-city"></i>
+                            <input type="text" id="municipality" name="municipality"
+                                   placeholder="Enter municipality" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="province">Province <span class="required">*</span></label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-map"></i>
+                            <input type="text" id="province" name="province"
+                                   placeholder="Enter province" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARENT / GUARDIAN INFORMATION -->
+        <section class="form-section">
+            <div class="section-title">
+                <i class="fa-solid fa-people-roof"></i>
+                <span>Parent / Guardian Information</span>
+            </div>
+
+            <div class="form-grid guardian-grid">
+                <div class="form-group">
+                    <label for="guardianLastName">
+                        Last Name <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="guardianLastName" name="guardianLastName"
+                               placeholder="Enter last name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="guardianFirstName">
+                        First Name <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="guardianFirstName" name="guardianFirstName"
+                               placeholder="Enter first name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="guardianMiddleName">
+                        Middle Name <span class="optional">(Optional)</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="guardianMiddleName" name="guardianMiddleName"
+                               placeholder="Enter middle name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="relationship">
+                        Relationship <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper select-wrapper">
+                        <i class="fa-solid fa-people-arrows"></i>
+                        <select id="relationship" name="relationship" required>
+                            <option value="" selected disabled>Select relationship</option>
+                            <option value="Mother">Mother</option>
+                            <option value="Father">Father</option>
+                            <option value="Guardian">Guardian</option>
+                            <option value="Grandparent">Grandparent</option>
+                            <option value="Sibling">Sibling</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="guardianContact">
+                        Contact Number <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-phone"></i>
+                        <input type="tel" id="guardianContact" name="guardianContact"
+                               placeholder="Enter contact number" required>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CLASS ASSIGNMENT -->
+        <section class="form-section assignment-section">
+            <div class="section-title">
+                <i class="fa-solid fa-school"></i>
+                <span>Class Assignment</span>
+            </div>
+
+            <div class="form-grid class-grid">
+                <div class="form-group">
+                    <label for="department">
+                        Department <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper select-wrapper">
+                        <i class="fa-solid fa-building"></i>
+                        <select id="department" name="department" required>
+                            <option value="" selected disabled>Select department</option>
+                            <option value="SHS">Senior High School (SHS)</option>
+                            <option value="JHS">Junior High School (JHS)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="grade">Grade <span class="required">*</span></label>
+                    <div class="input-wrapper select-wrapper">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <select id="grade" name="grade" required>
+                            <option value="" selected disabled>Select grade</option>
+                            <option value="Grade 7">Grade 7</option>
+                            <option value="Grade 8">Grade 8</option>
+                            <option value="Grade 9">Grade 9</option>
+                            <option value="Grade 10">Grade 10</option>
+                            <option value="Grade 11">Grade 11</option>
+                            <option value="Grade 12">Grade 12</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="section">Section <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-users"></i>
+                        <input type="text" id="section" name="section"
+                               placeholder="Enter section" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adviser">Adviser <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        <input type="text" id="adviser" name="adviser"
+                               placeholder="Enter adviser name" required>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORM ACTIONS -->
+        <div class="form-actions">
+            <button type="button" class="form-btn btn-cancel" id="cancelBtn">
+                <i class="fa-solid fa-xmark"></i> Cancel
+            </button>
+
+            <button type="button" class="form-btn btn-clear" id="clearBtn">
+                <i class="fa-solid fa-eraser"></i> Clear
+            </button>
+
+            <button type="submit" class="form-btn btn-save">
+                <i class="fa-solid fa-user-plus"></i> Register Student
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("registerStudentForm");
+    const rfidInput = document.getElementById("rfid");
+    const scanRfidBtn = document.getElementById("scanRfidBtn");
+    const clearRfidBtn = document.getElementById("clearRfidBtn");
+    const rfidStatusBox = document.getElementById("rfidStatusBox");
+    const rfidStatusIcon = document.getElementById("rfidStatusIcon");
+    const rfidStatusTitle = document.getElementById("rfidStatusTitle");
+    const rfidStatusText = document.getElementById("rfidStatusText");
+
+    const studentImage = document.getElementById("studentImage");
+    const imagePreview = document.getElementById("imagePreview");
+    const fileName = document.getElementById("fileName");
+
+    let rfidScanning = false;
+    let rfidBuffer = "";
+    let rfidScanTimer = null;
+
+    function setRfidStatus(type, title, message) {
+        rfidStatusBox.classList.remove("scanning", "success", "error");
+
+        if (type) {
+            rfidStatusBox.classList.add(type);
+        }
+
+        const icons = {
+            scanning: "fa-wifi",
+            success: "fa-circle-check",
+            error: "fa-circle-exclamation"
+        };
+
+        const iconName = icons[type] || "fa-id-card";
+        rfidStatusIcon.innerHTML = '<i class="fa-solid ' + iconName + '"></i>';
+        rfidStatusTitle.textContent = title;
+        rfidStatusText.textContent = message;
+    }
+
+    function stopRfidScan() {
+        rfidScanning = false;
+        rfidBuffer = "";
+        clearTimeout(rfidScanTimer);
+
+        scanRfidBtn.classList.remove("scanning");
+        scanRfidBtn.innerHTML =
+            '<i class="fa-solid fa-wifi"></i><span>Scan RFID Card</span>';
+
+        document.body.classList.remove("rfid-scan-active");
+    }
+
+    function startRfidScan() {
+        stopRfidScan();
+        rfidScanning = true;
+        rfidInput.value = "";
+
+        scanRfidBtn.classList.add("scanning");
+        scanRfidBtn.innerHTML =
+            '<i class="fa-solid fa-spinner fa-spin"></i>' +
+            '<span>Waiting for RFID...</span>';
+
+        setRfidStatus(
+            "scanning",
+            "Waiting for RFID card",
+            "Tap the RFID card on the scanner now."
+        );
+
+        document.body.classList.add("rfid-scan-active");
+    }
+
+    function finishRfidScan(uid) {
+        uid = uid.trim();
+
+        if (!uid) {
+            return;
+        }
+
+        rfidInput.value = uid;
+        stopRfidScan();
+
+        setRfidStatus(
+            "success",
+            "RFID card detected",
+            "The RFID UID has been assigned to this student."
+        );
+    }
+
+    scanRfidBtn.addEventListener("click", function () {
+        if (rfidScanning) {
+            stopRfidScan();
+            setRfidStatus(
+                "",
+                "Ready to scan",
+                'Click "Scan RFID Card" and tap the student\'s card.'
+            );
+        } else {
+            startRfidScan();
+        }
+    });
+
+    clearRfidBtn.addEventListener("click", function () {
+        stopRfidScan();
+        rfidInput.value = "";
+        setRfidStatus(
+            "",
+            "Ready to scan",
+            'Click "Scan RFID Card" and tap the student\'s card.'
+        );
+    });
+
+    // Works with RFID readers configured as keyboard-input devices.
+    document.addEventListener("keydown", function (event) {
+        if (!rfidScanning) {
+            return;
+        }
+
+        if (event.key === "Enter") {
+            event.preventDefault();
+            clearTimeout(rfidScanTimer);
+
+            if (rfidBuffer.trim()) {
+                finishRfidScan(rfidBuffer);
+            }
+            return;
+        }
+
+        if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+            rfidBuffer += event.key;
+            clearTimeout(rfidScanTimer);
+
+            rfidScanTimer = setTimeout(function () {
+                if (rfidBuffer.trim()) {
+                    finishRfidScan(rfidBuffer);
+                }
+            }, 150);
+        }
+    });
+
+    studentImage.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (!file) {
+            imagePreview.innerHTML = '<i class="fa-solid fa-user"></i>';
+            fileName.textContent = "No file chosen";
+            return;
+        }
+
+        fileName.textContent = file.name;
+
+        if (!file.type.startsWith("image/")) {
+            imagePreview.innerHTML = '<i class="fa-solid fa-user"></i>';
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+            const img = document.createElement("img");
+            img.src = event.target.result;
+            img.alt = "Student image preview";
+            imagePreview.replaceChildren(img);
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+    function clearForm() {
+        form.reset();
+        stopRfidScan();
+        imagePreview.innerHTML = '<i class="fa-solid fa-user"></i>';
+        fileName.textContent = "No file chosen";
+
+        setRfidStatus(
+            "",
+            "Ready to scan",
+            'Click "Scan RFID Card" and tap the student\'s card.'
+        );
+    }
+
+    document.getElementById("clearBtn").addEventListener("click", clearForm);
+
+    document.getElementById("cancelBtn").addEventListener("click", function () {
+        if (confirm("Are you sure you want to cancel? All entered information will be cleared.")) {
+            clearForm();
+        }
+    });
+
+    // Front-end demonstration only; no Django database record is created.
+    form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        alert("Student registration form submitted (demo only).");
+        clearForm();
+    });
+});
+</script>
+{% endblock %}

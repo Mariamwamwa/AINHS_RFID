@@ -1,0 +1,209 @@
+
+{% extends 'IN_BASE/Admin_Base.html' %}
+{% load static %}
+
+{% block title %}
+Users - RFID Attendance Management System
+{% endblock %}
+
+{% block page_heading %}
+<h2>Users</h2>
+{% endblock %}
+
+{% block page_subheading %}
+<p>Manage teacher account credentials</p>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ADMIN/Admin_Users.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="users-content">
+
+    <!-- PAGE INTRODUCTION -->
+    <div class="page-intro">
+        <div>
+            <span class="section-label">USER MANAGEMENT</span>
+            <h2>Teacher Accounts</h2>
+            <p>
+                View and manage teacher account credentials
+                registered in the attendance management system.
+            </p>
+        </div>
+
+        <a href="{% url 'admin_add_teacher' %}" class="add-user-btn">
+            <i class="fa-solid fa-user-plus"></i>
+            Add Teacher
+        </a>
+    </div>
+
+    <!-- USERS TABLE CARD -->
+    <div class="users-card">
+
+        <div class="card-header">
+            <div>
+                <h3>Teacher Credentials</h3>
+                <p>
+                    List of teacher login credentials and
+                    security information.
+                </p>
+            </div>
+
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search teacher..."
+                >
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-container">
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID Nr</th>
+                        <th>Username</th>
+                        <th>Password</th>
+                        <th>Security Question</th>
+                        <th>Security Answer</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <!-- SAMPLE TEACHER 1 -->
+                    <tr>
+                        <td><span class="teacher-id">TCH-001</span></td>
+                        <td><span class="username">juandelacruz</span></td>
+                        <td>
+                            <div class="password-cell">
+                                <span class="password">••••••••••</span>
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    aria-label="Password is not available for display"
+                                    disabled
+                                >
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td>What is your favorite color?</td>
+                        <td><span class="security-answer">••••••••••</span></td>
+                    </tr>
+
+                    <!-- SAMPLE TEACHER 2 -->
+                    <tr>
+                        <td><span class="teacher-id">TCH-002</span></td>
+                        <td><span class="username">mariasantos</span></td>
+                        <td>
+                            <div class="password-cell">
+                                <span class="password">••••••••••</span>
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    aria-label="Password is not available for display"
+                                    disabled
+                                >
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td>What is your mother's maiden name?</td>
+                        <td><span class="security-answer">••••••••••</span></td>
+                    </tr>
+
+                    <!-- SAMPLE TEACHER 3 -->
+                    <tr>
+                        <td><span class="teacher-id">TCH-003</span></td>
+                        <td><span class="username">pedroaquino</span></td>
+                        <td>
+                            <div class="password-cell">
+                                <span class="password">••••••••••</span>
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    aria-label="Password is not available for display"
+                                    disabled
+                                >
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td>What was the name of your first pet?</td>
+                        <td><span class="security-answer">••••••••••</span></td>
+                    </tr>
+
+                    <!-- SAMPLE TEACHER 4 -->
+                    <tr>
+                        <td><span class="teacher-id">TCH-004</span></td>
+                        <td><span class="username">ricacruz</span></td>
+                        <td>
+                            <div class="password-cell">
+                                <span class="password">••••••••••</span>
+                                <button
+                                    type="button"
+                                    class="password-toggle"
+                                    aria-label="Password is not available for display"
+                                    disabled
+                                >
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td>What is your favorite food?</td>
+                        <td><span class="security-answer">••••••••••</span></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TABLE FOOTER -->
+        <div class="table-footer">
+            <span>Showing 4 of 24 teacher accounts</span>
+
+            <div class="pagination">
+                <button type="button" class="pagination-btn disabled" disabled>
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button type="button" class="pagination-btn active">1</button>
+                <button type="button" class="pagination-btn">2</button>
+                <button type="button" class="pagination-btn">3</button>
+                <button type="button" class="pagination-btn">4</button>
+                <button type="button" class="pagination-btn">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    /* SEARCH */
+    const searchInput = document.getElementById("searchInput");
+    const tableRows = document.querySelectorAll("#usersTable tbody tr");
+
+    searchInput.addEventListener("input", function () {
+        const searchValue = this.value.toLowerCase().trim();
+
+        tableRows.forEach(function (row) {
+            const rowText = row.textContent.toLowerCase();
+
+            row.style.display = rowText.includes(searchValue)
+                ? ""
+                : "none";
+        });
+    });
+</script>
+{% endblock %}

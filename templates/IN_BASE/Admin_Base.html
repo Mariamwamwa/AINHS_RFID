@@ -1,3 +1,4 @@
+
 {% load static %}
 
 <!DOCTYPE html>
@@ -14,45 +15,23 @@
 
     <title>
         {% block title %}
-        AINHS Admin | Attendance System
+        Admin Dashboard - RFID Attendance Management System
         {% endblock %}
     </title>
 
-
-    <!-- =====================================================
-         MATERIAL ICONS
-         ===================================================== -->
-
-    <link
-        href="https://fonts.googleapis.com/icon?family=Material+Icons"
-        rel="stylesheet"
-    >
-
-
-    <!-- =====================================================
-         FONT AWESOME
-         ===================================================== -->
-
+    <!-- FONT AWESOME -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
-
-    <!-- =====================================================
-         ADMIN BASE CSS
-         ===================================================== -->
-
+    <!-- ADMIN BASE CSS -->
     <link
         rel="stylesheet"
-        href="{% static 'css/Admin_UI/Admin_Base.css' %}"
+        href="{% static 'css/IN_BASE/Admin_Base.css' %}"
     >
 
-
-    <!-- =====================================================
-         PAGE-SPECIFIC CSS
-         ===================================================== -->
-
+    <!-- PAGE-SPECIFIC CSS -->
     {% block extra_css %}
     {% endblock %}
 
@@ -63,20 +42,335 @@
 
 
     <!-- =====================================================
-         ADMIN HEADER + SIDEBAR
+         TOP HEADER
          ===================================================== -->
 
-    {% include 'ADMIN/Admin_Header_Sidebar.html' %}
+    <header class="topbar">
+
+        <!-- LEFT SIDE OF HEADER -->
+        <div class="topbar-left">
+
+            <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                type="button"
+            >
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+
+            <div class="page-heading">
+
+                {% block page_heading %}
+
+                <h2>Dashboard</h2>
+
+                {% endblock %}
+
+
+                {% block page_subheading %}
+
+                <p>Welcome back, Administrator!</p>
+
+                {% endblock %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             RIGHT SIDE OF HEADER
+             ===================================================== -->
+
+        <div class="topbar-right">
+
+
+            <!-- NOTIFICATION -->
+            <button
+                class="notification-btn"
+                type="button"
+            >
+
+                <i class="fa-regular fa-bell"></i>
+
+                <span class="notification-dot"></span>
+
+            </button>
+
+
+
+            <!-- =================================================
+                 ADMINISTRATOR PROFILE
+                 ================================================= -->
+
+            <div class="admin-profile-wrapper">
+
+
+                <button
+                    class="admin-profile"
+                    id="adminProfile"
+                    type="button"
+                >
+
+                    <div class="admin-avatar">
+
+                        <i class="fa-solid fa-user"></i>
+
+                    </div>
+
+
+                    <div class="admin-details">
+
+                        <strong>Administrator</strong>
+
+                        <span>Admin</span>
+
+                    </div>
+
+
+                    <i class="fa-solid fa-chevron-down profile-arrow"></i>
+
+                </button>
+
+
+
+                <!-- =================================================
+                     PROFILE DROPDOWN
+                     ================================================= -->
+
+                <div
+                    class="profile-dropdown"
+                    id="profileDropdown"
+                >
+
+
+                    <div class="dropdown-user">
+
+
+                        <div class="dropdown-avatar">
+
+                            <i class="fa-solid fa-user"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <strong>Administrator</strong>
+
+                            <span>Administrator Account</span>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="dropdown-divider"></div>
+
+
+
+                    <!-- LOGOUT -->
+
+                    <a
+                        href="#"
+                        class="dropdown-item logout-item"
+                    >
+
+                        <i class="fa-solid fa-right-from-bracket"></i>
+
+                        <span>Logout</span>
+
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </header>
 
 
 
     <!-- =====================================================
-         ADMIN PAGE CONTENT
+         SIDEBAR
+         ===================================================== -->
+
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+
+        <div class="sidebar-menu">
+
+
+            <!-- =================================================
+                 MAIN MENU
+                 ================================================= -->
+
+            <p class="menu-label">MAIN MENU</p>
+
+
+
+            <!-- DASHBOARD -->
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-gauge-high"></i>
+
+                <span>Dashboard</span>
+
+            </a>
+
+
+
+            <!-- USERS -->
+
+            <a
+                href="{% url 'admin_users' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_users' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-users"></i>
+
+                <span>Users</span>
+
+            </a>
+
+
+
+            <!-- =================================================
+                 TEACHERS
+                 ================================================= -->
+
+            <p class="menu-label">TEACHERS</p>
+
+
+
+            <!-- TEACHERS INFO -->
+
+            <a
+                href="{% url 'admin_teachers' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_teachers' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-chalkboard-user"></i>
+
+                <span>Teacher's Info</span>
+
+            </a>
+
+
+
+            <!-- ADD TEACHER -->
+
+            <a
+                href="{% url 'admin_add_teacher' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_add_teacher' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-user-plus"></i>
+
+                <span>Add Teacher</span>
+
+            </a>
+
+
+
+            <!-- =================================================
+                 STUDENTS
+                 ================================================= -->
+
+            <p class="menu-label">STUDENTS</p>
+
+
+
+            <!-- CLASSES -->
+
+            <a
+                href="{% url 'admin_classes' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_classes' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-school"></i>
+
+                <span>Classes</span>
+
+            </a>
+
+
+
+            <!-- STUDENTS INFO -->
+
+            <a
+                href="{% url 'admin_students' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_students' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-user-graduate"></i>
+
+                <span>Students</span>
+
+            </a>
+
+
+
+            <!-- REGISTER STUDENTS -->
+
+            <a
+                href="{% url 'admin_register_rfid' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_register_rfid' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-user-plus"></i>
+
+                <span>Register Students</span>
+
+            </a>
+
+
+
+            <!-- STUDENT ATTENDANCE -->
+
+            <a
+                href="{% url 'admin_attendance' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'admin_attendance' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-calendar-check"></i>
+
+                <span>Student Attendance</span>
+
+            </a>
+
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
          ===================================================== -->
 
     <main class="main-content">
 
         {% block content %}
+
         {% endblock %}
 
     </main>
@@ -84,8 +378,93 @@
 
 
     <!-- =====================================================
-         PAGE-SPECIFIC JAVASCRIPT
+         JAVASCRIPT
          ===================================================== -->
+
+    <script>
+
+
+        /* =====================================================
+           SIDEBAR TOGGLE
+           ===================================================== */
+
+        const sidebar = document.getElementById("sidebar");
+
+        const sidebarToggle = document.getElementById("sidebarToggle");
+
+
+        sidebarToggle.addEventListener("click", function () {
+
+            sidebar.classList.toggle("collapsed");
+
+        });
+
+
+
+        /* =====================================================
+           ACTIVE SIDEBAR MENU
+           ===================================================== */
+
+        const menuItems = document.querySelectorAll(".menu-item");
+
+
+        menuItems.forEach(item => {
+
+            item.addEventListener("click", function () {
+
+                menuItems.forEach(menu => {
+
+                    menu.classList.remove("active");
+
+                });
+
+                this.classList.add("active");
+
+            });
+
+        });
+
+
+
+        /* =====================================================
+           ADMIN PROFILE DROPDOWN
+           ===================================================== */
+
+        const adminProfile = document.getElementById("adminProfile");
+
+        const profileDropdown = document.getElementById("profileDropdown");
+
+
+        adminProfile.addEventListener("click", function (event) {
+
+            event.stopPropagation();
+
+            profileDropdown.classList.toggle("show");
+
+        });
+
+
+
+        /* =====================================================
+           CLOSE DROPDOWN WHEN CLICKING OUTSIDE
+           ===================================================== */
+
+        document.addEventListener("click", function (event) {
+
+            if (!event.target.closest(".admin-profile-wrapper")) {
+
+                profileDropdown.classList.remove("show");
+
+            }
+
+        });
+
+
+    </script>
+
+
+
+    <!-- PAGE-SPECIFIC JAVASCRIPT -->
 
     {% block extra_js %}
     {% endblock %}

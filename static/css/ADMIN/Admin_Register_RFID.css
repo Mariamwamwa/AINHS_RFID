@@ -1,0 +1,696 @@
+
+/* =========================================================
+   REGISTER STUDENT - PAGE CONTENT
+   ========================================================= */
+
+.register-student-content {
+    padding: 20px 32px 40px;
+}
+
+/* PAGE INTRO */
+
+.register-student-content .page-intro {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.register-student-content .intro-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: rgba(111, 66, 193, 0.1);
+    color: var(--primary-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.register-student-content .intro-text h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 3px;
+}
+
+.register-student-content .intro-text p {
+    font-size: 11px;
+    color: var(--gray);
+}
+
+/* FORM CARD AND SECTIONS */
+
+.register-student-content .form-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    box-shadow: 0 2px 8px rgba(33, 37, 41, 0.04);
+    overflow: hidden;
+}
+
+.register-student-content .form-section {
+    padding: 22px 24px 24px;
+}
+
+.register-student-content .form-section + .form-section {
+    border-top: 1px solid var(--border);
+}
+
+.register-student-content .assignment-section {
+    background: #fcfcfe;
+}
+
+.register-student-content .section-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 18px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.register-student-content .section-title i {
+    width: 29px;
+    height: 29px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    background: rgba(111, 66, 193, 0.1);
+    color: var(--primary-purple);
+    font-size: 13px;
+}
+
+/* FORM GRIDS */
+
+.register-student-content .form-grid {
+    display: grid;
+    gap: 17px 24px;
+}
+
+.register-student-content .personal-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: start;
+    gap: 18px 24px;
+}
+
+.register-student-content .rfid-card-field {
+    grid-column: 1 / 3;
+    grid-row: 1;
+}
+
+.register-student-content .student-image-lrn-field {
+    grid-column: 3 / 5;
+    grid-row: 1;
+}
+
+.register-student-content .personal-details-grid {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px 24px;
+    align-items: start;
+    min-width: 0;
+}
+
+.register-student-content .guardian-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.register-student-content .class-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* RFID CARD */
+
+.register-student-content .rfid-card-field {
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid #e3e6ec;
+    border-radius: 10px;
+    background: #fbfcfe;
+    height: fit-content;
+    align-self: start;
+}
+
+.register-student-content .rfid-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.register-student-content .rfid-card-header label {
+    display: block;
+    margin-bottom: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-dark);
+}
+
+.register-student-content .required {
+    color: #dc3545;
+}
+
+.register-student-content .rfid-help {
+    font-size: 9px;
+    color: var(--gray);
+}
+
+/* RFID SCAN BUTTON */
+
+.register-student-content .scan-rfid-btn {
+    flex-shrink: 0;
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid rgba(111, 66, 193, 0.22);
+    border-radius: 7px;
+    background: rgba(111, 66, 193, 0.08);
+    color: var(--primary-purple);
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.register-student-content .scan-rfid-btn:hover {
+    background: rgba(111, 66, 193, 0.14);
+    border-color: rgba(111, 66, 193, 0.35);
+}
+
+.register-student-content .scan-rfid-btn.scanning {
+    background: linear-gradient(
+        90deg,
+        var(--primary-purple),
+        var(--primary-blue)
+    );
+    border-color: transparent;
+    color: var(--white);
+    box-shadow: 0 4px 10px rgba(111, 66, 193, 0.18);
+}
+
+/* RFID STATUS */
+
+.register-student-content .rfid-status-box {
+    min-height: 54px;
+    margin-bottom: 10px;
+    padding: 8px 11px;
+    border: 1px solid #e3e6ec;
+    border-radius: 8px;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+
+.register-student-content .rfid-status-box.scanning {
+    border-color: rgba(111, 66, 193, 0.3);
+    background: rgba(111, 66, 193, 0.035);
+}
+
+.register-student-content .rfid-status-box.success {
+    border-color: rgba(25, 135, 84, 0.25);
+    background: rgba(25, 135, 84, 0.04);
+}
+
+.register-student-content .rfid-status-box.error {
+    border-color: rgba(220, 53, 69, 0.25);
+    background: rgba(220, 53, 69, 0.04);
+}
+
+.register-student-content .rfid-status-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #f4f6fa;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.register-student-content .rfid-status-box.scanning .rfid-status-icon {
+    background: rgba(111, 66, 193, 0.1);
+    color: var(--primary-purple);
+}
+
+.register-student-content .rfid-status-box.success .rfid-status-icon {
+    background: rgba(25, 135, 84, 0.1);
+    color: #198754;
+}
+
+.register-student-content .rfid-status-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.register-student-content .rfid-status-content strong {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.register-student-content .rfid-status-content span {
+    margin-top: 2px;
+    font-size: 9px;
+    color: var(--gray);
+}
+
+/* RFID INPUT */
+
+.register-student-content .rfid-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.register-student-content .rfid-input-wrapper {
+    flex: 1;
+}
+
+.register-student-content .rfid-input-wrapper input {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    background: #f8f9fa;
+}
+
+.register-student-content .rfid-input-wrapper input:focus {
+    background: var(--white);
+}
+
+.register-student-content .clear-rfid-btn {
+    width: 43px;
+    height: 43px;
+    flex-shrink: 0;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.register-student-content .clear-rfid-btn:hover {
+    border-color: #ced4da;
+    background: #f8f9fa;
+    color: #dc3545;
+}
+
+body.rfid-scan-active .register-student-content .rfid-card-field {
+    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.06);
+}
+
+/* STUDENT IMAGE AND LRN */
+
+.register-student-content .student-image-lrn-field {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.register-student-content .student-image-lrn-field .form-group {
+    margin: 0;
+}
+
+.register-student-content .image-upload-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-height: 110px;
+}
+
+.register-student-content .student-image-lrn-field .image-upload-wrapper {
+    min-height: 0;
+}
+
+.register-student-content .image-preview {
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    border: 1px dashed #ced4da;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--gray-light);
+    font-size: 30px;
+}
+
+.register-student-content .image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.register-student-content .image-upload-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.register-student-content .image-upload-content input[type="file"] {
+    display: none;
+}
+
+.register-student-content .image-upload-btn {
+    width: 145px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    background: #fff;
+    color: #343a40;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+    text-align: center;
+}
+
+.register-student-content .image-upload-btn i,
+.register-student-content .image-upload-btn span {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+}
+
+.register-student-content .image-upload-btn:hover {
+    border-color: var(--primary-purple);
+    color: var(--primary-purple);
+    background: rgba(111, 66, 193, 0.04);
+}
+
+.register-student-content .file-name {
+    max-width: 180px;
+    font-size: 9px;
+    color: var(--gray-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* FORM LABELS */
+
+.register-student-content .form-group {
+    min-width: 0;
+}
+
+.register-student-content .form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gray-dark);
+}
+
+.register-student-content .form-group label small,
+.register-student-content .form-group label .optional {
+    color: var(--gray-light);
+    font-size: 9px;
+    font-weight: 400;
+}
+
+/* INPUTS AND SELECTS */
+
+.register-student-content .input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.register-student-content .input-wrapper > i {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-light);
+    font-size: 13px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.register-student-content .input-wrapper input,
+.register-student-content .input-wrapper select {
+    width: 100%;
+    height: 43px;
+    padding: 0 13px 0 38px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--dark);
+    font-family: inherit;
+    font-size: 12px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.register-student-content .input-wrapper input::placeholder {
+    color: var(--gray-light);
+}
+
+.register-student-content .input-wrapper input:focus,
+.register-student-content .input-wrapper select:focus {
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.08);
+}
+
+.register-student-content .input-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 32px;
+    cursor: pointer;
+}
+
+.register-student-content .select-wrapper::after {
+    content: "\f078";
+    position: absolute;
+    right: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: var(--gray);
+    font-size: 10px;
+    pointer-events: none;
+}
+
+/* AGE AND SEX */
+
+.register-student-content .age-sex-field {
+    min-width: 0;
+}
+
+.register-student-content .age-sex-wrapper {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 10px;
+    width: 100%;
+}
+
+.register-student-content .age-field,
+.register-student-content .sex-field,
+.register-student-content .age-sex-wrapper .input-wrapper,
+.register-student-content .age-sex-wrapper input,
+.register-student-content .age-sex-wrapper select {
+    min-width: 0;
+}
+
+.register-student-content #age::-webkit-inner-spin-button,
+.register-student-content #age::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.register-student-content #age {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* FORM ACTIONS */
+
+.register-student-content .form-actions {
+    min-height: 78px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid var(--border);
+    background: var(--white);
+}
+
+.register-student-content .form-btn {
+    height: 39px;
+    padding: 0 16px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.register-student-content .btn-cancel {
+    background: var(--white);
+    border: 1px solid #dee2e6;
+    color: var(--gray-dark);
+}
+
+.register-student-content .btn-cancel:hover {
+    background: #f8f9fa;
+    border-color: #ced4da;
+}
+
+.register-student-content .btn-clear {
+    background: rgba(111, 66, 193, 0.08);
+    border: 1px solid rgba(111, 66, 193, 0.15);
+    color: var(--primary-purple);
+}
+
+.register-student-content .btn-clear:hover {
+    background: rgba(111, 66, 193, 0.14);
+}
+
+.register-student-content .btn-save {
+    background: linear-gradient(
+        90deg,
+        var(--primary-purple),
+        var(--primary-blue)
+    );
+    border: none;
+    color: var(--white);
+    box-shadow: 0 4px 10px rgba(111, 66, 193, 0.18);
+}
+
+.register-student-content .btn-save:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(111, 66, 193, 0.24);
+}
+
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+@media (max-width: 1100px) {
+    .register-student-content .class-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1000px) {
+    .register-student-content .personal-details-grid,
+    .register-student-content .guardian-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 900px) {
+    .register-student-content .personal-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .register-student-content .rfid-card-field {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .register-student-content .student-image-lrn-field {
+        grid-column: 2;
+        grid-row: 1;
+    }
+
+    .register-student-content .personal-details-grid {
+        grid-column: 1 / -1;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 850px) {
+    .register-student-content .personal-details-grid,
+    .register-student-content .guardian-grid,
+    .register-student-content .class-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .register-student-content {
+        padding: 18px 18px 30px;
+    }
+
+    .register-student-content .form-section {
+        padding: 18px;
+    }
+
+    .register-student-content .form-actions {
+        padding: 14px 18px;
+    }
+
+    .register-student-content .personal-grid,
+    .register-student-content .personal-details-grid,
+    .register-student-content .guardian-grid,
+    .register-student-content .class-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .register-student-content .rfid-card-field,
+    .register-student-content .student-image-lrn-field,
+    .register-student-content .personal-details-grid {
+        grid-column: 1;
+        grid-row: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .register-student-content .rfid-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .register-student-content .scan-rfid-btn {
+        width: 100%;
+    }
+
+    .register-student-content .form-actions {
+        flex-wrap: wrap;
+    }
+
+    .register-student-content .form-btn {
+        flex: 1;
+    }
+
+    .register-student-content .age-sex-wrapper {
+        grid-template-columns: 65px minmax(0, 1fr);
+        gap: 8px;
+    }
+}

@@ -1,0 +1,571 @@
+
+{% extends 'IN_BASE/Admin_Base.html' %}
+{% load static %}
+
+
+{% block title %}
+Admin Dashboard - RFID Attendance Management System
+{% endblock %}
+
+
+{% block page_heading %}
+<h2>Dashboard</h2>
+{% endblock %}
+
+
+{% block page_subheading %}
+<p>Welcome back, Administrator!</p>
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/ADMIN/Admin_Dashboard.css' %}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- =====================================================
+     DASHBOARD CONTENT
+     ===================================================== -->
+
+<section class="dashboard-content">
+
+
+    <!-- =================================================
+         WELCOME CARD
+         ================================================= -->
+
+    <div class="welcome-card">
+
+        <div class="welcome-text">
+
+            <span class="welcome-label">
+                ADMINISTRATOR
+            </span>
+
+            <h2>
+                Welcome to the RFID Attendance
+                Management System
+            </h2>
+
+            <p>
+                Manage teachers, students, classes, and
+                attendance records from your dashboard.
+            </p>
+
+        </div>
+
+
+        <div class="welcome-icon">
+            <i class="fa-solid fa-chart-line"></i>
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         STATISTICS
+         ================================================= -->
+
+    <div class="stats-grid">
+
+
+        <!-- TOTAL TEACHERS -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon purple">
+                <i class="fa-solid fa-chalkboard-user"></i>
+            </div>
+
+            <div class="stat-information">
+
+                <span>Total Teachers</span>
+
+                <h3>24</h3>
+
+                <small>
+                    <i class="fa-solid fa-arrow-up"></i>
+                    Active teachers
+                </small>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TOTAL STUDENTS -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon blue">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+
+            <div class="stat-information">
+
+                <span>Total Students</span>
+
+                <h3>356</h3>
+
+                <small>
+                    <i class="fa-solid fa-arrow-up"></i>
+                    Registered students
+                </small>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TOTAL CLASSES -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon aqua">
+                <i class="fa-solid fa-school"></i>
+            </div>
+
+            <div class="stat-information">
+
+                <span>Total Classes</span>
+
+                <h3>18</h3>
+
+                <small>
+                    Active classes
+                </small>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TODAY'S ATTENDANCE -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon cyan">
+                <i class="fa-solid fa-calendar-check"></i>
+            </div>
+
+            <div class="stat-information">
+
+                <span>Today's Attendance</span>
+
+                <h3>92%</h3>
+
+                <small>
+                    <i class="fa-solid fa-circle-check"></i>
+                    Attendance recorded
+                </small>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         LOWER DASHBOARD
+         ================================================= -->
+
+    <div class="dashboard-grid">
+
+
+        <!-- =================================================
+             TODAY'S ATTENDANCE
+             ================================================= -->
+
+        <div class="dashboard-card attendance-card">
+
+
+            <div class="card-header">
+
+                <div>
+
+                    <h3>Today's Attendance</h3>
+
+                    <p>
+                        Recent student attendance records
+                    </p>
+
+                </div>
+
+
+                <button class="view-all-btn">
+                    View All
+                </button>
+
+            </div>
+
+
+
+            <!-- ATTENDANCE TABLE -->
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Student</th>
+                            <th>Student ID</th>
+                            <th>Time In</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+
+
+                    <tbody>
+
+
+                        <!-- STUDENT 1 -->
+
+                        <tr>
+
+                            <td>
+
+                                <div class="student-cell">
+
+                                    <div class="student-avatar">
+                                        JD
+                                    </div>
+
+                                    <span>
+                                        Juan Dela Cruz
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                2026-001
+                            </td>
+
+                            <td>
+                                7:45 AM
+                            </td>
+
+                            <td>
+
+                                <span class="status present">
+                                    Present
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+
+
+                        <!-- STUDENT 2 -->
+
+                        <tr>
+
+                            <td>
+
+                                <div class="student-cell">
+
+                                    <div class="student-avatar">
+                                        MS
+                                    </div>
+
+                                    <span>
+                                        Maria Santos
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                2026-002
+                            </td>
+
+                            <td>
+                                7:51 AM
+                            </td>
+
+                            <td>
+
+                                <span class="status present">
+                                    Present
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+
+
+                        <!-- STUDENT 3 -->
+
+                        <tr>
+
+                            <td>
+
+                                <div class="student-cell">
+
+                                    <div class="student-avatar">
+                                        PA
+                                    </div>
+
+                                    <span>
+                                        Pedro Aquino
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                2026-003
+                            </td>
+
+                            <td>
+                                8:03 AM
+                            </td>
+
+                            <td>
+
+                                <span class="status late">
+                                    Late
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+
+
+                        <!-- STUDENT 4 -->
+
+                        <tr>
+
+                            <td>
+
+                                <div class="student-cell">
+
+                                    <div class="student-avatar">
+                                        RC
+                                    </div>
+
+                                    <span>
+                                        Rica Cruz
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+                                2026-004
+                            </td>
+
+                            <td>
+                                7:42 AM
+                            </td>
+
+                            <td>
+
+                                <span class="status present">
+                                    Present
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             QUICK ACTIONS
+             ================================================= -->
+
+        <div class="dashboard-card quick-actions-card">
+
+
+            <div class="card-header">
+
+                <div>
+
+                    <h3>Quick Actions</h3>
+
+                    <p>
+                        Frequently used functions
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="quick-actions">
+
+
+                <!-- ADD TEACHER -->
+
+                <a
+                    href="{% url 'admin_add_teacher' %}"
+                    class="quick-action"
+                >
+
+                    <div class="quick-action-icon purple-bg">
+
+                        <i class="fa-solid fa-user-plus"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Add Teacher
+                        </strong>
+
+                        <span>
+                            Register a new teacher
+                        </span>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </a>
+
+
+
+                <!-- REGISTER STUDENT -->
+
+                <a
+                    href="{% url 'admin_register_rfid' %}"
+                    class="quick-action"
+                >
+
+                    <div class="quick-action-icon blue-bg">
+
+                        <i class="fa-solid fa-user-graduate"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Register Student
+                        </strong>
+
+                        <span>
+                            Add a new student
+                        </span>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </a>
+
+
+
+                <!-- MANAGE CLASSES -->
+
+                <a
+                    href="{% url 'admin_classes' %}"
+                    class="quick-action"
+                >
+
+                    <div class="quick-action-icon aqua-bg">
+
+                        <i class="fa-solid fa-school"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Manage Classes
+                        </strong>
+
+                        <span>
+                            View and manage classes
+                        </span>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </a>
+
+
+
+                <!-- ATTENDANCE -->
+
+                <a
+                    href="{% url 'admin_attendance' %}"
+                    class="quick-action"
+                >
+
+                    <div class="quick-action-icon cyan-bg">
+
+                        <i class="fa-solid fa-calendar-check"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Attendance
+                        </strong>
+
+                        <span>
+                            View attendance records
+                        </span>
+
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+{% endblock %}

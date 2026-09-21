@@ -1,0 +1,524 @@
+
+{% extends 'IN_BASE/Admin_Base.html' %}
+{% load static %}
+
+{% block title %}Classes - RFID Attendance Management System{% endblock %}
+
+{% block page_heading %}
+<h2>Classes</h2>
+{% endblock %}
+
+{% block page_subheading %}
+<p>Manage grade levels, class sections, and advisers.</p>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ADMIN/Admin_Classes.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="classes-page">
+
+    <!-- CLASS MANAGER HEADER -->
+    <div class="classes-header">
+        <h3><i class="fas fa-graduation-cap"></i> Class Manager</h3>
+
+        <div class="classes-header-actions">
+            <button type="button" class="classes-btn classes-btn-outline" id="exportBtn">
+                <i class="fas fa-file-export"></i> Export
+            </button>
+            <button type="button" class="classes-btn classes-btn-primary" id="addSectionBtn">
+                <i class="fas fa-plus"></i> Add Section
+            </button>
+        </div>
+    </div>
+
+    <!-- SUMMARY CARDS -->
+    <div class="classes-stats">
+        <div class="classes-stat-card">
+            <div class="number" id="totalSections">0</div>
+            <div class="label">Total Sections</div>
+        </div>
+        <div class="classes-stat-card">
+            <div class="number" id="totalStudents">0</div>
+            <div class="label">Total Students</div>
+        </div>
+        <div class="classes-stat-card">
+            <div class="number" id="totalTeachers">0</div>
+            <div class="label">Teachers</div>
+        </div>
+        <div class="classes-stat-card">
+            <div class="number" id="totalJHS">0</div>
+            <div class="label">JHS Sections</div>
+        </div>
+        <div class="classes-stat-card">
+            <div class="number" id="totalSHS">0</div>
+            <div class="label">SHS Sections</div>
+        </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="classes-filter-bar">
+        <div class="classes-filter-group">
+            <label for="filterDept"><i class="fas fa-building"></i> Dept</label>
+            <select id="filterDept">
+                <option value="all">All</option>
+                <option value="JHS">JHS</option>
+                <option value="SHS">SHS</option>
+            </select>
+        </div>
+
+        <div class="classes-filter-group">
+            <label for="filterGrade"><i class="fas fa-layer-group"></i> Grade</label>
+            <select id="filterGrade">
+                <option value="all">All</option>
+                <option value="7">Grade 7</option>
+                <option value="8">Grade 8</option>
+                <option value="9">Grade 9</option>
+                <option value="10">Grade 10</option>
+                <option value="11">Grade 11</option>
+                <option value="12">Grade 12</option>
+            </select>
+        </div>
+
+        <div class="classes-search-group">
+            <div class="classes-search-wrapper">
+                <i class="fas fa-search"></i>
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search section or adviser..."
+                    aria-label="Search section or adviser"
+                >
+            </div>
+        </div>
+    </div>
+
+    <!-- GRADE SECTIONS ARE RENDERED HERE -->
+    <div id="sectionContainer"></div>
+
+    <!-- ADD / EDIT MODAL -->
+    <div class="classes-modal-overlay" id="modalOverlay" aria-hidden="true">
+        <div class="classes-modal" role="dialog" aria-modal="true"
+             aria-labelledby="modalTitle">
+
+            <h2 id="modalTitle">
+                <i class="fas fa-plus-circle"></i> Add Section
+            </h2>
+            <p class="sub" id="modalSub">
+                Fill in the details for the new class section.
+            </p>
+
+            <form id="sectionForm">
+                <input type="hidden" id="editId">
+
+                <label for="formGrade">Grade Level</label>
+                <select id="formGrade" required>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                </select>
+
+                <label for="formSection">Section Name</label>
+                <input type="text" id="formSection"
+                       placeholder="e.g. Einstein, STEM A, Mabini" required>
+
+                <label for="formTeacher">Adviser / Teacher</label>
+                <input type="text" id="formTeacher"
+                       placeholder="Full name of adviser" required>
+
+                <label for="formStudents">Number of Students</label>
+                <input type="number" id="formStudents"
+                       placeholder="e.g. 35" min="0" step="1" required>
+
+                <div class="classes-modal-actions">
+                    <button type="button" class="classes-btn classes-btn-outline"
+                            id="cancelModalBtn">
+                        Cancel
+                    </button>
+                    <button type="submit" class="classes-btn classes-btn-primary"
+                            id="modalSaveBtn">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
+
+    const STORAGE_KEY = "ainhs_class_sections_demo";
+    const initialData = [
+        { id: 1, grade: "7", section: "Einstein", teacher: "Mrs. Santos", students: 35 },
+        { id: 2, grade: "7", section: "Newton", teacher: "Mr. Rivera", students: 32 },
+        { id: 3, grade: "7", section: "Galileo", teacher: "Ms. Cruz", students: 30 },
+        { id: 4, grade: "8", section: "Mabini", teacher: "Mr. Dimagiba", students: 28 },
+        { id: 5, grade: "8", section: "Bonifacio", teacher: "Ms. Garcia", students: 31 },
+        { id: 6, grade: "9", section: "Rizal", teacher: "Mrs. Reyes", students: 33 },
+        { id: 7, grade: "9", section: "Luna", teacher: "Mr. Santiago", students: 29 },
+        { id: 8, grade: "10", section: "Aquino", teacher: "Ms. Tan", students: 27 },
+        { id: 9, grade: "10", section: "Magsaysay", teacher: "Mr. Ong", students: 30 },
+        { id: 10, grade: "11", section: "STEM A", teacher: "Dr. Bautista", students: 30 },
+        { id: 11, grade: "11", section: "ABM A", teacher: "Mr. Flores", students: 28 },
+        { id: 12, grade: "11", section: "HUMSS A", teacher: "Ms. Villanueva", students: 26 },
+        { id: 13, grade: "12", section: "STEM B", teacher: "Dr. Mendoza", students: 32 },
+        { id: 14, grade: "12", section: "ABM B", teacher: "Mr. Lim", students: 25 },
+        { id: 15, grade: "12", section: "HUMSS B", teacher: "Ms. Reyes", students: 24 }
+    ];
+
+    const $ = id => document.getElementById(id);
+    let sections;
+
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        const parsed = stored === null ? null : JSON.parse(stored);
+        sections = Array.isArray(parsed) ? parsed : initialData.map(s => ({ ...s }));
+    } catch (error) {
+        sections = initialData.map(s => ({ ...s }));
+    }
+
+    function persist() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(sections));
+        } catch (error) {
+            console.warn("Class changes could not be saved in browser storage.", error);
+        }
+    }
+
+    function escapeHTML(value) {
+        return String(value).replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[character]);
+    }
+
+    function highlighted(value, query) {
+        const text = String(value);
+        if (!query) return escapeHTML(text);
+
+        const lowerText = text.toLowerCase();
+        const lowerQuery = query.toLowerCase();
+        let result = "";
+        let start = 0;
+        let match;
+
+        while ((match = lowerText.indexOf(lowerQuery, start)) !== -1) {
+            result += escapeHTML(text.slice(start, match));
+            result += '<span class="classes-highlight">' +
+                      escapeHTML(text.slice(match, match + query.length)) +
+                      "</span>";
+            start = match + query.length;
+        }
+
+        return result + escapeHTML(text.slice(start));
+    }
+
+    function updateStats() {
+        $("totalSections").textContent = sections.length;
+        $("totalStudents").textContent = sections.reduce(
+            (total, section) => total + Number(section.students || 0), 0
+        );
+
+        const teachers = new Set(
+            sections
+                .map(section => String(section.teacher).trim().toLowerCase())
+                .filter(Boolean)
+        );
+
+        $("totalTeachers").textContent = teachers.size;
+        $("totalJHS").textContent = sections.filter(
+            section => Number(section.grade) <= 10
+        ).length;
+        $("totalSHS").textContent = sections.filter(
+            section => Number(section.grade) >= 11
+        ).length;
+    }
+
+    function renderSections() {
+        const department = $("filterDept").value;
+        const gradeFilter = $("filterGrade").value;
+        const query = $("searchInput").value.trim().toLowerCase();
+        const container = $("sectionContainer");
+
+        const filtered = sections.filter(section => {
+            const grade = String(section.grade);
+            const sectionDepartment = Number(grade) <= 10 ? "JHS" : "SHS";
+
+            return (department === "all" || department === sectionDepartment) &&
+                   (gradeFilter === "all" || gradeFilter === grade) &&
+                   (
+                       !query ||
+                       String(section.section).toLowerCase().includes(query) ||
+                       String(section.teacher).toLowerCase().includes(query)
+                   );
+        }).sort((a, b) =>
+            Number(a.grade) - Number(b.grade) ||
+            String(a.section).localeCompare(String(b.section))
+        );
+
+        if (!filtered.length) {
+            container.innerHTML = `
+                <div class="classes-empty-state">
+                    <i class="fas fa-users-slash"></i>
+                    <h3>No sections found</h3>
+                    <p>Try adjusting the filters or search for a different keyword.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = ["7", "8", "9", "10", "11", "12"]
+            .map(grade => {
+                const gradeSections = filtered.filter(
+                    section => String(section.grade) === grade
+                );
+                if (!gradeSections.length) return "";
+
+                const dept = Number(grade) <= 10 ? "JHS" : "SHS";
+
+                const rows = gradeSections.map(section => `
+                    <tr>
+                        <td class="section-name">
+                            ${highlighted(section.section, query)}
+                        </td>
+                        <td>
+                            <span class="teacher-name">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                ${highlighted(section.teacher, query)}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="students-badge">
+                                ${Number(section.students)}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="classes-row-actions">
+                                <button type="button" data-action="edit"
+                                        data-id="${section.id}" title="Edit"
+                                        aria-label="Edit section">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                                <button type="button" class="delete-btn"
+                                        data-action="delete" data-id="${section.id}"
+                                        title="Delete" aria-label="Delete section">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join("");
+
+                return `
+                    <section class="classes-grade-container">
+                        <button type="button" class="classes-grade-header"
+                                aria-expanded="true">
+                            <span class="classes-grade-left">
+                                <span class="classes-grade-title">Grade ${grade}</span>
+                                <span class="classes-dept-badge ${dept.toLowerCase()}">
+                                    ${dept}
+                                </span>
+                                <span class="classes-grade-count">
+                                    ${gradeSections.length}
+                                    section${gradeSections.length === 1 ? "" : "s"}
+                                </span>
+                            </span>
+                            <i class="fas fa-chevron-down toggle-icon open"></i>
+                        </button>
+
+                        <div class="classes-grade-body">
+                            <div class="classes-table-scroll">
+                                <table class="classes-section-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Section</th>
+                                            <th>Adviser</th>
+                                            <th>Students</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>${rows}</tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+                `;
+            }).join("");
+    }
+
+    function refresh() {
+        renderSections();
+        updateStats();
+    }
+
+    function openModal(section = null) {
+        $("sectionForm").reset();
+        $("editId").value = section ? section.id : "";
+        $("formGrade").value = section ? String(section.grade) : "7";
+        $("formSection").value = section ? section.section : "";
+        $("formTeacher").value = section ? section.teacher : "";
+        $("formStudents").value = section ? section.students : "";
+
+        $("modalTitle").innerHTML = section
+            ? '<i class="fas fa-edit"></i> Edit Section'
+            : '<i class="fas fa-plus-circle"></i> Add Section';
+
+        $("modalSub").textContent = section
+            ? "Update the section details."
+            : "Fill in the details for the new class section.";
+
+        $("modalSaveBtn").innerHTML = section
+            ? '<i class="fas fa-save"></i> Update'
+            : '<i class="fas fa-save"></i> Save';
+
+        $("modalOverlay").classList.add("active");
+        $("modalOverlay").setAttribute("aria-hidden", "false");
+        $("formSection").focus();
+    }
+
+    function closeModal() {
+        $("modalOverlay").classList.remove("active");
+        $("modalOverlay").setAttribute("aria-hidden", "true");
+    }
+
+    $("sectionForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (!this.reportValidity()) return;
+
+        const editId = $("editId").value;
+        const grade = $("formGrade").value;
+        const sectionName = $("formSection").value.trim();
+        const teacher = $("formTeacher").value.trim();
+        const students = Number($("formStudents").value);
+
+        if (!sectionName || !teacher ||
+            !Number.isInteger(students) || students < 0) {
+            alert("Enter a section name, adviser, and valid student count.");
+            return;
+        }
+
+        const duplicate = sections.some(section =>
+            String(section.grade) === grade &&
+            section.section.trim().toLowerCase() === sectionName.toLowerCase() &&
+            String(section.id) !== editId
+        );
+
+        if (duplicate) {
+            alert(`A section named "${sectionName}" already exists in Grade ${grade}.`);
+            return;
+        }
+
+        if (editId) {
+            const existing = sections.find(
+                section => String(section.id) === editId
+            );
+            if (!existing) return;
+
+            Object.assign(existing, {
+                grade,
+                section: sectionName,
+                teacher,
+                students
+            });
+        } else {
+            sections.push({
+                id: Date.now() + Math.floor(Math.random() * 1000),
+                grade,
+                section: sectionName,
+                teacher,
+                students
+            });
+        }
+
+        persist();
+        refresh();
+        closeModal();
+    });
+
+    $("sectionContainer").addEventListener("click", function (event) {
+        const header = event.target.closest(".classes-grade-header");
+
+        if (header) {
+            const body = header.nextElementSibling;
+            const isOpen = header.getAttribute("aria-expanded") === "true";
+
+            header.setAttribute("aria-expanded", String(!isOpen));
+            body.hidden = isOpen;
+            header.querySelector(".toggle-icon").classList.toggle("open", !isOpen);
+            return;
+        }
+
+        const actionButton = event.target.closest("button[data-action]");
+        if (!actionButton) return;
+
+        const section = sections.find(
+            item => String(item.id) === actionButton.dataset.id
+        );
+        if (!section) return;
+
+        if (actionButton.dataset.action === "edit") {
+            openModal(section);
+        }
+
+        if (actionButton.dataset.action === "delete") {
+            if (!confirm(
+                `Delete "${section.section}" (Grade ${section.grade}) permanently?`
+            )) return;
+
+            sections = sections.filter(item => item !== section);
+            persist();
+            refresh();
+        }
+    });
+
+    $("addSectionBtn").addEventListener("click", () => openModal());
+    $("cancelModalBtn").addEventListener("click", closeModal);
+
+    ["filterDept", "filterGrade"].forEach(id => {
+        $(id).addEventListener("change", renderSections);
+    });
+
+    $("searchInput").addEventListener("input", renderSections);
+
+    $("modalOverlay").addEventListener("click", function (event) {
+        if (event.target === this) closeModal();
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") closeModal();
+    });
+
+    $("exportBtn").addEventListener("click", function () {
+        const blob = new Blob(
+            [JSON.stringify(sections, null, 2)],
+            { type: "application/json" }
+        );
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "class_sections_backup.json";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+
+    refresh();
+});
+</script>
+{% endblock %}

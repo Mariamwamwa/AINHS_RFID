@@ -1,0 +1,1953 @@
+{% extends 'IN_BASE/Admin_Base.html' %}
+{% load static %}
+{% block title %}Students - RFID Attendance Management System{% endblock %}
+{% block page_heading %}<h2>Students</h2>{% endblock %}
+{% block page_subheading %}<p>View and manage registered students.</p>{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'css/ADMIN/Admin_Students_Info.css' %}">{% endblock %}
+{% block content %}
+<div class="students-content">
+
+
+            <!-- =================================================
+                 PAGE INTRO
+                 ================================================= -->
+
+            <div class="students-page-intro">
+
+                <div class="students-intro-icon">
+                    <i class="fa-solid fa-user-graduate"></i>
+                </div>
+
+                <div class="students-intro-text">
+
+                    <h3>Student Records</h3>
+
+                    <p>
+                        View, search, and manage registered student information.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STUDENT SUMMARY
+                 ================================================= -->
+
+            <div class="students-summary-grid">
+
+
+                <!-- TOTAL STUDENTS -->
+
+                <div class="students-summary-card">
+
+                    <div class="students-summary-icon purple">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+
+                    <div class="students-summary-details">
+
+                        <span>Total Students</span>
+
+                        <strong id="totalStudents">
+                            4
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SHS -->
+
+                <div class="students-summary-card">
+
+                    <div class="students-summary-icon blue">
+                        <i class="fa-solid fa-school"></i>
+                    </div>
+
+                    <div class="students-summary-details">
+
+                        <span>Senior High School</span>
+
+                        <strong id="shsStudents">
+                            2
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- JHS -->
+
+                <div class="students-summary-card">
+
+                    <div class="students-summary-icon cyan">
+                        <i class="fa-solid fa-building-columns"></i>
+                    </div>
+
+                    <div class="students-summary-details">
+
+                        <span>Junior High School</span>
+
+                        <strong id="jhsStudents">
+                            2
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RFID -->
+
+                <div class="students-summary-card">
+
+                    <div class="students-summary-icon teal">
+                        <i class="fa-solid fa-id-card"></i>
+                    </div>
+
+                    <div class="students-summary-details">
+
+                        <span>RFID Registered</span>
+
+                        <strong id="rfidStudents">
+                            4
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 STUDENT LIST CARD
+                 ================================================= -->
+
+            <section class="students-card">
+
+
+                <!-- CARD HEADER -->
+
+                <div class="students-card-header">
+
+                    <div class="card-header-text">
+
+                        <h3>
+                            All Students
+                        </h3>
+
+                        <p>
+                            List of students registered in the system.
+                        </p>
+
+                    </div>
+
+
+                    <!-- REGISTER STUDENT BUTTON -->
+
+                    <a href="#"
+                        class="add-student-btn">
+
+                        <i class="fa-solid fa-user-plus"></i>
+
+                        <span>Register Student</span>
+
+                    </a>
+
+                </div>
+
+
+                <!-- =================================================
+                     SEARCH + FILTERS
+                     ================================================= -->
+
+                <div class="student-filters">
+
+
+                    <!-- SEARCH -->
+
+                    <div class="search-wrapper">
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input
+                            type="text"
+                            id="studentSearch"
+                            placeholder="Search student, LRN, or RFID..."
+                        >
+
+                    </div>
+
+
+                    <!-- DEPARTMENT -->
+
+                    <div class="filter-wrapper department-filter">
+
+                        <i class="fa-solid fa-building"></i>
+
+                        <select id="departmentFilter">
+
+                            <option value="">
+                                All Departments
+                            </option>
+
+                            <option value="SHS">
+                                Senior High School
+                            </option>
+
+                            <option value="JHS">
+                                Junior High School
+                            </option>
+
+                        </select>
+
+                        <i class="fa-solid fa-chevron-down filter-arrow"></i>
+
+                    </div>
+
+
+                    <!-- GRADE -->
+
+                    <div class="filter-wrapper grade-filter">
+
+                        <i class="fa-solid fa-layer-group"></i>
+
+                        <select id="gradeFilter">
+
+                            <option value="">
+                                All Grades
+                            </option>
+
+                            <option value="Grade 7">Grade 7</option>
+                            <option value="Grade 8">Grade 8</option>
+                            <option value="Grade 9">Grade 9</option>
+                            <option value="Grade 10">Grade 10</option>
+                            <option value="Grade 11">Grade 11</option>
+                            <option value="Grade 12">Grade 12</option>
+
+                        </select>
+
+                        <i class="fa-solid fa-chevron-down filter-arrow"></i>
+
+                    </div>
+
+
+                    <!-- SECTION -->
+
+                    <div class="filter-wrapper section-filter">
+
+                        <i class="fa-solid fa-users"></i>
+
+                        <select id="sectionFilter">
+
+                            <option value="">
+                                All Sections
+                            </option>
+
+                            <option value="Section A">
+                                Section A
+                            </option>
+
+                            <option value="Section B">
+                                Section B
+                            </option>
+
+                            <option value="Section C">
+                                Section C
+                            </option>
+
+                        </select>
+
+                        <i class="fa-solid fa-chevron-down filter-arrow"></i>
+
+                    </div>
+
+
+                    <!-- REFRESH -->
+
+                    <button
+                        type="button"
+                        class="reset-filter-btn"
+                        id="resetFilters"
+                        title="Refresh / Reset filters"
+                        aria-label="Refresh / Reset filters"
+                    >
+
+                        <i class="fa-solid fa-rotate-right"></i>
+
+                    </button>
+
+                </div>
+
+
+                <!-- =================================================
+                     TABLE
+                     ================================================= -->
+
+                <div class="students-table-wrapper">
+
+                    <table class="students-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th class="student-column">
+                                    Student
+                                </th>
+
+                                <th>
+                                    LRN
+                                </th>
+
+                                <th>
+                                    RFID UID
+                                </th>
+
+                                <th>
+                                    Age
+                                </th>
+
+                                <th>
+                                    Sex
+                                </th>
+
+                                <th>
+                                    Class
+                                </th>
+
+                                <th>
+                                    Guardian
+                                </th>
+
+                                <th>
+                                    Guardian Contact
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th class="action-column">
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="studentsTableBody">
+
+
+                            <!-- =================================================
+                                 STUDENT 1
+                                 ================================================= -->
+
+                            <tr>
+
+                                <td class="student-column">
+
+                                    <div class="student-info">
+
+                                        <div class="student-avatar">
+
+                                            <i class="fa-solid fa-user"></i>
+
+                                        </div>
+
+                                        <div class="student-details">
+
+                                            <strong>
+                                                Juan Dela Cruz
+                                            </strong>
+
+                                            <span>
+                                                juan.delacruz@email.com
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        123456789012
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="rfid-badge">
+
+                                        <i class="fa-solid fa-fingerprint"></i>
+
+                                        RFID-001A2B
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- AGE -->
+
+                                <td>
+                                    <span class="table-text">
+                                        17
+                                    </span>
+                                </td>
+
+
+                                <!-- SEX -->
+
+                                <td>
+                                    <span class="table-text">
+                                        Male
+                                    </span>
+                                </td>
+
+
+                                <!-- CLASS -->
+
+                                <td>
+
+                                    <div class="class-info">
+
+                                        <strong>
+                                            Grade 11
+                                        </strong>
+
+                                        <span>
+                                            Section A
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- GUARDIAN -->
+
+                                <td>
+
+                                    <div class="guardian-info">
+
+                                        <strong>
+                                            Maria Dela Cruz
+                                        </strong>
+
+                                        <span>
+                                            Mother
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- GUARDIAN CONTACT -->
+
+                                <td>
+                                    <span class="table-text">
+                                        0917 123 4567
+                                    </span>
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    <span class="status-badge active-status">
+
+                                        <span class="status-dot"></span>
+
+                                        Active
+
+                                    </span>
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td class="action-column">
+
+                                    <div class="action-buttons">
+
+                                        <button
+                                            type="button"
+                                            class="table-action view-action"
+                                            title="View Student"
+                                        >
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="table-action edit-action"
+                                            title="Edit Student"
+                                        >
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="table-action delete-action"
+                                            title="Delete Student"
+                                        >
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                            <!-- =================================================
+                                 STUDENT 2
+                                 ================================================= -->
+
+                            <tr>
+
+                                <td class="student-column">
+
+                                    <div class="student-info">
+
+                                        <div class="student-avatar">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+
+                                        <div class="student-details">
+
+                                            <strong>
+                                                Angela Santos
+                                            </strong>
+
+                                            <span>
+                                                angela.santos@email.com
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        123456789013
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="rfid-badge">
+
+                                        <i class="fa-solid fa-fingerprint"></i>
+
+                                        RFID-002C4D
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        16
+                                    </span>
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        Female
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <div class="class-info">
+
+                                        <strong>
+                                            Grade 10
+                                        </strong>
+
+                                        <span>
+                                            Section B
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="guardian-info">
+
+                                        <strong>
+                                            Roberto Santos
+                                        </strong>
+
+                                        <span>
+                                            Father
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        0918 234 5678
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status-badge active-status">
+
+                                        <span class="status-dot"></span>
+
+                                        Active
+
+                                    </span>
+
+                                </td>
+
+
+                                <td class="action-column">
+
+                                    <div class="action-buttons">
+
+                                        <button
+                                            type="button"
+                                            class="table-action view-action"
+                                            title="View Student"
+                                        >
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="table-action edit-action"
+                                            title="Edit Student"
+                                        >
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="table-action delete-action"
+                                            title="Delete Student"
+                                        >
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                            <!-- =================================================
+                                 STUDENT 3
+                                 ================================================= -->
+
+                            <tr>
+
+                                <td class="student-column">
+
+                                    <div class="student-info">
+
+                                        <div class="student-avatar">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+
+                                        <div class="student-details">
+
+                                            <strong>
+                                                Mark Anthony Reyes
+                                            </strong>
+
+                                            <span>
+                                                mark.reyes@email.com
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        123456789014
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="rfid-badge">
+
+                                        <i class="fa-solid fa-fingerprint"></i>
+
+                                        RFID-003E5F
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        15
+                                    </span>
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        Male
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <div class="class-info">
+
+                                        <strong>
+                                            Grade 9
+                                        </strong>
+
+                                        <span>
+                                            Section A
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="guardian-info">
+
+                                        <strong>
+                                            Elena Reyes
+                                        </strong>
+
+                                        <span>
+                                            Mother
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        0919 345 6789
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status-badge active-status">
+
+                                        <span class="status-dot"></span>
+
+                                        Active
+
+                                    </span>
+
+                                </td>
+
+
+                                <td class="action-column">
+
+                                    <div class="action-buttons">
+
+                                        <button
+                                            type="button"
+                                            class="table-action view-action"
+                                            title="View Student"
+                                        >
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="table-action edit-action"
+                                            title="Edit Student"
+                                        >
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="table-action delete-action"
+                                            title="Delete Student"
+                                        >
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                            <!-- =================================================
+                                 STUDENT 4
+                                 ================================================= -->
+
+                            <tr>
+
+                                <td class="student-column">
+
+                                    <div class="student-info">
+
+                                        <div class="student-avatar">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+
+                                        <div class="student-details">
+
+                                            <strong>
+                                                Sophia Garcia
+                                            </strong>
+
+                                            <span>
+                                                sophia.garcia@email.com
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        123456789015
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="rfid-badge">
+
+                                        <i class="fa-solid fa-fingerprint"></i>
+
+                                        RFID-004G6H
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        18
+                                    </span>
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        Female
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <div class="class-info">
+
+                                        <strong>
+                                            Grade 12
+                                        </strong>
+
+                                        <span>
+                                            Section C
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+
+                                    <div class="guardian-info">
+
+                                        <strong>
+                                            Carlos Garcia
+                                        </strong>
+
+                                        <span>
+                                            Father
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <td>
+                                    <span class="table-text">
+                                        0920 456 7890
+                                    </span>
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status-badge inactive-status">
+
+                                        <span class="status-dot"></span>
+
+                                        Inactive
+
+                                    </span>
+
+                                </td>
+
+
+                                <td class="action-column">
+
+                                    <div class="action-buttons">
+
+                                        <button
+                                            type="button"
+                                            class="table-action view-action"
+                                            title="View Student"
+                                        >
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="table-action edit-action"
+                                            title="Edit Student"
+                                        >
+                                            <i class="fa-solid fa-pen"></i>
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            class="table-action delete-action"
+                                            title="Delete Student"
+                                        >
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+
+                            <!-- =================================================
+                                 EMPTY STATE
+                                 ================================================= -->
+
+                            <tr id="emptyState" class="empty-state-row">
+
+                                <td colspan="10">
+
+                                    <div class="empty-state">
+
+                                        <div class="empty-state-icon">
+
+                                            <i class="fa-solid fa-user-graduate"></i>
+
+                                        </div>
+
+                                        <strong>
+                                            No students found
+                                        </strong>
+
+                                        <span>
+                                            Try changing your search or filters.
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- =================================================
+                     TABLE FOOTER
+                     ================================================= -->
+
+                <div class="students-table-footer">
+
+                    <div class="showing-info">
+
+                        Showing
+                        <strong id="showingStart">1</strong>–<strong id="showingEnd">4</strong>
+                        of
+                        <strong id="showingTotal">4</strong>
+                        students
+
+                    </div>
+
+
+                    <div class="students-pagination">
+
+                        <button
+                            type="button"
+                            class="students-pagination-btn disabled" disabled
+                            title="Previous"
+                        >
+                            <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="students-pagination-btn active-page"
+                        >
+                            1
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="students-pagination-btn disabled" disabled
+                            title="Next"
+                        >
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+</div>
+<!-- =====================================================
+     STUDENT PROFILE VIEW MODAL
+     ===================================================== -->
+
+<div class="student-profile-overlay" id="studentProfileOverlay">
+
+    <div
+        class="student-profile-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="studentProfileTitle"
+    >
+
+        <!-- PROFILE HEADER -->
+
+        <div class="student-profile-header">
+
+            <div class="student-profile-header-left">
+
+                <div class="student-profile-header-icon">
+                    <i class="fa-solid fa-id-card"></i>
+                </div>
+
+                <div class="student-profile-header-text">
+
+                    <h3 id="studentProfileTitle">
+                        Student Profile
+                    </h3>
+
+                    <p>
+                        Complete student information
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="student-profile-close"
+                id="closeStudentProfile"
+                aria-label="Close student profile"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+
+        <!-- PROFILE BODY -->
+
+        <div class="student-profile-body">
+
+
+            <!-- STUDENT SUMMARY -->
+
+            <div class="student-profile-top">
+
+                <div class="student-profile-photo" id="profilePhoto">
+
+                    <i class="fa-solid fa-user"></i>
+
+                </div>
+
+
+                <div class="student-profile-main">
+
+                    <h2 id="profileName">
+                        Juan Dela Cruz
+                    </h2>
+
+                    <p id="profileEmail">
+                        juan.delacruz@email.com
+                    </p>
+
+
+                    <div
+                        class="student-profile-status"
+                        id="profileStatus"
+                    >
+
+                        <span class="status-badge active-status">
+
+                            <span class="status-dot"></span>
+
+                            Active
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PERSONAL INFORMATION -->
+
+            <div class="profile-section">
+
+                <div class="profile-section-title">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    <span>Personal Information</span>
+
+                </div>
+
+
+                <div class="profile-info-grid">
+
+
+                    <div class="profile-info-item">
+
+                        <span class="profile-info-label">
+                            <i class="fa-solid fa-id-card"></i>
+                            LRN
+                        </span>
+
+                        <strong
+                            class="profile-info-value"
+                            id="profileLRN"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-info-item">
+
+                        <span class="profile-info-label">
+                            <i class="fa-solid fa-fingerprint"></i>
+                            RFID UID
+                        </span>
+
+                        <strong
+                            class="profile-info-value"
+                            id="profileRFID"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-info-item">
+
+                        <span class="profile-info-label">
+                            <i class="fa-solid fa-cake-candles"></i>
+                            Age
+                        </span>
+
+                        <strong
+                            class="profile-info-value"
+                            id="profileAge"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-info-item">
+
+                        <span class="profile-info-label">
+                            <i class="fa-solid fa-venus-mars"></i>
+                            Sex
+                        </span>
+
+                        <strong
+                            class="profile-info-value"
+                            id="profileSex"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-info-item">
+
+                        <span class="profile-info-label">
+                            <i class="fa-solid fa-envelope"></i>
+                            Email
+                        </span>
+
+                        <strong
+                            class="profile-info-value"
+                            id="profileEmailInfo"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="profile-info-item">
+
+                        <span class="profile-info-label">
+                            <i class="fa-solid fa-phone"></i>
+                            Contact Number
+                        </span>
+
+                        <strong
+                            class="profile-info-value"
+                            id="profileContact"
+                        >
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ADDRESS -->
+
+           <div class="profile-section">
+
+    <div class="profile-section-title">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>Address</span>
+    </div>
+
+    <div class="profile-info-grid profile-three-columns">
+
+        <div class="profile-info-item">
+            <span class="profile-info-label">
+                <i class="fa-solid fa-map-pin"></i>
+                Barangay
+            </span>
+            <strong class="profile-info-value" id="profileBarangay">
+                —
+            </strong>
+        </div>
+
+        <div class="profile-info-item">
+            <span class="profile-info-label">
+                <i class="fa-solid fa-city"></i>
+                Municipality
+            </span>
+            <strong class="profile-info-value" id="profileMunicipality">
+                —
+            </strong>
+        </div>
+
+        <div class="profile-info-item">
+            <span class="profile-info-label">
+                <i class="fa-solid fa-map"></i>
+                Province
+            </span>
+            <strong class="profile-info-value" id="profileProvince">
+                —
+            </strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+            <!-- SCHOOL INFORMATION -->
+
+<div class="profile-section">
+
+    <div class="profile-section-title">
+        <i class="fa-solid fa-school"></i>
+        <span>School Information</span>
+    </div>
+
+    <div class="profile-info-grid profile-three-columns">
+
+        <div class="profile-info-item">
+            <span class="profile-info-label">
+                <i class="fa-solid fa-layer-group"></i>
+                Grade
+            </span>
+            <strong class="profile-info-value" id="profileGrade">
+                —
+            </strong>
+        </div>
+
+        <div class="profile-info-item">
+            <span class="profile-info-label">
+                <i class="fa-solid fa-users"></i>
+                Section
+            </span>
+            <strong class="profile-info-value" id="profileSection">
+                —
+            </strong>
+        </div>
+
+        <div class="profile-info-item">
+            <span class="profile-info-label">
+                <i class="fa-solid fa-user-tie"></i>
+                Adviser
+            </span>
+            <strong class="profile-info-value" id="profileAdviser">
+                —
+            </strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+            <!-- PARENT / GUARDIAN -->
+
+<div class="profile-section">
+
+    <div class="profile-section-title">
+        <i class="fa-solid fa-people-roof"></i>
+        <span>Parent / Guardian Information</span>
+    </div>
+
+    <div class="profile-info-grid profile-three-columns">
+
+        <div class="profile-info-item">
+            <span class="profile-info-label">
+                <i class="fa-solid fa-user-shield"></i>
+                Parent / Guardian
+            </span>
+            <strong class="profile-info-value" id="profileGuardian">
+                —
+            </strong>
+        </div>
+
+        <div class="profile-info-item">
+            <span class="profile-info-label">
+                <i class="fa-solid fa-user-tag"></i>
+                Relationship
+            </span>
+            <strong class="profile-info-value" id="profileRelationship">
+                —
+            </strong>
+        </div>
+
+        <div class="profile-info-item">
+            <span class="profile-info-label">
+                <i class="fa-solid fa-phone"></i>
+                Guardian Contact Number
+            </span>
+            <strong class="profile-info-value" id="profileGuardianContact">
+                —
+            </strong>
+        </div>
+
+    </div>
+
+</div>
+        <!-- PROFILE FOOTER -->
+
+        <div class="student-profile-footer">
+
+            <button
+                type="button"
+                class="profile-close-btn"
+                id="closeStudentProfileBottom"
+            >
+                Close
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+const searchInput =
+            document.getElementById("studentSearch");
+
+        const departmentFilter =
+            document.getElementById("departmentFilter");
+
+        const gradeFilter =
+            document.getElementById("gradeFilter");
+
+        const sectionFilter =
+            document.getElementById("sectionFilter");
+
+        const resetFilters =
+            document.getElementById("resetFilters");
+
+        const tableBody =
+            document.getElementById("studentsTableBody");
+
+        const emptyState =
+            document.getElementById("emptyState");
+
+
+        function filterStudents() {
+
+            const searchValue =
+                searchInput.value.toLowerCase().trim();
+
+            const departmentValue =
+                departmentFilter.value.toLowerCase();
+
+            const gradeValue =
+                gradeFilter.value.toLowerCase();
+
+            const sectionValue =
+                sectionFilter.value.toLowerCase();
+
+
+            const rows =
+                tableBody.querySelectorAll(
+                    "tr:not(#emptyState)"
+                );
+
+
+            let visibleCount = 0;
+
+
+            rows.forEach(function (row) {
+
+                const rowText =
+                    row.textContent.toLowerCase();
+
+
+                const matchesSearch =
+                    !searchValue ||
+                    rowText.includes(searchValue);
+
+
+                let matchesDepartment = true;
+
+                if (departmentValue === "shs") {
+
+                    matchesDepartment =
+                        rowText.includes("grade 11") ||
+                        rowText.includes("grade 12");
+
+                }
+                else if (departmentValue === "jhs") {
+
+                    matchesDepartment =
+                        rowText.includes("grade 7") ||
+                        rowText.includes("grade 8") ||
+                        rowText.includes("grade 9") ||
+                        rowText.includes("grade 10");
+
+                }
+
+
+                const matchesGrade =
+                    !gradeValue ||
+                    rowText.includes(gradeValue);
+
+
+                const matchesSection =
+                    !sectionValue ||
+                    rowText.includes(sectionValue);
+
+
+                const visible =
+                    matchesSearch &&
+                    matchesDepartment &&
+                    matchesGrade &&
+                    matchesSection;
+
+
+                row.style.display =
+                    visible ? "" : "none";
+
+
+                if (visible) {
+                    visibleCount++;
+                }
+
+            });
+
+
+            emptyState.style.display =
+                visibleCount === 0
+                    ? "table-row"
+                    : "none";
+
+
+            document.getElementById("showingStart").textContent =
+                visibleCount > 0 ? "1" : "0";
+
+            document.getElementById("showingEnd").textContent =
+                visibleCount;
+
+            document.getElementById("showingTotal").textContent =
+                visibleCount;
+
+        }
+
+
+        searchInput.addEventListener(
+            "input",
+            filterStudents
+        );
+
+
+        departmentFilter.addEventListener(
+            "change",
+            filterStudents
+        );
+
+
+        gradeFilter.addEventListener(
+            "change",
+            filterStudents
+        );
+
+
+        sectionFilter.addEventListener(
+            "change",
+            filterStudents
+        );
+
+
+        /* =====================================================
+           REFRESH / RESET FILTERS
+           ===================================================== */
+
+        resetFilters.addEventListener(
+            "click",
+            function () {
+
+                searchInput.value = "";
+
+                departmentFilter.value = "";
+
+                gradeFilter.value = "";
+
+                sectionFilter.value = "";
+
+                filterStudents();
+
+            }
+        );
+
+
+        /* =====================================================
+           ACTION BUTTONS
+           ===================================================== */
+
+/* =====================================================
+   STUDENT PROFILE VIEW
+   ===================================================== */
+
+const studentProfileOverlay =
+    document.getElementById("studentProfileOverlay");
+
+const closeStudentProfile =
+    document.getElementById("closeStudentProfile");
+
+const closeStudentProfileBottom =
+    document.getElementById("closeStudentProfileBottom");
+
+
+function setProfileValue(id, value) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+
+        element.textContent =
+            value || "Not available";
+
+    }
+
+}
+
+
+function openStudentProfile(row) {
+
+    const data = { ...row.dataset };
+    const cells = row.cells;
+    data.name ||= row.querySelector('.student-details strong')?.textContent.trim();
+    data.email ||= row.querySelector('.student-details span')?.textContent.trim();
+    data.lrn ||= cells[1]?.textContent.trim();
+    data.rfid ||= cells[2]?.textContent.trim();
+    data.age ||= cells[3]?.textContent.trim();
+    data.sex ||= cells[4]?.textContent.trim();
+    data.grade ||= row.querySelector('.class-info strong')?.textContent.trim();
+    data.section ||= row.querySelector('.class-info span')?.textContent.trim();
+    data.guardian ||= row.querySelector('.guardian-info strong')?.textContent.trim();
+    data.relationship ||= row.querySelector('.guardian-info span')?.textContent.trim();
+    data.guardianContact ||= cells[7]?.textContent.trim();
+    data.status ||= row.querySelector('.status-badge')?.textContent.trim();
+
+
+    /* =================================================
+       BASIC INFORMATION
+       ================================================= */
+
+    setProfileValue(
+        "profileName",
+        data.name
+    );
+
+    setProfileValue(
+        "profileEmail",
+        data.email
+    );
+
+    setProfileValue(
+        "profileEmailInfo",
+        data.email
+    );
+
+    setProfileValue(
+        "profileLRN",
+        data.lrn
+    );
+
+    setProfileValue(
+        "profileRFID",
+        data.rfid
+    );
+
+    setProfileValue(
+        "profileAge",
+        data.age
+    );
+
+    setProfileValue(
+        "profileSex",
+        data.sex
+    );
+
+    setProfileValue(
+        "profileContact",
+        data.contact
+    );
+
+
+    /* =================================================
+       ADDRESS
+       ================================================= */
+
+    setProfileValue(
+        "profileBarangay",
+        data.barangay
+    );
+
+    setProfileValue(
+        "profileMunicipality",
+        data.municipality
+    );
+
+    setProfileValue(
+        "profileProvince",
+        data.province
+    );
+
+
+    /* =================================================
+       SCHOOL INFORMATION
+       ================================================= */
+
+    setProfileValue(
+        "profileGrade",
+        data.grade
+    );
+
+    setProfileValue(
+        "profileSection",
+        data.section
+    );
+
+setProfileValue("profileAdviser", data.adviser);
+    /* =================================================
+       GUARDIAN
+       ================================================= */
+
+    setProfileValue(
+        "profileGuardian",
+        data.guardian
+    );
+
+    setProfileValue(
+        "profileRelationship",
+        data.relationship
+    );
+
+    setProfileValue(
+        "profileGuardianContact",
+        data.guardianContact
+    );
+
+
+    /* =================================================
+       STATUS
+       ================================================= */
+
+    const profileStatus =
+        document.getElementById("profileStatus");
+
+    const status =
+        data.status || "Active";
+
+    const statusClass =
+        status.toLowerCase() === "active"
+            ? "active-status"
+            : "inactive-status";
+
+
+    profileStatus.innerHTML = `
+
+        <span class="status-badge ${statusClass}">
+
+            <span class="status-dot"></span>
+
+            ${status}
+
+        </span>
+
+    `;
+
+
+    /* =================================================
+       OPEN MODAL
+       ================================================= */
+
+    studentProfileOverlay.classList.add("show");
+
+    document.body.style.overflow = "hidden";
+
+}
+
+
+/* =====================================================
+   VIEW BUTTON
+   ===================================================== */
+
+document.querySelectorAll(
+    ".view-action"
+).forEach(function (button) {
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            const row =
+                this.closest("tr");
+
+            if (row) {
+
+                openStudentProfile(row);
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =====================================================
+   CLOSE PROFILE
+   ===================================================== */
+
+function closeStudentProfileModal() {
+
+    studentProfileOverlay.classList.remove("show");
+
+    document.body.style.overflow = "";
+
+}
+
+
+closeStudentProfile.addEventListener(
+    "click",
+    closeStudentProfileModal
+);
+
+
+closeStudentProfileBottom.addEventListener(
+    "click",
+    closeStudentProfileModal
+);
+
+
+/* =====================================================
+   CLOSE WHEN CLICKING OUTSIDE
+   ===================================================== */
+
+studentProfileOverlay.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            event.target ===
+            studentProfileOverlay
+        ) {
+
+            closeStudentProfileModal();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   CLOSE WITH ESCAPE KEY
+   ===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Escape" &&
+            studentProfileOverlay.classList.contains("show")
+        ) {
+
+            closeStudentProfileModal();
+
+        }
+
+    }
+);
+
+
+        document.querySelectorAll(
+            ".edit-action"
+        ).forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    alert(
+                        "Student editing will be connected here."
+                    );
+
+                }
+            );
+
+        });
+
+
+        document.querySelectorAll(
+            ".delete-action"
+        ).forEach(function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const confirmDelete =
+                        confirm(
+                            "Remove this student from the displayed sample list? This does not delete a database record."
+                        );
+
+
+                    if (confirmDelete) {
+
+                        this.closest("tr").remove();
+
+                        filterStudents();
+
+                    }
+
+                }
+            );
+
+        });
+
+
+        /* =====================================================
+           INITIALIZE
+           ===================================================== */
+
+        filterStudents();
+
+    
+</script>
+{% endblock %}

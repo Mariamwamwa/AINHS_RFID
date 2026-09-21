@@ -4,48 +4,85 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import Teacher
 
+
+# =====================================================
+# AUTHENTICATION
+# =====================================================
+
 def home(request):
-    return render(request, 'Authentication/Home_Page.html')
+    return render(request, 'AUTHENTICATION/Home_Page.html')
+
 
 def login_page(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        role = request.POST.get('role')  
-        
-        user = authenticate(request, username=username, password=password)
-        
+        role = request.POST.get('role')
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
         if user is not None:
-            login(request, user)
 
             if role == 'admin':
+
                 if user.is_superuser or user.is_staff:
+                    login(request, user)
                     return redirect('admin_dashboard')
+
                 else:
-                    messages.error(request, 'You are not authorized as admin.')
+                    messages.error(
+                        request,
+                        'You are not authorized as admin.'
+                    )
                     return redirect('login')
-            
+
             elif role == 'teacher':
+
                 try:
                     teacher = Teacher.objects.get(user=user)
+
+                    login(request, user)
                     return redirect('teacher_dashboard')
+
                 except Teacher.DoesNotExist:
-                    messages.error(request, 'No teacher profile found.')
+                    messages.error(
+                        request,
+                        'No teacher profile found.'
+                    )
                     return redirect('login')
-            
+
             else:
-                messages.error(request, 'Please select an account type.')
+                messages.error(
+                    request,
+                    'Please select an account type.'
+                )
                 return redirect('login')
-                
+
         else:
-            messages.error(request, 'Invalid username or password.')
-            return render(request, 'Authentication/Login_Page.html')
-    
-    return render(request, 'Authentication/Login_Page.html')
+            messages.error(
+                request,
+                'Invalid username or password.'
+            )
+
+            return render(
+                request,
+                'AUTHENTICATION/Login_Page.html'
+            )
+
+    return render(
+        request,
+        'AUTHENTICATION/Login_Page.html'
+    )
+
 
 def register_page(request):
+
     if request.method == 'POST':
-       
+
         id_number = request.POST.get('id_number')
         role = request.POST.get('role')
         department = request.POST.get('department')
@@ -59,38 +96,63 @@ def register_page(request):
         security_answer = request.POST.get('security_answer')
 
         if password != confirm_password:
-            messages.error(request, 'Passwords do not match.')
-            return render(request, 'Authentication/Register_Page.html')
+            messages.error(
+                request,
+                'Passwords do not match.'
+            )
+            return render(
+                request,
+                'AUTHENTICATION/Register_Page.html'
+            )
 
         if User.objects.filter(username=username).exists():
-            messages.error(request, 'Username already exists.')
-            return render(request, 'Authentication/Register_Page.html')
+            messages.error(
+                request,
+                'Username already exists.'
+            )
+            return render(
+                request,
+                'AUTHENTICATION/Register_Page.html'
+            )
 
-        if role == 'TEACHER' and Teacher.objects.filter(teacher_id=id_number).exists():
-            messages.error(request, 'Teacher ID already exists.')
-            return render(request, 'Authentication/Register_Page.html')
-        
+        if role == 'TEACHER' and Teacher.objects.filter(
+            teacher_id=id_number
+        ).exists():
+
+            messages.error(
+                request,
+                'Teacher ID already exists.'
+            )
+
+            return render(
+                request,
+                'AUTHENTICATION/Register_Page.html'
+            )
+
         if role == 'ADMIN':
+
             user = User.objects.create_user(
                 username=username,
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
-                is_staff=True,      
-                is_superuser=True,  
+                is_staff=True,
+                is_superuser=True,
             )
-        else:  # TEACHER
-            # TEACHER: normal user
+
+        else:
+
             user = User.objects.create_user(
                 username=username,
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
-                is_staff=False,     
-                is_superuser=False, 
+                is_staff=False,
+                is_superuser=False,
             )
-        
+
         if role == 'TEACHER':
+
             Teacher.objects.create(
                 user=user,
                 teacher_id=id_number,
@@ -108,52 +170,121 @@ def register_page(request):
                 security_question=security_question,
                 security_answer=security_answer,
             )
-        
-        messages.success(request, 'Account created successfully!')
+
+        messages.success(
+            request,
+            'Account created successfully!'
+        )
+
         return redirect('login')
-    
-    return render(request, 'Authentication/Register_Page.html')
+
+    return render(
+        request,
+        'AUTHENTICATION/Register_Page.html'
+    )
+
 
 def attendance_page(request):
-    return render(request, 'Authentication/Attendance_Page.html')
+    return render(
+        request,
+        'AUTHENTICATION/Attendance_Page.html'
+    )
 
-#ADMIN
+
+# =====================================================
+# ADMIN
+# =====================================================
+
 def admin_dashboard(request):
-    return render(request, 'ADMIN/00_Dashboard.html')
+    return render(
+        request,
+        'ADMIN/Admin_Dashboard.html'
+    )
+
 
 def admin_users(request):
-    return render(request, 'ADMIN/01_Users.html')
+    return render(
+        request,
+        'ADMIN/Admin_Users.html'
+    )
+
 
 def admin_attendance(request):
-    return render(request, 'ADMIN/02_Student_Attendance.html')
+    return render(
+        request,
+        'ADMIN/Admin_Student_Attendance.html'
+    )
+
 
 def admin_teachers(request):
-    return render(request, 'ADMIN/03_Teachers_Info.html')
+    return render(
+        request,
+        'ADMIN/Admin_Teachers_Info.html'
+    )
+
 
 def admin_students(request):
-    return render(request, 'ADMIN/04_Students_Info.html')
+    return render(
+        request,
+        'ADMIN/Admin_Students_Info.html'
+    )
+
 
 def admin_classes(request):
-    return render(request, 'ADMIN/05_Classes.html')
+    return render(
+        request,
+        'ADMIN/Admin_Classes.html'
+    )
+
 
 def admin_register_rfid(request):
-    return render(request, 'ADMIN/06_Register_RFID.html')
+    return render(
+        request,
+        'ADMIN/Admin_Register_RFID.html'
+    )
+
 
 def admin_add_teacher(request):
-    return render(request, 'ADMIN/07_Add_Teacher.html')
+    return render(
+        request,
+        'ADMIN/Admin_Add_Teacher.html'
+    )
 
-#TEACHER
+
+# =====================================================
+# TEACHER
+# =====================================================
+
 def teacher_dashboard(request):
-    return render(request, 'TEACHER/01_Dashboard.html')
+    return render(
+        request,
+        'TEACHER/Teacher_Dashboard.html'
+    )
+
 
 def teacher_class_attendance(request):
-    return render(request, 'TEACHER/02_Class_Attendance.html')
+    return render(
+        request,
+        'TEACHER/Teacher_Class_Attendance.html'
+    )
+
 
 def teacher_class_record(request):
-    return render(request, 'TEACHER/03_Class_Record.html')
+    return render(
+        request,
+        'TEACHER/Teacher_Class_Record.html'
+    )
+
 
 def teacher_profile(request):
-    return render(request, 'TEACHER/04_Personal_Info.html')
+    return render(
+        request,
+        'TEACHER/Teacher_Personal_Info.html'
+    )
+
 
 def teacher_security(request):
-    return render(request, 'TEACHER/05_Security.html')
+    return render(
+        request,
+        'TEACHER/Teacher_Security.html'
+    )

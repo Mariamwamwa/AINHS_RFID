@@ -1,0 +1,556 @@
+
+/* =========================================================
+   TEACHER CONTENT
+   ========================================================= */
+
+.teacher-content {
+    padding: 30px 32px 40px;
+}
+
+
+/* =========================================================
+   PAGE TITLE ROW
+   ========================================================= */
+
+.page-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.title-icon {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(111, 66, 193, 0.10);
+    color: var(--primary-purple);
+    font-size: 20px;
+}
+
+.page-title h1 {
+    font-size: 22px;
+    line-height: 1.2;
+    color: var(--dark);
+}
+
+.page-title p {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--gray);
+}
+
+
+/* =========================================================
+   TOOLBAR CARD
+   ========================================================= */
+
+.toolbar-card {
+    min-height: 82px;
+    padding: 15px 18px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   TEACHER SUMMARY
+   ========================================================= */
+
+.teacher-summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.summary-icon {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(111, 66, 193, 0.10);
+    color: var(--primary-purple);
+    font-size: 18px;
+}
+
+.summary-information span {
+    display: block;
+    color: var(--gray);
+    font-size: 11px;
+}
+
+.summary-information strong {
+    display: block;
+    margin-top: 2px;
+    color: var(--dark);
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+
+.teacher-search {
+    width: 300px;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #FAFBFD;
+
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 9px;
+
+    transition: 0.2s ease;
+}
+
+.teacher-search:focus-within {
+    border-color: rgba(111, 66, 193, 0.45);
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.06);
+}
+
+.teacher-search i {
+    color: var(--gray-light);
+    font-size: 13px;
+}
+
+.teacher-search input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--dark);
+    font-size: 12px;
+}
+
+.teacher-search input::placeholder {
+    color: var(--gray-light);
+}
+
+
+/* =========================================================
+   TEACHER TABLE CARD
+   ========================================================= */
+
+.teacher-table-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TABLE CARD HEADER
+   ========================================================= */
+
+.table-card-header {
+    min-height: 72px;
+    padding: 17px 20px;
+    border-bottom: 1px solid var(--border);
+
+    display: flex;
+    align-items: center;
+}
+
+.table-card-header h3 {
+    font-size: 16px;
+    color: var(--dark);
+}
+
+.table-card-header p {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--gray);
+}
+
+
+/* =========================================================
+   TEACHER TABLE CONTAINER
+   ========================================================= */
+
+.teacher-table-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+
+/* =========================================================
+   TEACHER TABLE
+   ========================================================= */
+
+.teacher-table {
+    width: 100%;
+    min-width: 1350px;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+
+/* =========================================================
+   TABLE HEAD
+   ========================================================= */
+
+.teacher-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+
+    padding: 13px 14px;
+    text-align: left;
+    background: #FAFBFD;
+    color: var(--gray);
+
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+
+    border-bottom: 1px solid var(--border);
+}
+
+
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
+
+.teacher-table tbody td {
+    padding: 14px;
+    border-top: 1px solid #F0F1F3;
+    color: var(--gray-dark);
+    font-size: 12px;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.teacher-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.teacher-table tbody tr:hover {
+    background: #FAFBFD;
+}
+
+
+/* =========================================================
+   TEACHER ID
+   ========================================================= */
+
+.teacher-id {
+    color: var(--primary-purple);
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   DEPARTMENT
+   ========================================================= */
+
+.department {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 45px;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.department.jhs {
+    background: rgba(0, 123, 255, 0.10);
+    color: var(--primary-blue);
+}
+
+.department.shs {
+    background: rgba(111, 66, 193, 0.10);
+    color: var(--primary-purple);
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+   ========================================================= */
+
+.action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.action-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--white);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    font-size: 11px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+/* VIEW BUTTON */
+
+.view-btn {
+    color: var(--primary-blue);
+}
+
+.view-btn:hover {
+    background: rgba(0, 123, 255, 0.08);
+    border-color: rgba(0, 123, 255, 0.20);
+}
+
+
+/* EDIT BUTTON */
+
+.edit-btn {
+    color: var(--primary-purple);
+}
+
+.edit-btn:hover {
+    background: rgba(111, 66, 193, 0.08);
+    border-color: rgba(111, 66, 193, 0.20);
+}
+
+
+/* DELETE BUTTON */
+
+.delete-btn {
+    color: #DC3545;
+}
+
+.delete-btn:hover {
+    background: rgba(220, 53, 69, 0.08);
+    border-color: rgba(220, 53, 69, 0.20);
+}
+
+
+/* =========================================================
+   TABLE FOOTER
+   ========================================================= */
+
+.table-footer {
+    min-height: 58px;
+    padding: 10px 18px;
+    border-top: 1px solid var(--border);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.table-footer > span {
+    color: var(--gray);
+    font-size: 11px;
+}
+
+.table-footer strong {
+    color: var(--dark);
+}
+
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pagination-btn {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--gray-dark);
+    font-size: 11px;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-btn:hover {
+    background: #F5F7FB;
+    color: var(--primary-purple);
+}
+
+.pagination-btn.active {
+    background: var(--primary-purple);
+    border-color: var(--primary-purple);
+    color: var(--white);
+}
+
+.pagination-btn.disabled {
+    color: var(--gray-light);
+    cursor: not-allowed;
+    background: #FAFBFD;
+}
+
+
+/* =========================================================
+   RESPONSIVE - 1200px
+   ========================================================= */
+
+@media (max-width: 1200px) {
+
+    .teacher-content {
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+
+    .teacher-table {
+        min-width: 1300px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - 850px
+   ========================================================= */
+
+@media (max-width: 850px) {
+
+    .page-title h1 {
+        font-size: 20px;
+    }
+
+    .toolbar-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .teacher-search {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - 650px
+   ========================================================= */
+
+@media (max-width: 650px) {
+
+    .teacher-content {
+        padding: 18px 18px 30px;
+    }
+
+    .page-title-row {
+        align-items: flex-start;
+    }
+
+    .page-title {
+        align-items: flex-start;
+    }
+
+    .title-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 17px;
+    }
+
+    .page-title h1 {
+        font-size: 18px;
+    }
+
+    .page-title p {
+        font-size: 10px;
+    }
+
+    .add-teacher-btn {
+        padding: 0 12px;
+    }
+
+    .add-teacher-btn span {
+        display: none;
+    }
+
+    .add-teacher-btn {
+        width: 42px;
+        height: 42px;
+        min-height: 42px;
+        padding: 0;
+    }
+
+    .table-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .page-heading h2 {
+        font-size: 18px;
+    }
+
+    .page-heading p {
+        font-size: 10px;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - 480px
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .page-title-row {
+        gap: 10px;
+    }
+
+    .title-icon {
+        display: none;
+    }
+
+}
