@@ -1,4 +1,3 @@
-
 {% load static %}
 
 <!DOCTYPE html>
@@ -125,7 +124,17 @@
 
                         <strong>Administrator</strong>
 
-                        <span>Admin</span>
+                        <span>
+                            {% if user.is_superuser %}
+                                Super Admin
+                            {% elif user.admin_profile.department == 'SHS' %}
+                                SHS Admin
+                            {% elif user.admin_profile.department == 'JHS' %}
+                                JHS Admin
+                            {% else %}
+                                Admin
+                            {% endif %}
+                        </span>
 
                     </div>
 
@@ -160,7 +169,17 @@
 
                             <strong>Administrator</strong>
 
-                            <span>Administrator Account</span>
+                            <span>
+                                {% if user.is_superuser %}
+                                    Super Administrator Account
+                                {% elif user.admin_profile.department == 'SHS' %}
+                                    Senior High School Admin
+                                {% elif user.admin_profile.department == 'JHS' %}
+                                    Junior High School Admin
+                                {% else %}
+                                    Administrator Account
+                                {% endif %}
+                            </span>
 
                         </div>
 
@@ -175,16 +194,16 @@
 
                     <!-- LOGOUT -->
 
-                   <a
-    href="{% url 'logout' %}"
-    class="dropdown-item logout-item"
->
+                    <a
+                        href="{% url 'logout' %}"
+                        class="dropdown-item logout-item"
+                    >
 
-    <i class="fa-solid fa-right-from-bracket"></i>
+                        <i class="fa-solid fa-right-from-bracket"></i>
 
-    <span>Logout</span>
+                        <span>Logout</span>
 
-</a>
+                    </a>
 
 
                 </div>
@@ -271,8 +290,6 @@
                 <span>Teacher's Info</span>
 
             </a>
-
-
 
 
 

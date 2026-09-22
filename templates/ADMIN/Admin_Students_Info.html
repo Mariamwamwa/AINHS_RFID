@@ -186,7 +186,7 @@
 
                     <!-- DEPARTMENT -->
 
-                    <div class="filter-wrapper department-filter">
+                    <div class="filter-wrapper department-filter" id="deptFilterGroup">
 
                         <i class="fa-solid fa-building"></i>
 
@@ -223,12 +223,7 @@
                                 All Grades
                             </option>
 
-                            <option value="Grade 7">Grade 7</option>
-                            <option value="Grade 8">Grade 8</option>
-                            <option value="Grade 9">Grade 9</option>
-                            <option value="Grade 10">Grade 10</option>
-                            <option value="Grade 11">Grade 11</option>
-                            <option value="Grade 12">Grade 12</option>
+                            <!-- Options populated by JS -->
 
                         </select>
 
@@ -1027,6 +1022,7 @@
 </div>
 </div>
 
+{{ admin_dept|json_script:"adminDept" }}
 {% csrf_token %}
 
 {% endblock %}
@@ -1034,6 +1030,30 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     "use strict";
+
+    /* =====================================================
+       ADMIN DEPARTMENT (galing sa Django)
+       ===================================================== */
+    let ADMIN_DEPT = null;
+    try {
+        ADMIN_DEPT = JSON.parse(
+            document.getElementById("adminDept").textContent || "null"
+        );
+    } catch (err) {
+        ADMIN_DEPT = null;
+    }
+    // "JHS" | "SHS" | null (superuser)
+
+
+    /* =====================================================
+       GRADE OPTIONS BY DEPARTMENT
+       ===================================================== */
+    const GRADE_OPTIONS = {
+        JHS: ["Grade 7", "Grade 8", "Grade 9", "Grade 10"],
+        SHS: ["Grade 11", "Grade 12"],
+        all: ["Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"]
+    };
+
 
     /* =====================================================
        ELEMENTS
@@ -1046,6 +1066,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const resetFilters       = document.getElementById("resetFilters");
     const tableBody          = document.getElementById("studentsTableBody");
     const emptyState         = document.getElementById("emptyState");
+    const deptFilterGroup    = document.getElementById("deptFilterGroup");
 
     const totalStudentsEl    = document.getElementById("totalStudents");
     const shsStudentsEl      = document.getElementById("shsStudents");
@@ -1066,6 +1087,47 @@ document.addEventListener("DOMContentLoaded", function () {
     function getCSRFToken() {
         const input = document.querySelector("input[name=csrfmiddlewaretoken]");
         return input ? input.value : "";
+    }
+
+
+    /* =====================================================
+       EFFECTIVE DEPARTMENT
+       ===================================================== */
+
+    function getEffectiveDept() {
+        if (ADMIN_DEPT) return ADMIN_DEPT;
+        return departmentFilter ? departmentFilter.value : "all";
+    }
+
+
+    /* =====================================================
+       POPULATE GRADE DROPDOWN
+       ===================================================== */
+
+    function populateGradeFilter() {
+        if (!gradeFilter) return;
+
+        let dept = getEffectiveDept();
+        if (!dept || dept === "") dept = "all";
+
+        const currentValue = gradeFilter.value;
+        const options = GRADE_OPTIONS[dept] || GRADE_OPTIONS.all;
+
+        gradeFilter.innerHTML = '<option value="">All Grades</option>';
+
+        options.forEach(function (grade) {
+            const opt = document.createElement("option");
+            opt.value = grade;
+            opt.textContent = grade;
+            gradeFilter.appendChild(opt);
+        });
+
+        // I-restore kung valid pa
+        if (options.indexOf(currentValue) !== -1) {
+            gradeFilter.value = currentValue;
+        } else {
+            gradeFilter.value = "";
+        }
     }
 
 
@@ -1130,7 +1192,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function filterStudents() {
 
         const searchValue     = searchInput ? searchInput.value.toLowerCase().trim() : "";
-        const departmentValue = departmentFilter ? departmentFilter.value.toUpperCase() : "";
+        const departmentValue = getEffectiveDept().toUpperCase();
         const gradeValue      = gradeFilter ? gradeFilter.value.toLowerCase() : "";
         const sectionValue    = sectionFilter ? sectionFilter.value.toLowerCase() : "";
 
@@ -1182,10 +1244,17 @@ document.addEventListener("DOMContentLoaded", function () {
        FILTER EVENTS
        ===================================================== */
 
-    if (searchInput)      searchInput.addEventListener("input", filterStudents);
-    if (departmentFilter) departmentFilter.addEventListener("change", filterStudents);
-    if (gradeFilter)      gradeFilter.addEventListener("change", filterStudents);
-    if (sectionFilter)    sectionFilter.addEventListener("change", filterStudents);
+    if (searchInput)  searchInput.addEventListener("input", filterStudents);
+
+    if (departmentFilter) {
+        departmentFilter.addEventListener("change", function () {
+            populateGradeFilter();
+            filterStudents();
+        });
+    }
+
+    if (gradeFilter)   gradeFilter.addEventListener("change", filterStudents);
+    if (sectionFilter) sectionFilter.addEventListener("change", filterStudents);
 
 
     /* =====================================================
@@ -1194,10 +1263,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (resetFilters) {
         resetFilters.addEventListener("click", function () {
-            if (searchInput)      searchInput.value = "";
-            if (departmentFilter) departmentFilter.value = "";
-            if (gradeFilter)      gradeFilter.value = "";
-            if (sectionFilter)    sectionFilter.value = "";
+            if (searchInput) searchInput.value = "";
+            if (sectionFilter) sectionFilter.value = "";
+
+            // Kung superuser, i-reset ang dept filter
+            if (departmentFilter && !ADMIN_DEPT) {
+                departmentFilter.value = "";
+            }
+
+            // I-repopulate ang grades base sa effective dept
+            populateGradeFilter();
+
             filterStudents();
         });
     }
@@ -1389,6 +1465,21 @@ document.addEventListener("DOMContentLoaded", function () {
        INITIALIZE
        ===================================================== */
 
+    // Kung JHS/SHS admin, i-lock at i-hide ang dept filter
+    if (ADMIN_DEPT) {
+        if (departmentFilter) {
+            departmentFilter.value = ADMIN_DEPT;
+            departmentFilter.disabled = true;
+        }
+        if (deptFilterGroup) {
+            deptFilterGroup.style.display = "none";
+        }
+    }
+
+    // Initial populate ng grade dropdown
+    populateGradeFilter();
+
+    // Initial render
     updateSummary();
     filterStudents();
 

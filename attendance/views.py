@@ -16,6 +16,20 @@ from .models import Admin, Teacher, Student, Class, Attendance
 
 
 # =====================================================
+# HELPER — GET ADMIN DEPARTMENT & GRADE FILTER
+# =====================================================
+
+def get_admin_department(request):
+    """Return 'JHS', 'SHS', or None (superuser)."""
+    if request.user.is_superuser:
+        return None
+    try:
+        return request.user.admin_profile.department
+    except (AttributeError, Admin.DoesNotExist):
+        return None
+
+
+# =====================================================
 # AUTHENTICATION
 # =====================================================
 
@@ -71,7 +85,7 @@ def register_page(request):
 
         id_number = request.POST.get('id_number', '').strip()
         role = (request.POST.get('role') or '').upper()
-        department = request.POST.get('department', '')
+        department = request.POST.get('department', '').strip().upper()
         last_name = request.POST.get('last_name', '').strip()
         first_name = request.POST.get('first_name', '').strip()
         middle_name = request.POST.get('middle_name', '').strip()
@@ -91,6 +105,10 @@ def register_page(request):
             messages.error(request, 'Passwords do not match.')
             return render(request, 'AUTHENTICATION/Register_Page.html')
 
+        if department not in ('JHS', 'SHS'):
+            messages.error(request, 'Please select a valid department.')
+            return render(request, 'AUTHENTICATION/Register_Page.html')
+
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Username already exists.')
             return render(request, 'AUTHENTICATION/Register_Page.html')
@@ -103,12 +121,17 @@ def register_page(request):
             messages.error(request, 'Admin ID already exists.')
             return render(request, 'AUTHENTICATION/Register_Page.html')
 
+        # =================================================
+        # CREATE USER
+        # Admin → is_staff=True, is_superuser=False
+        # Teacher → is_staff=False, is_superuser=False
+        # =================================================
         if role == 'ADMIN':
             user = User.objects.create_user(
                 username=username, password=password,
                 first_name=first_name, last_name=last_name,
                 email=email or '',
-                is_staff=True, is_superuser=True,
+                is_staff=True, is_superuser=False,
             )
         else:
             user = User.objects.create_user(
@@ -167,14 +190,25 @@ def attendance_page(request):
 @login_required
 def admin_dashboard(request):
     today = date_cls.today()
+    admin_dept = get_admin_department(request)
 
-    total_teachers = Teacher.objects.count()
-    total_students = Student.objects.filter(is_active=True).count()
-    total_classes = Class.objects.count()
+    teachers_qs = Teacher.objects.all()
+    students_qs = Student.objects.filter(is_active=True)
+    classes_qs = Class.objects.all()
+    attendance_qs = Attendance.objects.filter(date=today)
 
-    today_records = Attendance.objects.filter(date=today)
-    total_today = today_records.count()
-    present_today = today_records.filter(status='present').count()
+    if admin_dept:
+        teachers_qs = teachers_qs.filter(department=admin_dept)
+        students_qs = students_qs.filter(department=admin_dept)
+        classes_qs = classes_qs.filter(department=admin_dept)
+        attendance_qs = attendance_qs.filter(student__department=admin_dept)
+
+    total_teachers = teachers_qs.count()
+    total_students = students_qs.count()
+    total_classes = classes_qs.count()
+
+    total_today = attendance_qs.count()
+    present_today = attendance_qs.filter(status='present').count()
 
     attendance_rate = (
         round((present_today / total_today) * 100)
@@ -182,7 +216,7 @@ def admin_dashboard(request):
     )
 
     recent_attendance = []
-    for record in today_records.select_related('student').order_by('-created_at')[:4]:
+    for record in attendance_qs.select_related('student').order_by('-created_at')[:4]:
         student = record.student
         recent_attendance.append({
             'initials': (
@@ -204,6 +238,7 @@ def admin_dashboard(request):
         'total_classes': total_classes,
         'attendance_rate': attendance_rate,
         'recent_attendance': recent_attendance,
+        'admin_dept': admin_dept,
     }
     return render(request, 'ADMIN/Admin_Dashboard.html', context)
 
@@ -214,8 +249,16 @@ def admin_dashboard(request):
 
 @login_required
 def admin_users(request):
+    admin_dept = get_admin_department(request)
+
     teachers = Teacher.objects.select_related('user').order_by('last_name', 'first_name')
-    return render(request, 'ADMIN/Admin_Users.html', {'teachers': teachers})
+    if admin_dept:
+        teachers = teachers.filter(department=admin_dept)
+
+    return render(request, 'ADMIN/Admin_Users.html', {
+        'teachers': teachers,
+        'admin_dept': admin_dept,
+    })
 
 
 # =====================================================
@@ -224,8 +267,16 @@ def admin_users(request):
 
 @login_required
 def admin_teachers(request):
+    admin_dept = get_admin_department(request)
+
     teachers = Teacher.objects.all().order_by('last_name', 'first_name')
-    return render(request, 'ADMIN/Admin_Teachers_Info.html', {'teachers': teachers})
+    if admin_dept:
+        teachers = teachers.filter(department=admin_dept)
+
+    return render(request, 'ADMIN/Admin_Teachers_Info.html', {
+        'teachers': teachers,
+        'admin_dept': admin_dept,
+    })
 
 
 # =====================================================
@@ -241,6 +292,13 @@ def delete_teacher(request, teacher_id):
         return JsonResponse(
             {'success': False, 'error': 'Teacher not found'},
             status=404
+        )
+
+    admin_dept = get_admin_department(request)
+    if admin_dept and teacher.department != admin_dept:
+        return JsonResponse(
+            {'success': False, 'error': 'Not authorized for this department.'},
+            status=403
         )
 
     user = teacher.user
@@ -267,6 +325,13 @@ def edit_teacher(request, teacher_id):
             status=404
         )
 
+    admin_dept = get_admin_department(request)
+    if admin_dept and teacher.department != admin_dept:
+        return JsonResponse(
+            {'success': False, 'error': 'Not authorized for this department.'},
+            status=403
+        )
+
     try:
         payload = json.loads(request.body)
     except json.JSONDecodeError:
@@ -284,15 +349,16 @@ def edit_teacher(request, teacher_id):
     teacher.birthday    = payload.get('birthday') or None
     teacher.email       = payload.get('email', teacher.email)
     teacher.contact     = payload.get('contact', teacher.contact)
-    teacher.department  = payload.get('department', teacher.department)
     teacher.grade       = payload.get('grade', teacher.grade)
     teacher.section     = payload.get('section', teacher.section)
+
+    if not admin_dept:
+        teacher.department = payload.get('department', teacher.department)
 
     teacher.save()
 
     new_grade      = payload.get('grade', teacher.grade)
     new_section    = payload.get('section', teacher.section)
-    new_department = payload.get('department', teacher.department)
 
     class_obj = Class.objects.filter(teacher=teacher).first()
     if class_obj:
@@ -300,8 +366,6 @@ def edit_teacher(request, teacher_id):
             class_obj.grade = new_grade
         if new_section:
             class_obj.section = new_section
-        if new_department:
-            class_obj.department = new_department
         class_obj.save()
 
     return JsonResponse({'success': True})
@@ -313,7 +377,11 @@ def edit_teacher(request, teacher_id):
 
 @login_required
 def admin_students(request):
+    admin_dept = get_admin_department(request)
+
     students = Student.objects.select_related('adviser').order_by('last_name', 'first_name')
+    if admin_dept:
+        students = students.filter(department=admin_dept)
 
     total_students = students.count()
     shs_count = students.filter(department='SHS').count()
@@ -325,6 +393,13 @@ def admin_students(request):
         .distinct().order_by('section')
     )
 
+    if admin_dept:
+        sections = (
+            Student.objects.filter(department=admin_dept)
+            .values_list('section', flat=True)
+            .distinct().order_by('section')
+        )
+
     context = {
         'students': students,
         'total_students': total_students,
@@ -332,6 +407,7 @@ def admin_students(request):
         'jhs_count': jhs_count,
         'rfid_count': rfid_count,
         'sections': sections,
+        'admin_dept': admin_dept,
     }
     return render(request, 'ADMIN/Admin_Students_Info.html', context)
 
@@ -350,6 +426,13 @@ def edit_student(request, student_id):
         return JsonResponse(
             {'success': False, 'error': 'Student not found'},
             status=404
+        )
+
+    admin_dept = get_admin_department(request)
+    if admin_dept and student.department != admin_dept:
+        return JsonResponse(
+            {'success': False, 'error': 'Not authorized for this department.'},
+            status=403
         )
 
     try:
@@ -372,12 +455,14 @@ def edit_student(request, student_id):
     student.barangay     = payload.get('barangay', student.barangay)
     student.municipality = payload.get('municipality', student.municipality)
     student.province     = payload.get('province', student.province)
-    student.department   = payload.get('department', student.department)
     student.grade        = payload.get('grade', student.grade)
     student.section      = payload.get('section', student.section)
     student.parent_name  = payload.get('parent_name', student.parent_name)
     student.parent_relationship = payload.get('parent_relationship', student.parent_relationship)
     student.parent_contact      = payload.get('parent_contact', student.parent_contact)
+
+    if not admin_dept:
+        student.department = payload.get('department', student.department)
 
     if student.grade and student.section:
         class_obj = Class.objects.filter(
@@ -408,6 +493,13 @@ def delete_student(request, student_id):
             status=404
         )
 
+    admin_dept = get_admin_department(request)
+    if admin_dept and student.department != admin_dept:
+        return JsonResponse(
+            {'success': False, 'error': 'Not authorized for this department.'},
+            status=403
+        )
+
     student.delete()
     return JsonResponse({'success': True})
 
@@ -418,11 +510,22 @@ def delete_student(request, student_id):
 
 @login_required
 def admin_classes(request):
+    admin_dept = get_admin_department(request)
+
     classes = Class.objects.select_related('teacher').all()
     teachers = Teacher.objects.all().order_by('last_name', 'first_name')
 
+    if admin_dept:
+        classes = classes.filter(department=admin_dept)
+        teachers = teachers.filter(department=admin_dept)
+
     total_sections = classes.count()
-    total_students = Student.objects.filter(is_active=True).count()
+
+    total_students = Student.objects.filter(is_active=True)
+    if admin_dept:
+        total_students = total_students.filter(department=admin_dept)
+    total_students = total_students.count()
+
     total_teachers = classes.exclude(teacher__isnull=True).values('teacher').distinct().count()
     total_jhs = classes.filter(department='JHS').count()
     total_shs = classes.filter(department='SHS').count()
@@ -459,6 +562,7 @@ def admin_classes(request):
         'total_jhs': total_jhs,
         'total_shs': total_shs,
         'teachers': teachers,
+        'admin_dept': admin_dept,
     }
     return render(request, 'ADMIN/Admin_Classes.html', context)
 
@@ -476,23 +580,39 @@ def add_class(request):
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
 
+    admin_dept = get_admin_department(request)
+
     grade = payload.get('grade', '').strip()
     section = payload.get('section', '').strip()
     teacher_id = payload.get('teacherId')
-    department = payload.get('department', '')
-
-    if not department and grade:
-        try:
-            grade_num = int(grade.replace('Grade ', '').strip())
-            department = 'SHS' if grade_num >= 11 else 'JHS'
-        except ValueError:
-            pass
 
     if not grade or not section:
         return JsonResponse(
             {'success': False, 'error': 'Grade and Section are required.'},
             status=400
         )
+
+    try:
+        grade_num = int(grade.replace('Grade ', '').strip())
+        department = 'SHS' if grade_num >= 11 else 'JHS'
+    except ValueError:
+        return JsonResponse(
+            {'success': False, 'error': 'Invalid grade.'},
+            status=400
+        )
+
+    # Enforce department
+    if admin_dept and department != admin_dept:
+        if admin_dept == 'SHS':
+            return JsonResponse({
+                'success': False,
+                'error': 'SHS admin can only add Grade 11 and 12 classes.'
+            }, status=403)
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'JHS admin can only add Grade 7-10 classes.'
+            }, status=403)
 
     if Class.objects.filter(grade=grade, section__iexact=section).exists():
         return JsonResponse({
@@ -509,6 +629,12 @@ def add_class(request):
                 {'success': False, 'error': 'Teacher not found'},
                 status=404
             )
+
+        if admin_dept and teacher.department != admin_dept:
+            return JsonResponse({
+                'success': False,
+                'error': 'You can only assign teachers in your department.'
+            }, status=403)
 
         existing_class = Class.objects.filter(teacher=teacher).first()
         if existing_class:
@@ -563,6 +689,13 @@ def edit_class(request, class_id):
     except Class.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Class not found'}, status=404)
 
+    admin_dept = get_admin_department(request)
+    if admin_dept and class_obj.department != admin_dept:
+        return JsonResponse({
+            'success': False,
+            'error': 'Not authorized for this department.'
+        }, status=403)
+
     try:
         payload = json.loads(request.body)
     except json.JSONDecodeError:
@@ -571,6 +704,18 @@ def edit_class(request, class_id):
     new_grade = payload.get('grade', class_obj.grade).strip()
     new_section = payload.get('section', class_obj.section).strip()
     new_teacher_id = payload.get('teacherId')
+
+    try:
+        grade_num = int(new_grade.replace('Grade ', '').strip())
+        new_department = 'SHS' if grade_num >= 11 else 'JHS'
+    except ValueError:
+        new_department = class_obj.department
+
+    if admin_dept and new_department != admin_dept:
+        return JsonResponse({
+            'success': False,
+            'error': f'You can only manage {admin_dept} classes.'
+        }, status=403)
 
     if Class.objects.filter(
         grade=new_grade, section__iexact=new_section
@@ -582,12 +727,19 @@ def edit_class(request, class_id):
 
     class_obj.grade = new_grade
     class_obj.section = new_section
+    class_obj.department = new_department
 
     if new_teacher_id:
         try:
             new_teacher = Teacher.objects.get(id=new_teacher_id)
         except Teacher.DoesNotExist:
             return JsonResponse({'success': False, 'error': 'Teacher not found'}, status=404)
+
+        if admin_dept and new_teacher.department != admin_dept:
+            return JsonResponse({
+                'success': False,
+                'error': 'You can only assign teachers in your department.'
+            }, status=403)
 
         existing = Class.objects.filter(teacher=new_teacher).exclude(id=class_id).first()
         if existing:
@@ -600,12 +752,6 @@ def edit_class(request, class_id):
             }, status=400)
 
         class_obj.teacher = new_teacher
-
-    try:
-        grade_num = int(new_grade.replace('Grade ', '').strip())
-        class_obj.department = 'SHS' if grade_num >= 11 else 'JHS'
-    except ValueError:
-        pass
 
     class_obj.save()
 
@@ -631,6 +777,13 @@ def delete_class(request, class_id):
     except Class.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Class not found'}, status=404)
 
+    admin_dept = get_admin_department(request)
+    if admin_dept and class_obj.department != admin_dept:
+        return JsonResponse({
+            'success': False,
+            'error': 'Not authorized for this department.'
+        }, status=403)
+
     if class_obj.teacher:
         teacher = class_obj.teacher
         teacher.grade = None
@@ -647,8 +800,12 @@ def delete_class(request, class_id):
 
 @login_required
 def admin_attendance(request):
+    admin_dept = get_admin_department(request)
     today = date_cls.today().isoformat()
+
     students = Student.objects.filter(is_active=True).order_by('last_name', 'first_name')
+    if admin_dept:
+        students = students.filter(department=admin_dept)
 
     students_data = [
         {
@@ -663,6 +820,7 @@ def admin_attendance(request):
     context = {
         'today': today,
         'students_json': students_data,
+        'admin_dept': admin_dept,
     }
     return render(request, 'ADMIN/Admin_Student_Attendance.html', context)
 
@@ -673,6 +831,8 @@ def admin_attendance(request):
 
 @login_required
 def admin_register_rfid(request):
+
+    admin_dept = get_admin_department(request)
 
     if request.method == 'POST':
         rfid = request.POST.get('rfid', '').strip()
@@ -688,24 +848,39 @@ def admin_register_rfid(request):
         municipality = request.POST.get('municipality', '').strip()
         province = request.POST.get('province', '').strip()
 
-        # =================================================
-        # GUARDIAN INFO — cleaned
-        # =================================================
         guardian_last = request.POST.get('guardianLastName', '').strip()
         guardian_first = request.POST.get('guardianFirstName', '').strip()
         relationship = request.POST.get('relationship', '').strip()
         guardian_contact = request.POST.get('guardianContact', '').strip()
 
-        # Clean multiple spaces (para hindi mag-doble)
         guardian_first = " ".join(guardian_first.split())
         guardian_last = " ".join(guardian_last.split())
 
-        department = request.POST.get('department', '').strip()
+        department = request.POST.get('department', '').strip().upper()
         grade = request.POST.get('grade', '').strip()
         section = request.POST.get('section', '').strip()
         adviser_name = request.POST.get('adviser', '').strip()
 
         image = request.FILES.get('studentImage')
+
+        # Enforce department
+        if admin_dept and department != admin_dept:
+            messages.error(request, f'You can only register {admin_dept} students.')
+            return redirect('admin_register_rfid')
+
+        # Enforce grade range
+        try:
+            grade_num = int(grade.replace('Grade ', '').strip())
+        except (ValueError, AttributeError):
+            grade_num = 0
+
+        if admin_dept == 'SHS' and grade_num not in (11, 12):
+            messages.error(request, 'SHS admin can only register Grade 11 or 12 students.')
+            return redirect('admin_register_rfid')
+
+        if admin_dept == 'JHS' and grade_num not in (7, 8, 9, 10):
+            messages.error(request, 'JHS admin can only register Grade 7-10 students.')
+            return redirect('admin_register_rfid')
 
         if rfid and Student.objects.filter(rfid=rfid).exists():
             messages.error(request, 'RFID card is already registered.')
@@ -715,11 +890,7 @@ def admin_register_rfid(request):
             messages.error(request, 'LRN already exists.')
             return redirect('admin_register_rfid')
 
-        # =================================================
-        # AUTO ADVISER MATCHING
-        # =================================================
         adviser = None
-
         if grade and section:
             class_obj = Class.objects.filter(
                 grade=grade,
@@ -735,9 +906,6 @@ def admin_register_rfid(request):
                 Q(last_name__icontains=adviser_name)
             ).first()
 
-        # =================================================
-        # PARENT NAME — cleaned
-        # =================================================
         parent_name = f"{guardian_first} {guardian_last}".strip()
         parent_name = " ".join(parent_name.split())
 
@@ -767,10 +935,10 @@ def admin_register_rfid(request):
         messages.success(request, 'Student registered successfully!')
         return redirect('admin_students')
 
-    # =================================================
-    # GET — i-load ang classes para sa Section dropdown
-    # =================================================
+    # GET — i-load ang classes (filtered by department)
     classes = Class.objects.select_related('teacher').all()
+    if admin_dept:
+        classes = classes.filter(department=admin_dept)
 
     classes_data = [
         {
@@ -788,6 +956,7 @@ def admin_register_rfid(request):
 
     return render(request, 'ADMIN/Admin_Register_RFID.html', {
         'classes_json': classes_data,
+        'admin_dept': admin_dept,
     })
 
 
@@ -797,7 +966,10 @@ def admin_register_rfid(request):
 
 @login_required
 def admin_add_teacher(request):
-    return render(request, 'ADMIN/Admin_Add_Teacher.html')
+    admin_dept = get_admin_department(request)
+    return render(request, 'ADMIN/Admin_Add_Teacher.html', {
+        'admin_dept': admin_dept,
+    })
 
 
 # =====================================================
@@ -808,10 +980,14 @@ def admin_add_teacher(request):
 @csrf_protect
 @require_http_methods(["GET", "POST"])
 def save_attendance(request):
+    admin_dept = get_admin_department(request)
 
     if request.method == 'GET':
         date_str = request.GET.get('date') or date_cls.today().isoformat()
         records = Attendance.objects.filter(date=date_str)
+
+        if admin_dept:
+            records = records.filter(student__department=admin_dept)
 
         data = [
             {
@@ -835,6 +1011,14 @@ def save_attendance(request):
     field = payload.get('field')
     value = payload.get('value', '')
     date_str = payload.get('date') or date_cls.today().isoformat()
+
+    try:
+        student = Student.objects.get(id=student_id)
+    except Student.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Student not found'}, status=404)
+
+    if admin_dept and student.department != admin_dept:
+        return JsonResponse({'success': False, 'error': 'Not authorized'}, status=403)
 
     field_map = {
         'timeInAM':  'time_in_am',
@@ -868,6 +1052,8 @@ def save_attendance(request):
 @csrf_protect
 @require_http_methods(["POST"])
 def bulk_attendance(request):
+    admin_dept = get_admin_department(request)
+
     try:
         payload = json.loads(request.body)
     except json.JSONDecodeError:
@@ -881,6 +1067,14 @@ def bulk_attendance(request):
         return JsonResponse({'success': False, 'error': 'Invalid action'}, status=400)
 
     for sid in student_ids:
+        try:
+            student = Student.objects.get(id=sid)
+        except Student.DoesNotExist:
+            continue
+
+        if admin_dept and student.department != admin_dept:
+            continue
+
         record, _ = Attendance.objects.get_or_create(
             student_id=sid, date=date_str,
         )
@@ -907,13 +1101,20 @@ def bulk_attendance(request):
 @csrf_protect
 @require_http_methods(["POST"])
 def reset_attendance(request):
+    admin_dept = get_admin_department(request)
+
     try:
         payload = json.loads(request.body)
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
 
     date_str = payload.get('date') or date_cls.today().isoformat()
-    Attendance.objects.filter(date=date_str).delete()
+
+    qs = Attendance.objects.filter(date=date_str)
+    if admin_dept:
+        qs = qs.filter(student__department=admin_dept)
+
+    qs.delete()
     return JsonResponse({'success': True})
 
 
