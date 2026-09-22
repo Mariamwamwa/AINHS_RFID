@@ -554,3 +554,196 @@
     }
 
 }
+
+/* =====================================================
+   TEACHER EDIT MODAL
+   ===================================================== */
+
+.teacher-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.teacher-modal-overlay.show {
+    display: flex;
+}
+
+.teacher-modal {
+    background: white;
+    border-radius: 12px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.teacher-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.teacher-modal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.teacher-modal-header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: #eef2ff;
+    color: #6366f1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.teacher-modal-header-text h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: #1f2937;
+}
+
+.teacher-modal-header-text p {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.teacher-modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.teacher-modal-close:hover {
+    background: #f3f4f6;
+    color: #1f2937;
+}
+
+.teacher-modal-body {
+    padding: 24px;
+}
+
+.teacher-modal-section {
+    margin-bottom: 24px;
+}
+
+.teacher-modal-section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.teacher-modal-section-title i {
+    color: #6366f1;
+}
+
+.teacher-modal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+@media (max-width: 768px) {
+    .teacher-modal-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.teacher-modal-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.teacher-modal-item label {
+    font-size: 0.82rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.teacher-modal-item input,
+.teacher-modal-item select {
+    padding: 9px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #1f2937;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.teacher-modal-item input:focus,
+.teacher-modal-item select:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.teacher-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+    margin-top: 10px;
+}
+
+.teacher-modal-btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.teacher-modal-btn.cancel-btn {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.teacher-modal-btn.cancel-btn:hover {
+    background: #e5e7eb;
+}
+
+.teacher-modal-btn.save-btn {
+    background: #6366f1;
+    color: white;
+}
+
+.teacher-modal-btn.save-btn:hover {
+    background: #4f46e5;
+}
+

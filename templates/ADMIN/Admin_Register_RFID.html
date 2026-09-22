@@ -1,4 +1,3 @@
-
 {% extends 'IN_BASE/Admin_Base.html' %}
 {% load static %}
 
@@ -19,7 +18,6 @@
 {% block content %}
 <div class="register-student-content">
 
-    <!-- PAGE INTRODUCTION -->
     <div class="page-intro">
         <div class="intro-icon">
             <i class="fa-solid fa-user-plus"></i>
@@ -30,7 +28,7 @@
         </div>
     </div>
 
-    <form class="form-card" id="registerStudentForm" enctype="multipart/form-data">
+    <form class="form-card" id="registerStudentForm" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         <!-- PERSONAL INFORMATION -->
@@ -42,7 +40,6 @@
 
             <div class="form-grid personal-grid">
 
-                <!-- RFID CARD -->
                 <div class="rfid-card-field">
                     <div class="rfid-card-header">
                         <div>
@@ -70,28 +67,16 @@
                     <div class="rfid-input-row">
                         <div class="input-wrapper rfid-input-wrapper">
                             <i class="fa-solid fa-fingerprint"></i>
-                            <input
-                                type="text"
-                                id="rfid"
-                                name="rfid"
-                                placeholder="RFID UID will appear here"
-                                readonly
-                                required
-                            >
+                            <input type="text" id="rfid" name="rfid"
+                                   placeholder="RFID UID will appear here"
+                                   readonly required>
                         </div>
-                        <button
-                            type="button"
-                            class="clear-rfid-btn"
-                            id="clearRfidBtn"
-                            title="Clear RFID"
-                            aria-label="Clear RFID"
-                        >
+                        <button type="button" class="clear-rfid-btn" id="clearRfidBtn">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- STUDENT IMAGE AND LRN -->
                 <div class="student-image-lrn-field">
                     <div class="form-group image-form-group">
                         <label for="studentImage">
@@ -109,13 +94,8 @@
                                     <span>Choose File</span>
                                 </label>
 
-                                <input
-                                    type="file"
-                                    id="studentImage"
-                                    name="studentImage"
-                                    accept="image/*"
-                                    required
-                                >
+                                <input type="file" id="studentImage"
+                                       name="studentImage" accept="image/*" required>
 
                                 <div class="file-name" id="fileName">No file chosen</div>
                             </div>
@@ -126,18 +106,12 @@
                         <label for="lrn">LRN <span class="required">*</span></label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-id-card"></i>
-                            <input
-                                type="text"
-                                id="lrn"
-                                name="lrn"
-                                placeholder="Enter LRN"
-                                required
-                            >
+                            <input type="text" id="lrn" name="lrn"
+                                   placeholder="Enter LRN" required>
                         </div>
                     </div>
                 </div>
 
-                <!-- PERSONAL DETAILS -->
                 <div class="personal-details-grid">
                     <div class="form-group">
                         <label for="lastName">Last Name <span class="required">*</span></label>
@@ -355,47 +329,59 @@
                     </div>
                 </div>
 
+                <!-- SECTION — DROPDOWN (galing sa Class table) -->
                 <div class="form-group">
-                    <label for="section">Section <span class="required">*</span></label>
-                    <div class="input-wrapper">
+                    <label for="section">
+                        Section <span class="required">*</span>
+                    </label>
+                    <div class="input-wrapper select-wrapper">
                         <i class="fa-solid fa-users"></i>
-                        <input type="text" id="section" name="section"
-                               placeholder="Enter section" required>
+                        <select id="section" name="section" required>
+                            <option value="" selected disabled>
+                                Select section
+                            </option>
+                        </select>
                     </div>
                 </div>
 
+                <!-- ADVISER — READONLY (auto-fill mula sa Class) -->
                 <div class="form-group">
-                    <label for="adviser">Adviser <span class="required">*</span></label>
+                    <label for="adviser">Adviser</label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-chalkboard-user"></i>
                         <input type="text" id="adviser" name="adviser"
-                               placeholder="Enter adviser name" required>
+                               placeholder="Auto-detected from section"
+                               readonly>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- FORM ACTIONS -->
         <div class="form-actions">
             <button type="button" class="form-btn btn-cancel" id="cancelBtn">
                 <i class="fa-solid fa-xmark"></i> Cancel
             </button>
-
             <button type="button" class="form-btn btn-clear" id="clearBtn">
                 <i class="fa-solid fa-eraser"></i> Clear
             </button>
-
             <button type="submit" class="form-btn btn-save">
                 <i class="fa-solid fa-user-plus"></i> Register Student
             </button>
         </div>
     </form>
 </div>
+
+{# JSON data ng Classes para sa JS dropdown #}
+{{ classes_json|json_script:"classesData" }}
+
 {% endblock %}
+
 
 {% block extra_js %}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
+
     const form = document.getElementById("registerStudentForm");
     const rfidInput = document.getElementById("rfid");
     const scanRfidBtn = document.getElementById("scanRfidBtn");
@@ -409,23 +395,136 @@ document.addEventListener("DOMContentLoaded", function () {
     const imagePreview = document.getElementById("imagePreview");
     const fileName = document.getElementById("fileName");
 
+    // =========================================
+    // CLASS DATA — galing sa Django
+    // =========================================
+    const classesDataEl = document.getElementById("classesData");
+    let classes = [];
+    try {
+        classes = JSON.parse(classesDataEl.textContent || "[]");
+    } catch (err) {
+        console.error("Invalid classes data:", err);
+        classes = [];
+    }
+
+    const departmentSelect = document.getElementById("department");
+    const gradeSelect      = document.getElementById("grade");
+    const sectionSelect    = document.getElementById("section");
+    const adviserInput     = document.getElementById("adviser");
+
+    // =========================================
+    // SECTION DROPDOWN — base sa Grade
+    // =========================================
+    function updateSections() {
+        const grade = gradeSelect.value;
+        const currentSection = sectionSelect.value;
+
+        // Reset
+        sectionSelect.innerHTML = '<option value="" disabled selected>Select section</option>';
+        adviserInput.value = "";
+
+        if (!grade) return;
+
+        // Filter classes base sa grade
+        const filtered = classes.filter(c => c.grade === grade);
+
+        if (!filtered.length) {
+            const opt = document.createElement("option");
+            opt.value = "";
+            opt.disabled = true;
+            opt.textContent = "No sections available for " + grade;
+            sectionSelect.appendChild(opt);
+            return;
+        }
+
+        // Add options
+        filtered.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c.section;
+            opt.textContent = c.section;
+            opt.dataset.teacher = c.teacher || "";
+            sectionSelect.appendChild(opt);
+        });
+
+        // Restore previous selection kung valid pa
+        if (currentSection && filtered.some(c => c.section === currentSection)) {
+            sectionSelect.value = currentSection;
+            autoFillAdviser();
+        }
+    }
+
+    // =========================================
+    // AUTO-FILL ADVISER — kapag napili ang section
+    // =========================================
+    function autoFillAdviser() {
+        const selectedOption = sectionSelect.options[sectionSelect.selectedIndex];
+        if (!selectedOption || !selectedOption.value) {
+            adviserInput.value = "";
+            return;
+        }
+
+        const teacherName = selectedOption.dataset.teacher || "";
+        adviserInput.value = teacherName || "No adviser assigned";
+    }
+
+    // Event listeners
+    gradeSelect.addEventListener("change", updateSections);
+    sectionSelect.addEventListener("change", autoFillAdviser);
+
+    // Initial load — kung may default value
+    updateSections();
+
+    // =========================================
+    // DEPARTMENT → GRADE filtering
+    // =========================================
+    departmentSelect.addEventListener("change", function () {
+        const dept = this.value;
+        const gradeOptions = gradeSelect.querySelectorAll("option");
+
+        gradeOptions.forEach(opt => {
+            if (!opt.value) return;
+
+            const gradeNum = parseInt(opt.value.replace("Grade ", ""), 10);
+
+            if (dept === "JHS" && gradeNum > 10) {
+                opt.style.display = "none";
+                opt.disabled = true;
+            } else if (dept === "SHS" && gradeNum < 11) {
+                opt.style.display = "none";
+                opt.disabled = true;
+            } else {
+                opt.style.display = "";
+                opt.disabled = false;
+            }
+        });
+
+        // Reset grade + section kapag nagbago department
+        if (gradeSelect.value) {
+            const gradeNum = parseInt(gradeSelect.value.replace("Grade ", ""), 10);
+            if ((dept === "JHS" && gradeNum > 10) ||
+                (dept === "SHS" && gradeNum < 11)) {
+                gradeSelect.value = "";
+                updateSections();
+            }
+        }
+    });
+
+    // =========================================
+    // RFID SCANNING
+    // =========================================
     let rfidScanning = false;
     let rfidBuffer = "";
     let rfidScanTimer = null;
 
     function setRfidStatus(type, title, message) {
         rfidStatusBox.classList.remove("scanning", "success", "error");
-
-        if (type) {
-            rfidStatusBox.classList.add(type);
-        }
+        if (type) rfidStatusBox.classList.add(type);
 
         const icons = {
             scanning: "fa-wifi",
             success: "fa-circle-check",
             error: "fa-circle-exclamation"
         };
-
         const iconName = icons[type] || "fa-id-card";
         rfidStatusIcon.innerHTML = '<i class="fa-solid ' + iconName + '"></i>';
         rfidStatusTitle.textContent = title;
@@ -436,11 +535,8 @@ document.addEventListener("DOMContentLoaded", function () {
         rfidScanning = false;
         rfidBuffer = "";
         clearTimeout(rfidScanTimer);
-
         scanRfidBtn.classList.remove("scanning");
-        scanRfidBtn.innerHTML =
-            '<i class="fa-solid fa-wifi"></i><span>Scan RFID Card</span>';
-
+        scanRfidBtn.innerHTML = '<i class="fa-solid fa-wifi"></i><span>Scan RFID Card</span>';
         document.body.classList.remove("rfid-scan-active");
     }
 
@@ -448,46 +544,24 @@ document.addEventListener("DOMContentLoaded", function () {
         stopRfidScan();
         rfidScanning = true;
         rfidInput.value = "";
-
         scanRfidBtn.classList.add("scanning");
-        scanRfidBtn.innerHTML =
-            '<i class="fa-solid fa-spinner fa-spin"></i>' +
-            '<span>Waiting for RFID...</span>';
-
-        setRfidStatus(
-            "scanning",
-            "Waiting for RFID card",
-            "Tap the RFID card on the scanner now."
-        );
-
+        scanRfidBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Waiting for RFID...</span>';
+        setRfidStatus("scanning", "Waiting for RFID card", "Tap the RFID card on the scanner now.");
         document.body.classList.add("rfid-scan-active");
     }
 
     function finishRfidScan(uid) {
         uid = uid.trim();
-
-        if (!uid) {
-            return;
-        }
-
+        if (!uid) return;
         rfidInput.value = uid;
         stopRfidScan();
-
-        setRfidStatus(
-            "success",
-            "RFID card detected",
-            "The RFID UID has been assigned to this student."
-        );
+        setRfidStatus("success", "RFID card detected", "The RFID UID has been assigned to this student.");
     }
 
     scanRfidBtn.addEventListener("click", function () {
         if (rfidScanning) {
             stopRfidScan();
-            setRfidStatus(
-                "",
-                "Ready to scan",
-                'Click "Scan RFID Card" and tap the student\'s card.'
-            );
+            setRfidStatus("", "Ready to scan", 'Click "Scan RFID Card" and tap the student\'s card.');
         } else {
             startRfidScan();
         }
@@ -496,41 +570,31 @@ document.addEventListener("DOMContentLoaded", function () {
     clearRfidBtn.addEventListener("click", function () {
         stopRfidScan();
         rfidInput.value = "";
-        setRfidStatus(
-            "",
-            "Ready to scan",
-            'Click "Scan RFID Card" and tap the student\'s card.'
-        );
+        setRfidStatus("", "Ready to scan", 'Click "Scan RFID Card" and tap the student\'s card.');
     });
 
-    // Works with RFID readers configured as keyboard-input devices.
     document.addEventListener("keydown", function (event) {
-        if (!rfidScanning) {
-            return;
-        }
+        if (!rfidScanning) return;
 
         if (event.key === "Enter") {
             event.preventDefault();
             clearTimeout(rfidScanTimer);
-
-            if (rfidBuffer.trim()) {
-                finishRfidScan(rfidBuffer);
-            }
+            if (rfidBuffer.trim()) finishRfidScan(rfidBuffer);
             return;
         }
 
         if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
             rfidBuffer += event.key;
             clearTimeout(rfidScanTimer);
-
             rfidScanTimer = setTimeout(function () {
-                if (rfidBuffer.trim()) {
-                    finishRfidScan(rfidBuffer);
-                }
+                if (rfidBuffer.trim()) finishRfidScan(rfidBuffer);
             }, 150);
         }
     });
 
+    // =========================================
+    // IMAGE PREVIEW
+    // =========================================
     studentImage.addEventListener("change", function () {
         const file = this.files[0];
 
@@ -548,28 +612,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         const reader = new FileReader();
-
         reader.onload = function (event) {
             const img = document.createElement("img");
             img.src = event.target.result;
             img.alt = "Student image preview";
             imagePreview.replaceChildren(img);
         };
-
         reader.readAsDataURL(file);
     });
 
+    // =========================================
+    // CLEAR / CANCEL
+    // =========================================
     function clearForm() {
         form.reset();
         stopRfidScan();
         imagePreview.innerHTML = '<i class="fa-solid fa-user"></i>';
         fileName.textContent = "No file chosen";
-
-        setRfidStatus(
-            "",
-            "Ready to scan",
-            'Click "Scan RFID Card" and tap the student\'s card.'
-        );
+        updateSections();
+        setRfidStatus("", "Ready to scan", 'Click "Scan RFID Card" and tap the student\'s card.');
     }
 
     document.getElementById("clearBtn").addEventListener("click", clearForm);
@@ -580,12 +641,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Front-end demonstration only; no Django database record is created.
+    // =========================================
+    // SUBMIT — Django form submit (hindi na demo)
+    // =========================================
+    // Walang preventDefault — hayaan ang browser mag-submit sa Django
     form.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        alert("Student registration form submitted (demo only).");
-        clearForm();
+        if (!form.reportValidity()) {
+            event.preventDefault();
+            return;
+        }
+        // I-disable ang submit button para hindi double-submit
+        const submitBtn = form.querySelector(".btn-save");
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registering...';
+        }
     });
 });
 </script>

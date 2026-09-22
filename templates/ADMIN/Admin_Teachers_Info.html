@@ -1,4 +1,3 @@
-
 {% extends 'IN_BASE/Admin_Base.html' %}
 {% load static %}
 
@@ -20,25 +19,18 @@ Teacher's Information - RFID Attendance Management System
 
 {% block content %}
 
-<!-- =====================================================
-     TEACHER CONTENT
-     ===================================================== -->
-
 <section class="teacher-content">
 
     <!-- PAGE TITLE -->
     <div class="page-title-row">
         <div class="page-title">
-
             <span class="title-icon">
                 <i class="fa-solid fa-chalkboard-user"></i>
             </span>
-
             <div>
                 <h1>Teacher's Information</h1>
                 <p>View and manage teacher information.</p>
             </div>
-
         </div>
     </div>
 
@@ -46,25 +38,18 @@ Teacher's Information - RFID Attendance Management System
     <div class="toolbar-card">
 
         <div class="teacher-summary">
-
             <div class="summary-icon">
                 <i class="fa-solid fa-chalkboard-user"></i>
             </div>
-
             <div class="summary-information">
                 <span>Total Teachers</span>
-                <strong>24</strong>
+                <strong id="totalTeachersCount">{{ teachers|length|default:"0" }}</strong>
             </div>
-
         </div>
 
         <div class="teacher-search">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input
-                type="text"
-                id="teacherSearch"
-                placeholder="Search teacher..."
-            >
+            <input type="text" id="teacherSearch" placeholder="Search teacher...">
         </div>
 
     </div>
@@ -75,9 +60,7 @@ Teacher's Information - RFID Attendance Management System
         <div class="table-card-header">
             <div>
                 <h3>Registered Teachers</h3>
-                <p>
-                    List of all registered teachers and their assigned classes.
-                </p>
+                <p>List of all registered teachers and their assigned classes.</p>
             </div>
         </div>
 
@@ -104,19 +87,83 @@ Teacher's Information - RFID Attendance Management System
 
                 <tbody>
 
-                    <!-- TEACHER 1 -->
-                    <tr>
-                        <td><strong class="teacher-id">T-001</strong></td>
-                        <td>Dela Cruz</td>
-                        <td>Juan</td>
-                        <td>Santos</td>
-                        <td>35</td>
-                        <td>Male</td>
-                        <td>January 15, 1991</td>
-                        <td>0917-123-4567</td>
-                        <td><span class="department jhs">JHS</span></td>
-                        <td>Grade 7</td>
-                        <td>Rizal</td>
+                    {% for teacher in teachers %}
+                    {% with cls=teacher.classes.first %}
+
+                    <tr
+                        data-teacher-id="{{ teacher.id }}"
+                        data-teacher-num="{{ teacher.teacher_id }}"
+                        data-first-name="{{ teacher.first_name }}"
+                        data-last-name="{{ teacher.last_name }}"
+                        data-middle-name="{{ teacher.middle_name|default:'' }}"
+                        data-age="{{ teacher.age|default:'' }}"
+                        data-sex="{{ teacher.sex|default:'' }}"
+                        data-birthday="{{ teacher.birthday|date:'Y-m-d' }}"
+                        data-email="{{ teacher.email|default:'' }}"
+                        data-contact="{{ teacher.contact|default:'' }}"
+                        data-grade="{% if cls %}{{ cls.grade }}{% else %}{{ teacher.grade|default:'' }}{% endif %}"
+                        data-section="{% if cls %}{{ cls.section }}{% else %}{{ teacher.section|default:'' }}{% endif %}"
+                        data-department="{% if cls %}{{ cls.department }}{% else %}{{ teacher.department|default:'' }}{% endif %}"
+                    >
+
+                        <td>
+                            <strong class="teacher-id">{{ teacher.teacher_id }}</strong>
+                        </td>
+
+                        <td>{{ teacher.last_name }}</td>
+                        <td>{{ teacher.first_name }}</td>
+
+                        <td>
+                            {% if teacher.middle_name %}{{ teacher.middle_name }}{% else %}—{% endif %}
+                        </td>
+
+                        <td>
+                            {% if teacher.age %}{{ teacher.age }}{% else %}—{% endif %}
+                        </td>
+
+                        <td>
+                            {% if teacher.sex %}{{ teacher.sex }}{% else %}—{% endif %}
+                        </td>
+
+                        <td>
+                            {% if teacher.birthday %}{{ teacher.birthday|date:"F d, Y" }}{% else %}—{% endif %}
+                        </td>
+
+                        <td>
+                            {% if teacher.email %}{{ teacher.email }}
+                            {% elif teacher.contact %}{{ teacher.contact }}
+                            {% else %}—{% endif %}
+                        </td>
+
+                        <!-- DEPARTMENT — priority: Class -->
+                        <td>
+                            {% if cls %}
+                                <span class="department {{ cls.department|lower }}">
+                                    {{ cls.department }}
+                                </span>
+                            {% elif teacher.department %}
+                                <span class="department {{ teacher.department|lower }}">
+                                    {{ teacher.department }}
+                                </span>
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <!-- GRADE — priority: Class -->
+                        <td>
+                            {% if cls %}{{ cls.grade }}
+                            {% elif teacher.grade %}{{ teacher.grade }}
+                            {% else %}—{% endif %}
+                        </td>
+
+                        <!-- SECTION — priority: Class -->
+                        <td>
+                            {% if cls %}{{ cls.section }}
+                            {% elif teacher.section %}{{ teacher.section }}
+                            {% else %}—{% endif %}
+                        </td>
+
                         <td>
                             <div class="action-buttons">
                                 <button type="button" class="action-btn view-btn" title="View">
@@ -129,148 +176,20 @@ Teacher's Information - RFID Attendance Management System
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
+                        </td>
+
+                    </tr>
+
+                    {% endwith %}
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="12" style="text-align:center; padding:24px;">
+                            No teachers registered yet.
                         </td>
                     </tr>
 
-                    <!-- TEACHER 2 -->
-                    <tr>
-                        <td><strong class="teacher-id">T-002</strong></td>
-                        <td>Santos</td>
-                        <td>Maria</td>
-                        <td>Reyes</td>
-                        <td>42</td>
-                        <td>Female</td>
-                        <td>March 22, 1984</td>
-                        <td>maria@email.com</td>
-                        <td><span class="department shs">SHS</span></td>
-                        <td>Grade 11</td>
-                        <td>STEM-A</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button" class="action-btn view-btn" title="View">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button type="button" class="action-btn edit-btn" title="Edit">
-                                    <i class="fa-solid fa-pen"></i>
-                                </button>
-                                <button type="button" class="action-btn delete-btn" title="Delete">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- TEACHER 3 -->
-                    <tr>
-                        <td><strong class="teacher-id">T-003</strong></td>
-                        <td>Aquino</td>
-                        <td>Pedro</td>
-                        <td>—</td>
-                        <td>38</td>
-                        <td>Male</td>
-                        <td>July 08, 1988</td>
-                        <td>0918-555-1234</td>
-                        <td><span class="department jhs">JHS</span></td>
-                        <td>Grade 8</td>
-                        <td>Bonifacio</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button" class="action-btn view-btn" title="View">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button type="button" class="action-btn edit-btn" title="Edit">
-                                    <i class="fa-solid fa-pen"></i>
-                                </button>
-                                <button type="button" class="action-btn delete-btn" title="Delete">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- TEACHER 4 -->
-                    <tr>
-                        <td><strong class="teacher-id">T-004</strong></td>
-                        <td>Garcia</td>
-                        <td>Ana</td>
-                        <td>Lopez</td>
-                        <td>31</td>
-                        <td>Female</td>
-                        <td>November 10, 1994</td>
-                        <td>0920-321-7890</td>
-                        <td><span class="department jhs">JHS</span></td>
-                        <td>Grade 9</td>
-                        <td>Mabini</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button" class="action-btn view-btn" title="View">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button type="button" class="action-btn edit-btn" title="Edit">
-                                    <i class="fa-solid fa-pen"></i>
-                                </button>
-                                <button type="button" class="action-btn delete-btn" title="Delete">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- TEACHER 5 -->
-                    <tr>
-                        <td><strong class="teacher-id">T-005</strong></td>
-                        <td>Reyes</td>
-                        <td>Michael</td>
-                        <td>Tan</td>
-                        <td>45</td>
-                        <td>Male</td>
-                        <td>May 03, 1981</td>
-                        <td>michael@email.com</td>
-                        <td><span class="department shs">SHS</span></td>
-                        <td>Grade 12</td>
-                        <td>ABM-A</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button" class="action-btn view-btn" title="View">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button type="button" class="action-btn edit-btn" title="Edit">
-                                    <i class="fa-solid fa-pen"></i>
-                                </button>
-                                <button type="button" class="action-btn delete-btn" title="Delete">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <!-- TEACHER 6 -->
-                    <tr>
-                        <td><strong class="teacher-id">T-006</strong></td>
-                        <td>Fernandez</td>
-                        <td>Carla</td>
-                        <td>Mendoza</td>
-                        <td>36</td>
-                        <td>Female</td>
-                        <td>August 18, 1990</td>
-                        <td>0919-456-7891</td>
-                        <td><span class="department shs">SHS</span></td>
-                        <td>Grade 11</td>
-                        <td>HUMSS-A</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button" class="action-btn view-btn" title="View">
-                                    <i class="fa-solid fa-eye"></i>
-                                </button>
-                                <button type="button" class="action-btn edit-btn" title="Edit">
-                                    <i class="fa-solid fa-pen"></i>
-                                </button>
-                                <button type="button" class="action-btn delete-btn" title="Delete">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                    {% endfor %}
 
                 </tbody>
 
@@ -282,6 +201,174 @@ Teacher's Information - RFID Attendance Management System
 
 </section>
 
+
+<!-- =====================================================
+     TEACHER EDIT MODAL
+     ===================================================== -->
+
+<div class="teacher-modal-overlay" id="teacherEditOverlay">
+
+    <div class="teacher-modal" role="dialog" aria-modal="true"
+         aria-labelledby="teacherEditTitle">
+
+        <div class="teacher-modal-header">
+
+            <div class="teacher-modal-header-left">
+
+                <div class="teacher-modal-header-icon">
+                    <i class="fa-solid fa-pen"></i>
+                </div>
+
+                <div class="teacher-modal-header-text">
+
+                    <h3 id="teacherEditTitle">Edit Teacher</h3>
+                    <p>Update teacher information</p>
+
+                </div>
+
+            </div>
+
+            <button type="button" class="teacher-modal-close"
+                    id="closeTeacherEdit" aria-label="Close edit modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <form id="teacherEditForm" class="teacher-modal-body">
+
+            <input type="hidden" id="editTeacherId">
+
+            <!-- PERSONAL INFORMATION -->
+
+            <div class="teacher-modal-section">
+
+                <div class="teacher-modal-section-title">
+                    <i class="fa-solid fa-user"></i>
+                    <span>Personal Information</span>
+                </div>
+
+                <div class="teacher-modal-grid">
+
+                    <div class="teacher-modal-item">
+                        <label for="editTeacherNum">Teacher ID</label>
+                        <input type="text" id="editTeacherNum" required>
+                    </div>
+
+                    <div class="teacher-modal-item">
+                        <label for="editFirstName">First Name</label>
+                        <input type="text" id="editFirstName" required>
+                    </div>
+
+                    <div class="teacher-modal-item">
+                        <label for="editLastName">Last Name</label>
+                        <input type="text" id="editLastName" required>
+                    </div>
+
+                    <div class="teacher-modal-item">
+                        <label for="editMiddleName">Middle Name</label>
+                        <input type="text" id="editMiddleName">
+                    </div>
+
+                    <div class="teacher-modal-item">
+                        <label for="editAge">Age</label>
+                        <input type="number" id="editAge" min="1" max="100">
+                    </div>
+
+                    <div class="teacher-modal-item">
+                        <label for="editSex">Sex</label>
+                        <select id="editSex">
+                            <option value="">—</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+
+                    <div class="teacher-modal-item">
+                        <label for="editBirthday">Birthday</label>
+                        <input type="date" id="editBirthday">
+                    </div>
+
+                    <div class="teacher-modal-item">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail">
+                    </div>
+
+                    <div class="teacher-modal-item">
+                        <label for="editContact">Contact Number</label>
+                        <input type="tel" id="editContact">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CLASS ASSIGNMENT -->
+
+            <div class="teacher-modal-section">
+
+                <div class="teacher-modal-section-title">
+                    <i class="fa-solid fa-school"></i>
+                    <span>Class Assignment</span>
+                </div>
+
+                <div class="teacher-modal-grid">
+
+                    <div class="teacher-modal-item">
+                        <label for="editDepartment">Department</label>
+                        <select id="editDepartment">
+                            <option value="">—</option>
+                            <option value="JHS">JHS</option>
+                            <option value="SHS">SHS</option>
+                        </select>
+                    </div>
+
+                    <div class="teacher-modal-item">
+                        <label for="editGrade">Grade</label>
+                        <select id="editGrade">
+                            <option value="">—</option>
+                            <option value="Grade 7" data-dept="JHS">Grade 7</option>
+                            <option value="Grade 8" data-dept="JHS">Grade 8</option>
+                            <option value="Grade 9" data-dept="JHS">Grade 9</option>
+                            <option value="Grade 10" data-dept="JHS">Grade 10</option>
+                            <option value="Grade 11" data-dept="SHS">Grade 11</option>
+                            <option value="Grade 12" data-dept="SHS">Grade 12</option>
+                        </select>
+                    </div>
+
+                    <div class="teacher-modal-item">
+                        <label for="editSection">Section</label>
+                        <input type="text" id="editSection" placeholder="e.g. Einstein">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="teacher-modal-footer">
+
+                <button type="button" class="teacher-modal-btn cancel-btn"
+                        id="cancelTeacherEdit">
+                    Cancel
+                </button>
+
+                <button type="submit" class="teacher-modal-btn save-btn">
+                    <i class="fa-solid fa-save"></i> Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{# CSRF token para sa AJAX #}
+{% csrf_token %}
+
 {% endblock %}
 
 
@@ -289,111 +376,310 @@ Teacher's Information - RFID Attendance Management System
 
 <script>
 
+document.addEventListener("DOMContentLoaded", function () {
+    "use strict";
+
+    const teacherSearch = document.getElementById("teacherSearch");
+    const teacherTable  = document.getElementById("teacherTable");
+
+    function getCSRFToken() {
+        const input = document.querySelector("input[name=csrfmiddlewaretoken]");
+        return input ? input.value : "";
+    }
+
+
     /* =====================================================
        TEACHER SEARCH
        ===================================================== */
 
-    const teacherSearch = document.getElementById("teacherSearch");
-    const teacherTable = document.getElementById("teacherTable");
-    const teacherRows = teacherTable.querySelectorAll("tbody tr");
+    if (teacherSearch && teacherTable) {
+        teacherSearch.addEventListener("input", function () {
+            const searchValue = this.value.toLowerCase().trim();
+            const teacherRows = teacherTable.querySelectorAll("tbody tr");
 
-    teacherSearch.addEventListener("input", function () {
+            teacherRows.forEach(row => {
+                if (row.querySelector("td[colspan]")) return;
+                const rowText = row.textContent.toLowerCase();
+                row.style.display = rowText.includes(searchValue) ? "" : "none";
+            });
+        });
+    }
 
-        const searchValue = this.value.toLowerCase().trim();
 
-        teacherRows.forEach(row => {
+    /* =====================================================
+       DYNAMIC GRADE DROPDOWN — base sa Department
+       ===================================================== */
 
-            const rowText = row.textContent.toLowerCase();
+    const editDepartment = document.getElementById("editDepartment");
+    const editGrade      = document.getElementById("editGrade");
 
-            if (rowText.includes(searchValue)) {
-                row.style.display = "";
-            } else {
-                row.style.display = "none";
+    function filterGradesByDepartment() {
+        if (!editDepartment || !editGrade) return;
+
+        const dept = editDepartment.value;
+        const currentValue = editGrade.value;
+        const options = editGrade.querySelectorAll("option");
+
+        options.forEach(function (opt) {
+            const optDept = opt.dataset.dept;
+
+            if (!optDept) {
+                opt.style.display = "";
+                return;
+            }
+
+            opt.style.display = (optDept === dept) ? "" : "none";
+        });
+
+        if (currentValue) {
+            const stillValid = Array.from(options).some(function (opt) {
+                return opt.value === currentValue && opt.style.display !== "none";
+            });
+            if (!stillValid) {
+                editGrade.value = "";
+            }
+        }
+    }
+
+    if (editDepartment) {
+        editDepartment.addEventListener("change", filterGradesByDepartment);
+    }
+
+
+    /* =====================================================
+       TEACHER EDIT MODAL
+       ===================================================== */
+
+    const teacherEditOverlay = document.getElementById("teacherEditOverlay");
+    const closeTeacherEdit   = document.getElementById("closeTeacherEdit");
+    const cancelTeacherEdit  = document.getElementById("cancelTeacherEdit");
+    const teacherEditForm    = document.getElementById("teacherEditForm");
+
+    function openTeacherEdit(row) {
+        const d = row.dataset;
+
+        document.getElementById("editTeacherId").value    = d.teacherId || "";
+        document.getElementById("editTeacherNum").value   = d.teacherNum || "";
+        document.getElementById("editFirstName").value    = d.firstName || "";
+        document.getElementById("editLastName").value     = d.lastName || "";
+        document.getElementById("editMiddleName").value   = d.middleName || "";
+        document.getElementById("editAge").value          = d.age || "";
+        document.getElementById("editSex").value          = d.sex || "";
+        document.getElementById("editBirthday").value     = d.birthday || "";
+        document.getElementById("editEmail").value        = d.email || "";
+        document.getElementById("editContact").value      = d.contact || "";
+        document.getElementById("editDepartment").value   = d.department || "";
+
+        document.getElementById("editGrade").value        = d.grade || "";
+
+        filterGradesByDepartment();
+
+        document.getElementById("editSection").value      = d.section || "";
+
+        if (teacherEditOverlay) {
+            teacherEditOverlay.classList.add("show");
+            document.body.style.overflow = "hidden";
+        }
+    }
+
+    function closeTeacherEditModal() {
+        if (teacherEditOverlay) teacherEditOverlay.classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    if (closeTeacherEdit)  closeTeacherEdit.addEventListener("click", closeTeacherEditModal);
+    if (cancelTeacherEdit) cancelTeacherEdit.addEventListener("click", closeTeacherEditModal);
+
+    if (teacherEditOverlay) {
+        teacherEditOverlay.addEventListener("click", function (event) {
+            if (event.target === teacherEditOverlay) closeTeacherEditModal();
+        });
+    }
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && teacherEditOverlay &&
+            teacherEditOverlay.classList.contains("show")) {
+            closeTeacherEditModal();
+        }
+    });
+
+
+    /* =====================================================
+       SAVE TEACHER EDIT — AJAX
+       ===================================================== */
+
+    if (teacherEditForm) {
+        teacherEditForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const teacherId = document.getElementById("editTeacherId").value;
+
+            if (!teacherId) {
+                alert("Missing teacher ID.");
+                return;
+            }
+
+            const payload = {
+                teacher_id:  document.getElementById("editTeacherNum").value.trim(),
+                first_name:  document.getElementById("editFirstName").value.trim(),
+                last_name:   document.getElementById("editLastName").value.trim(),
+                middle_name: document.getElementById("editMiddleName").value.trim(),
+                age:         document.getElementById("editAge").value,
+                sex:         document.getElementById("editSex").value,
+                birthday:    document.getElementById("editBirthday").value,
+                email:       document.getElementById("editEmail").value.trim(),
+                contact:     document.getElementById("editContact").value.trim(),
+                department:  document.getElementById("editDepartment").value,
+                grade:       document.getElementById("editGrade").value,
+                section:     document.getElementById("editSection").value.trim(),
+            };
+
+            try {
+                const response = await fetch(
+                    "{% url 'edit_teacher' 0 %}".replace('0', teacherId),
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": getCSRFToken(),
+                        },
+                        body: JSON.stringify(payload),
+                    }
+                );
+
+                if (!response.ok) {
+                    const text = await response.text();
+                    console.error("Server error:", text);
+                    throw new Error("HTTP " + response.status);
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.reload();
+                } else {
+                    alert("Error: " + (result.error || "Unknown"));
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Failed to save: " + err.message);
+            }
+        });
+    }
+
+
+    /* =====================================================
+       DELETE / VIEW / EDIT — EVENT DELEGATION
+       ===================================================== */
+
+    if (teacherTable) {
+
+        teacherTable.addEventListener("click", async function (event) {
+
+            /* =========================================
+               DELETE
+               ========================================= */
+
+            const deleteBtn = event.target.closest(".delete-btn");
+
+            if (deleteBtn) {
+
+                const row = deleteBtn.closest("tr");
+                const teacherId = row.dataset.teacherId;
+
+                const lastName = row.children[1].textContent.trim();
+                const firstName = row.children[2].textContent.trim();
+
+                if (!teacherId) {
+                    alert("Cannot delete: missing teacher ID.");
+                    return;
+                }
+
+                if (!confirm(
+                    "Are you sure you want to delete "
+                    + lastName + ", " + firstName + "?"
+                )) return;
+
+                try {
+                    const response = await fetch(
+                        "{% url 'delete_teacher' 0 %}".replace('0', teacherId),
+                        {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": getCSRFToken(),
+                            },
+                        }
+                    );
+
+                    if (!response.ok) {
+                        const text = await response.text();
+                        console.error("Server error:", text);
+                        throw new Error("HTTP " + response.status);
+                    }
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        row.remove();
+                        const countEl = document.getElementById("totalTeachersCount");
+                        if (countEl) {
+                            const remaining = teacherTable
+                                .querySelectorAll("tbody tr")
+                                .length - 1;
+                            countEl.textContent = Math.max(0, remaining);
+                        }
+                    } else {
+                        alert("Error: " + (result.error || "Unknown error"));
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Failed to delete: " + err.message);
+                }
+
+                return;
+            }
+
+
+            /* =========================================
+               VIEW
+               ========================================= */
+
+            const viewBtn = event.target.closest(".view-btn");
+
+            if (viewBtn) {
+
+                const row = viewBtn.closest("tr");
+
+                const teacherID = row.children[0].textContent.trim();
+                const lastName = row.children[1].textContent.trim();
+                const firstName = row.children[2].textContent.trim();
+
+                alert(
+                    "Teacher Information\n\n"
+                    + "ID Nr: " + teacherID + "\n"
+                    + "Name: " + firstName + " " + lastName
+                );
+
+                return;
+            }
+
+
+            /* =========================================
+               EDIT
+               ========================================= */
+
+            const editBtn = event.target.closest(".edit-btn");
+
+            if (editBtn) {
+                const row = editBtn.closest("tr");
+                if (row) openTeacherEdit(row);
             }
 
         });
 
-    });
+    }
 
-
-    /* =====================================================
-       DELETE BUTTON
-       Removes the displayed sample row only.
-       ===================================================== */
-
-    const deleteButtons = document.querySelectorAll(".delete-btn");
-
-    deleteButtons.forEach(button => {
-
-        button.addEventListener("click", function () {
-
-            const row = this.closest("tr");
-
-            const teacherName =
-                row.children[1].textContent.trim()
-                + ", "
-                + row.children[2].textContent.trim();
-
-            const confirmDelete = confirm(
-                "Are you sure you want to delete "
-                + teacherName
-                + "?"
-            );
-
-            if (confirmDelete) {
-                row.remove();
-            }
-
-        });
-
-    });
-
-
-    /* =====================================================
-       VIEW BUTTON
-       ===================================================== */
-
-    const viewButtons = document.querySelectorAll(".view-btn");
-
-    viewButtons.forEach(button => {
-
-        button.addEventListener("click", function () {
-
-            const row = this.closest("tr");
-
-            const teacherID = row.children[0].textContent.trim();
-            const lastName = row.children[1].textContent.trim();
-            const firstName = row.children[2].textContent.trim();
-
-            alert(
-                "Teacher Information\n\n"
-                + "ID Nr: " + teacherID + "\n"
-                + "Name: " + firstName + " " + lastName
-            );
-
-        });
-
-    });
-
-
-    /* =====================================================
-       EDIT BUTTON
-       ===================================================== */
-
-    const editButtons = document.querySelectorAll(".edit-btn");
-
-    editButtons.forEach(button => {
-
-        button.addEventListener("click", function () {
-
-            const row = this.closest("tr");
-            const teacherID = row.children[0].textContent.trim();
-
-            alert("Edit Teacher: " + teacherID);
-
-        });
-
-    });
+});
 
 </script>
 

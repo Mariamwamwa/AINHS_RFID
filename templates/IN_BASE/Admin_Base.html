@@ -175,16 +175,16 @@
 
                     <!-- LOGOUT -->
 
-                    <a
-                        href="#"
-                        class="dropdown-item logout-item"
-                    >
+                   <a
+    href="{% url 'logout' %}"
+    class="dropdown-item logout-item"
+>
 
-                        <i class="fa-solid fa-right-from-bracket"></i>
+    <i class="fa-solid fa-right-from-bracket"></i>
 
-                        <span>Logout</span>
+    <span>Logout</span>
 
-                    </a>
+</a>
 
 
                 </div>
@@ -274,18 +274,6 @@
 
 
 
-            <!-- ADD TEACHER -->
-
-            <a
-                href="{% url 'admin_add_teacher' %}"
-                class="menu-item {% if request.resolver_match.url_name == 'admin_add_teacher' %}active{% endif %}"
-            >
-
-                <i class="fa-solid fa-user-plus"></i>
-
-                <span>Add Teacher</span>
-
-            </a>
 
 
 

@@ -1,4 +1,3 @@
-
 {% extends 'IN_BASE/Admin_Base.html' %}
 {% load static %}
 
@@ -30,11 +29,6 @@
             <button type="button" class="attendance-btn attendance-btn-primary"
                     id="addStudentBtn">
                 <i class="fas fa-user-plus"></i> Add Student
-            </button>
-
-            <button type="button" class="attendance-btn attendance-btn-outline"
-                    id="exportBtn">
-                <i class="fas fa-file-export"></i> Export
             </button>
 
             <button type="button" class="attendance-btn attendance-btn-outline"
@@ -225,6 +219,10 @@
     </div>
 
 </div>
+
+{# Data mula sa Django — para dynamic #}
+{{ students_json|json_script:"studentsData" }}
+{% csrf_token %}
 {% endblock %}
 
 {% block extra_js %}
@@ -233,39 +231,25 @@ document.addEventListener("DOMContentLoaded", function () {
     "use strict";
 
     // =========================================================
-    // DATA - BROWSER DEMO ONLY
+    // DATA — GALING SA DJANGO (dynamic)
     // =========================================================
 
     const STUDENTS_KEY = "ainhs_attendance_demo_students";
     const RECORDS_KEY = "ainhs_attendance_demo_records";
 
-    const sampleStudents = [
-        { id: 1, name: "Juan Dela Cruz", grade: "7", section: "Einstein" },
-        { id: 2, name: "Maria Santos", grade: "7", section: "Einstein" },
-        { id: 3, name: "Jose Rizal", grade: "7", section: "Newton" },
-        { id: 4, name: "Andres Bonifacio", grade: "7", section: "Newton" },
-        { id: 5, name: "Apolinario Mabini", grade: "7", section: "Galileo" },
-        { id: 6, name: "Emilio Aguinaldo", grade: "8", section: "Mabini" },
-        { id: 7, name: "Gabriela Silang", grade: "8", section: "Mabini" },
-        { id: 8, name: "Lapu-Lapu", grade: "8", section: "Bonifacio" },
-        { id: 9, name: "Ferdinand Magellan", grade: "8", section: "Bonifacio" },
-        { id: 10, name: "Jose P. Laurel", grade: "9", section: "Rizal" },
-        { id: 11, name: "Manuel L. Quezon", grade: "9", section: "Rizal" },
-        { id: 12, name: "Sergio Osmeña", grade: "9", section: "Luna" },
-        { id: 13, name: "Ramon Magsaysay", grade: "10", section: "Aquino" },
-        { id: 14, name: "Corazon Aquino", grade: "10", section: "Aquino" },
-        { id: 15, name: "Benigno Aquino III", grade: "10", section: "Magsaysay" },
-        { id: 16, name: "Albert Einstein", grade: "11", section: "STEM A" },
-        { id: 17, name: "Marie Curie", grade: "11", section: "STEM A" },
-        { id: 18, name: "Ada Lovelace", grade: "11", section: "ABM A" },
-        { id: 19, name: "Alan Turing", grade: "11", section: "ABM A" },
-        { id: 20, name: "Sigmund Freud", grade: "11", section: "HUMSS A" },
-        { id: 21, name: "Neil Armstrong", grade: "12", section: "STEM B" },
-        { id: 22, name: "Buzz Aldrin", grade: "12", section: "STEM B" },
-        { id: 23, name: "Warren Buffett", grade: "12", section: "ABM B" },
-        { id: 24, name: "Oprah Winfrey", grade: "12", section: "ABM B" },
-        { id: 25, name: "Martin Luther King", grade: "12", section: "HUMSS B" }
-    ];
+    const serverStudents = (function () {
+        try {
+            const el = document.getElementById("studentsData");
+            return el ? JSON.parse(el.textContent || "[]") : [];
+        } catch (err) {
+            return [];
+        }
+    })();
+
+    const CSRF_TOKEN = (function () {
+        const input = document.querySelector("input[name=csrfmiddlewaretoken]");
+        return input ? input.value : "";
+    })();
 
     const $ = id => document.getElementById(id);
 
@@ -286,10 +270,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    let students = loadStored(
-        STUDENTS_KEY,
-        sampleStudents.map(student => ({ ...student }))
-    );
+    let students = serverStudents.length
+        ? serverStudents
+        : loadStored(STUDENTS_KEY, []);
 
     let attendance = loadStored(RECORDS_KEY, {});
 
@@ -372,7 +355,7 @@ document.addEventListener("DOMContentLoaded", function () {
                    (
                        !search ||
                        student.name.toLowerCase().includes(search) ||
-                       student.section.toLowerCase().includes(search)
+                       String(student.section).toLowerCase().includes(search)
                    );
         }).sort((a, b) =>
             Number(a.grade) - Number(b.grade) ||
@@ -455,6 +438,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }).join("");
     }
 
+    // =========================================================
+    // SAVE — localStorage + AJAX
+    // =========================================================
+
     $("attendanceBody").addEventListener("change", function (event) {
         const input = event.target.closest(".attendance-time-input");
         if (!input) return;
@@ -476,6 +463,22 @@ document.addEventListener("DOMContentLoaded", function () {
             showToast("Attendance updated!", "success");
         }
 
+        if (window.SAVE_ATTENDANCE_URL) {
+            fetch(window.SAVE_ATTENDANCE_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": CSRF_TOKEN,
+                },
+                body: JSON.stringify({
+                    student_id: studentId,
+                    field: field,
+                    value: input.value,
+                    date: date,
+                }),
+            }).catch(() => {});
+        }
+
         renderAttendance();
     });
 
@@ -487,7 +490,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // =========================================================
     // BULK ACTIONS
-    // Applies to students matching the current filters.
     // =========================================================
 
     function bulkUpdate(action) {
@@ -513,7 +515,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const key = recordKey(student.id, date);
 
             if (action === "present") {
-                // These are demo times, not actual RFID scan timestamps.
                 attendance[key] = {
                     timeInAM: "07:30",
                     timeOutAM: "11:30",
@@ -615,47 +616,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         renderAttendance();
         closeModal();
-    });
-
-    // =========================================================
-    // EXPORT ATTENDANCE FOR SELECTED DATE
-    // =========================================================
-
-    $("exportBtn").addEventListener("click", function () {
-        const date = $("attDate").value || localDate();
-
-        const data = students.map(student => {
-            const record = getRecord(student.id, date);
-
-            return {
-                Name: student.name,
-                Grade: student.grade,
-                Section: student.section,
-                "Time In (AM)": record.timeInAM || "",
-                "Time Out (AM)": record.timeOutAM || "",
-                "Time In (PM)": record.timeInPM || "",
-                "Time Out (PM)": record.timeOutPM || "",
-                Status: getStatus(record) === "present" ? "Present" : "Absent"
-            };
-        });
-
-        const blob = new Blob(
-            [JSON.stringify(data, null, 2)],
-            { type: "application/json" }
-        );
-
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = `attendance_${date}.json`;
-
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-        showToast("Attendance exported successfully!", "success");
     });
 
     // =========================================================

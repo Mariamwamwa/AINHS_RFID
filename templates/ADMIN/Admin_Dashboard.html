@@ -1,4 +1,3 @@
-
 {% extends 'IN_BASE/Admin_Base.html' %}
 {% load static %}
 
@@ -90,7 +89,7 @@ Admin Dashboard - RFID Attendance Management System
 
                 <span>Total Teachers</span>
 
-                <h3>24</h3>
+                <h3>{{ total_teachers|default:"0" }}</h3>
 
                 <small>
                     <i class="fa-solid fa-arrow-up"></i>
@@ -115,7 +114,7 @@ Admin Dashboard - RFID Attendance Management System
 
                 <span>Total Students</span>
 
-                <h3>356</h3>
+                <h3>{{ total_students|default:"0" }}</h3>
 
                 <small>
                     <i class="fa-solid fa-arrow-up"></i>
@@ -140,7 +139,7 @@ Admin Dashboard - RFID Attendance Management System
 
                 <span>Total Classes</span>
 
-                <h3>18</h3>
+                <h3>{{ total_classes|default:"0" }}</h3>
 
                 <small>
                     Active classes
@@ -164,7 +163,7 @@ Admin Dashboard - RFID Attendance Management System
 
                 <span>Today's Attendance</span>
 
-                <h3>92%</h3>
+                <h3>{{ attendance_rate|default:"0" }}%</h3>
 
                 <small>
                     <i class="fa-solid fa-circle-check"></i>
@@ -236,48 +235,7 @@ Admin Dashboard - RFID Attendance Management System
 
                     <tbody>
 
-
-                        <!-- STUDENT 1 -->
-
-                        <tr>
-
-                            <td>
-
-                                <div class="student-cell">
-
-                                    <div class="student-avatar">
-                                        JD
-                                    </div>
-
-                                    <span>
-                                        Juan Dela Cruz
-                                    </span>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                2026-001
-                            </td>
-
-                            <td>
-                                7:45 AM
-                            </td>
-
-                            <td>
-
-                                <span class="status present">
-                                    Present
-                                </span>
-
-                            </td>
-
-                        </tr>
-
-
-
-                        <!-- STUDENT 2 -->
+                        {% for record in recent_attendance %}
 
                         <tr>
 
@@ -286,11 +244,11 @@ Admin Dashboard - RFID Attendance Management System
                                 <div class="student-cell">
 
                                     <div class="student-avatar">
-                                        MS
+                                        {{ record.initials }}
                                     </div>
 
                                     <span>
-                                        Maria Santos
+                                        {{ record.full_name }}
                                     </span>
 
                                 </div>
@@ -298,103 +256,36 @@ Admin Dashboard - RFID Attendance Management System
                             </td>
 
                             <td>
-                                2026-002
+                                {{ record.student_id }}
                             </td>
 
                             <td>
-                                7:51 AM
+                                {{ record.time_in }}
                             </td>
 
                             <td>
 
-                                <span class="status present">
-                                    Present
+                                <span class="status {{ record.status|lower }}">
+                                    {{ record.status }}
                                 </span>
 
                             </td>
 
                         </tr>
 
-
-
-                        <!-- STUDENT 3 -->
+                        {% empty %}
 
                         <tr>
 
-                            <td>
+                            <td colspan="4" style="text-align:center; padding:20px;">
 
-                                <div class="student-cell">
-
-                                    <div class="student-avatar">
-                                        PA
-                                    </div>
-
-                                    <span>
-                                        Pedro Aquino
-                                    </span>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                2026-003
-                            </td>
-
-                            <td>
-                                8:03 AM
-                            </td>
-
-                            <td>
-
-                                <span class="status late">
-                                    Late
-                                </span>
+                                No attendance records yet today.
 
                             </td>
 
                         </tr>
 
-
-
-                        <!-- STUDENT 4 -->
-
-                        <tr>
-
-                            <td>
-
-                                <div class="student-cell">
-
-                                    <div class="student-avatar">
-                                        RC
-                                    </div>
-
-                                    <span>
-                                        Rica Cruz
-                                    </span>
-
-                                </div>
-
-                            </td>
-
-                            <td>
-                                2026-004
-                            </td>
-
-                            <td>
-                                7:42 AM
-                            </td>
-
-                            <td>
-
-                                <span class="status present">
-                                    Present
-                                </span>
-
-                            </td>
-
-                        </tr>
-
+                        {% endfor %}
 
                     </tbody>
 
@@ -431,37 +322,6 @@ Admin Dashboard - RFID Attendance Management System
 
 
             <div class="quick-actions">
-
-
-                <!-- ADD TEACHER -->
-
-                <a
-                    href="{% url 'admin_add_teacher' %}"
-                    class="quick-action"
-                >
-
-                    <div class="quick-action-icon purple-bg">
-
-                        <i class="fa-solid fa-user-plus"></i>
-
-                    </div>
-
-                    <div>
-
-                        <strong>
-                            Add Teacher
-                        </strong>
-
-                        <span>
-                            Register a new teacher
-                        </span>
-
-                    </div>
-
-                    <i class="fa-solid fa-chevron-right"></i>
-
-                </a>
-
 
 
                 <!-- REGISTER STUDENT -->

@@ -1,4 +1,3 @@
-
 {% extends 'IN_BASE/Admin_Base.html' %}
 {% load static %}
 
@@ -32,11 +31,6 @@ Users - RFID Attendance Management System
                 registered in the attendance management system.
             </p>
         </div>
-
-        <a href="{% url 'admin_add_teacher' %}" class="add-user-btn">
-            <i class="fa-solid fa-user-plus"></i>
-            Add Teacher
-        </a>
     </div>
 
     <!-- USERS TABLE CARD -->
@@ -76,89 +70,45 @@ Users - RFID Attendance Management System
 
                 <tbody>
 
-                    <!-- SAMPLE TEACHER 1 -->
+                    {% for teacher in teachers %}
                     <tr>
-                        <td><span class="teacher-id">TCH-001</span></td>
-                        <td><span class="username">juandelacruz</span></td>
                         <td>
-                            <div class="password-cell">
-                                <span class="password">••••••••••</span>
-                                <button
-                                    type="button"
-                                    class="password-toggle"
-                                    aria-label="Password is not available for display"
-                                    disabled
-                                >
-                                    <i class="fa-regular fa-eye"></i>
-                                </button>
-                            </div>
+                            <span class="teacher-id">
+                                {{ teacher.teacher_id }}
+                            </span>
                         </td>
-                        <td>What is your favorite color?</td>
-                        <td><span class="security-answer">••••••••••</span></td>
-                    </tr>
 
-                    <!-- SAMPLE TEACHER 2 -->
-                    <tr>
-                        <td><span class="teacher-id">TCH-002</span></td>
-                        <td><span class="username">mariasantos</span></td>
                         <td>
-                            <div class="password-cell">
-                                <span class="password">••••••••••</span>
-                                <button
-                                    type="button"
-                                    class="password-toggle"
-                                    aria-label="Password is not available for display"
-                                    disabled
-                                >
-                                    <i class="fa-regular fa-eye"></i>
-                                </button>
-                            </div>
+                            <span class="username">
+                                {{ teacher.user.username }}
+                            </span>
                         </td>
-                        <td>What is your mother's maiden name?</td>
-                        <td><span class="security-answer">••••••••••</span></td>
-                    </tr>
 
-                    <!-- SAMPLE TEACHER 3 -->
-                    <tr>
-                        <td><span class="teacher-id">TCH-003</span></td>
-                        <td><span class="username">pedroaquino</span></td>
                         <td>
                             <div class="password-cell">
-                                <span class="password">••••••••••</span>
-                                <button
-                                    type="button"
-                                    class="password-toggle"
-                                    aria-label="Password is not available for display"
-                                    disabled
-                                >
-                                    <i class="fa-regular fa-eye"></i>
-                                </button>
+                                <span class="password">
+                                    {{ teacher.plain_password|default:"—" }}
+                                </span>
                             </div>
                         </td>
-                        <td>What was the name of your first pet?</td>
-                        <td><span class="security-answer">••••••••••</span></td>
-                    </tr>
 
-                    <!-- SAMPLE TEACHER 4 -->
-                    <tr>
-                        <td><span class="teacher-id">TCH-004</span></td>
-                        <td><span class="username">ricacruz</span></td>
                         <td>
-                            <div class="password-cell">
-                                <span class="password">••••••••••</span>
-                                <button
-                                    type="button"
-                                    class="password-toggle"
-                                    aria-label="Password is not available for display"
-                                    disabled
-                                >
-                                    <i class="fa-regular fa-eye"></i>
-                                </button>
-                            </div>
+                            {{ teacher.security_question|default:"—" }}
                         </td>
-                        <td>What is your favorite food?</td>
-                        <td><span class="security-answer">••••••••••</span></td>
+
+                        <td>
+                            <span class="security-answer">
+                                {{ teacher.plain_security_answer|default:"—" }}
+                            </span>
+                        </td>
                     </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px;">
+                            No teacher accounts registered yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
 
                 </tbody>
             </table>
@@ -166,16 +116,24 @@ Users - RFID Attendance Management System
 
         <!-- TABLE FOOTER -->
         <div class="table-footer">
-            <span>Showing 4 of 24 teacher accounts</span>
+            <span>
+                Showing {{ teachers|length }} of {{ total_teachers }} teacher accounts
+            </span>
 
             <div class="pagination">
                 <button type="button" class="pagination-btn disabled" disabled>
                     <i class="fa-solid fa-chevron-left"></i>
                 </button>
-                <button type="button" class="pagination-btn active">1</button>
-                <button type="button" class="pagination-btn">2</button>
-                <button type="button" class="pagination-btn">3</button>
-                <button type="button" class="pagination-btn">4</button>
+
+                {% for page in page_range %}
+                    <button
+                        type="button"
+                        class="pagination-btn {% if page == current_page %}active{% endif %}"
+                    >
+                        {{ page }}
+                    </button>
+                {% endfor %}
+
                 <button type="button" class="pagination-btn">
                     <i class="fa-solid fa-chevron-right"></i>
                 </button>
@@ -190,20 +148,26 @@ Users - RFID Attendance Management System
 
 {% block extra_js %}
 <script>
-    /* SEARCH */
-    const searchInput = document.getElementById("searchInput");
-    const tableRows = document.querySelectorAll("#usersTable tbody tr");
+    document.addEventListener("DOMContentLoaded", function () {
+        "use strict";
 
-    searchInput.addEventListener("input", function () {
-        const searchValue = this.value.toLowerCase().trim();
+        const searchInput = document.getElementById("searchInput");
+        const usersTable = document.getElementById("usersTable");
 
-        tableRows.forEach(function (row) {
-            const rowText = row.textContent.toLowerCase();
+        if (searchInput && usersTable) {
+            searchInput.addEventListener("input", function () {
+                const searchValue = this.value.toLowerCase().trim();
+                const rows = usersTable.querySelectorAll("tbody tr");
 
-            row.style.display = rowText.includes(searchValue)
-                ? ""
-                : "none";
-        });
+                rows.forEach(function (row) {
+                    // Skip empty state row
+                    if (row.querySelector("td[colspan]")) return;
+
+                    const rowText = row.textContent.toLowerCase();
+                    row.style.display = rowText.includes(searchValue) ? "" : "none";
+                });
+            });
+        }
     });
 </script>
 {% endblock %}
