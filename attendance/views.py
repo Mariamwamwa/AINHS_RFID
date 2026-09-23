@@ -6,13 +6,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
 
-from .models import Admin, Teacher, Student, Class, Attendance
+from .models import Admin, Teacher, Student, Class, Attendance, Notification
 
 
 # =====================================================
@@ -26,6 +27,14 @@ def get_admin_department(request):
     try:
         return request.user.admin_profile.department
     except (AttributeError, Admin.DoesNotExist):
+        return None
+
+
+def get_teacher(request):
+    """Return Teacher object or None."""
+    try:
+        return request.user.teacher_profile
+    except Teacher.DoesNotExist:
         return None
 
 
@@ -121,11 +130,6 @@ def register_page(request):
             messages.error(request, 'Admin ID already exists.')
             return render(request, 'AUTHENTICATION/Register_Page.html')
 
-        # =================================================
-        # CREATE USER
-        # Admin → is_staff=True, is_superuser=False
-        # Teacher → is_staff=False, is_superuser=False
-        # =================================================
         if role == 'ADMIN':
             user = User.objects.create_user(
                 username=username, password=password,
@@ -601,7 +605,6 @@ def add_class(request):
             status=400
         )
 
-    # Enforce department
     if admin_dept and department != admin_dept:
         if admin_dept == 'SHS':
             return JsonResponse({
@@ -863,12 +866,10 @@ def admin_register_rfid(request):
 
         image = request.FILES.get('studentImage')
 
-        # Enforce department
         if admin_dept and department != admin_dept:
             messages.error(request, f'You can only register {admin_dept} students.')
             return redirect('admin_register_rfid')
 
-        # Enforce grade range
         try:
             grade_num = int(grade.replace('Grade ', '').strip())
         except (ValueError, AttributeError):
@@ -935,7 +936,6 @@ def admin_register_rfid(request):
         messages.success(request, 'Student registered successfully!')
         return redirect('admin_students')
 
-    # GET — i-load ang classes (filtered by department)
     classes = Class.objects.select_related('teacher').all()
     if admin_dept:
         classes = classes.filter(department=admin_dept)
@@ -1119,32 +1119,331 @@ def reset_attendance(request):
 
 
 # =====================================================
-# TEACHER
+# TEACHER — DASHBOARD
 # =====================================================
 
 @login_required
 def teacher_dashboard(request):
-    return render(request, 'TEACHER/Teacher_Dashboard.html')
+    today = date_cls.today()
+    teacher = get_teacher(request)
 
+    # Filter students ayon sa teacher's class
+    students_qs = Student.objects.filter(is_active=True)
+    if teacher and teacher.grade and teacher.section:
+        students_qs = students_qs.filter(
+            grade=teacher.grade,
+            section=teacher.section,
+        )
+
+    total_students = students_qs.count()
+
+    # Attendance records — filtered by teacher's students
+    student_ids = list(students_qs.values_list('id', flat=True))
+    today_records = Attendance.objects.filter(
+        date=today,
+        student_id__in=student_ids,
+    )
+    total_present = today_records.filter(status='present').count()
+    total_absent = today_records.filter(status='absent').count()
+
+    if total_students > 0:
+        attendance_rate = round((total_present / total_students) * 100)
+    else:
+        attendance_rate = 0
+
+    # Recent attendance — filtered by teacher's students
+    recent_attendance = Attendance.objects.filter(
+        student_id__in=student_ids,
+    ).select_related(
+        'student'
+    ).order_by('-date', '-time_in_am')[:10]
+
+    notifications = Notification.objects.filter(
+        user=request.user
+    ).order_by('-created_at')[:20]
+
+    context = {
+        'teacher': teacher,
+        'teacher_name': teacher.full_name if teacher else request.user.username,
+        'teacher_initials': teacher.initials if teacher else 'T',
+        'total_students': total_students,
+        'total_present': total_present,
+        'total_absent': total_absent,
+        'attendance_rate': attendance_rate,
+        'recent_attendance': recent_attendance,
+        'notifications': notifications,
+    }
+
+    return render(request, 'TEACHER/Teacher_Dashboard.html', context)
+
+
+# =====================================================
+# TEACHER — CLASS ATTENDANCE
+# =====================================================
 
 @login_required
 def teacher_class_attendance(request):
-    return render(request, 'TEACHER/Teacher_Class_Attendance.html')
+    teacher = get_teacher(request)
+    selected_date_str = request.GET.get('date')
 
+    if selected_date_str:
+        try:
+            selected_date = date_cls.fromisoformat(selected_date_str)
+        except ValueError:
+            selected_date = date_cls.today()
+    else:
+        selected_date = date_cls.today()
+
+    # Filter students ayon sa teacher's class
+    students_qs = Student.objects.filter(is_active=True)
+    if teacher and teacher.grade and teacher.section:
+        students_qs = students_qs.filter(
+            grade=teacher.grade,
+            section=teacher.section,
+        )
+
+    student_ids = list(students_qs.values_list('id', flat=True))
+
+    records = Attendance.objects.filter(
+        date=selected_date,
+        student_id__in=student_ids,
+    ).select_related('student').order_by('student__last_name')
+
+    total_students = students_qs.count()
+    total_present = records.filter(status='present').count()
+    total_absent = records.filter(status='absent').count()
+
+    # Section name
+    if teacher and teacher.grade and teacher.section:
+        section_name = f"{teacher.grade} - {teacher.section}"
+    else:
+        section_name = "Not Assigned"
+
+    # Dates with records — filtered
+    dates_with_records = list(
+        Attendance.objects.filter(
+            student_id__in=student_ids,
+        ).values_list('date', flat=True).distinct()
+    )
+    dates_with_records_str = [d.isoformat() for d in dates_with_records]
+
+    context = {
+        'selected_date': selected_date,
+        'records': records,
+        'total_students': total_students,
+        'total_present': total_present,
+        'total_absent': total_absent,
+        'section_name': section_name,
+        'dates_with_records': dates_with_records_str,
+    }
+
+    return render(request, 'TEACHER/Teacher_Class_Attendance.html', context)
+
+
+# =====================================================
+# TEACHER — CLASS RECORD
+# =====================================================
 
 @login_required
 def teacher_class_record(request):
-    return render(request, 'TEACHER/Teacher_Class_Record.html')
+    teacher = get_teacher(request)
 
+    # Auto-detect grade at section mula sa teacher profile
+    grade = teacher.grade if teacher and teacher.grade else None
+    section = teacher.section if teacher and teacher.section else None
+
+    # Filter students — kung anong grade/section lang ng teacher
+    if grade and section:
+        students = Student.objects.filter(
+            is_active=True,
+            grade=grade,
+            section=section,
+        ).order_by('last_name', 'first_name')
+    else:
+        students = Student.objects.none()
+
+    # Grade at Section options (para sa Promote Modal)
+    grade_options = ["Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"]
+    section_options = ["Section A", "Section B", "Section C", "Section D"]
+
+    context = {
+        'students': students,
+        'grade': grade or "Not Assigned",
+        'section': section or "",
+        'grade_options': grade_options,
+        'section_options': section_options,
+    }
+
+    return render(request, 'TEACHER/Teacher_Class_Record.html', context)
+
+
+# =====================================================
+# TEACHER — PROFILE / PERSONAL INFO
+# =====================================================
 
 @login_required
 def teacher_profile(request):
-    return render(request, 'TEACHER/Teacher_Personal_Info.html')
+    teacher = get_teacher(request)
 
+    if request.method == 'POST' and teacher:
+        # Update fields — PERO hindi kasama ang grade/section
+        # (admin lang ang pwedeng mag-assign ng class)
+        teacher.first_name = request.POST.get('first_name', teacher.first_name)
+        teacher.last_name = request.POST.get('last_name', teacher.last_name)
+        teacher.middle_name = request.POST.get('middle_name', teacher.middle_name)
+        teacher.age = request.POST.get('age') or None
+        teacher.sex = request.POST.get('sex', teacher.sex)
+        teacher.birthday = request.POST.get('birthday') or None
+        teacher.email = request.POST.get('email', teacher.email)
+        teacher.contact = request.POST.get('contact', teacher.contact)
+        teacher.department = request.POST.get('department', teacher.department)
+
+        # ❌ HINDI kasama ang grade at section — admin lang
+        # teacher.grade = ...  (removed)
+        # teacher.section = ...  (removed)
+
+        teacher.save()
+
+        messages.success(request, "Personal information updated successfully!")
+        return redirect('teacher_profile')
+
+    context = {
+        'teacher': teacher,
+    }
+
+    return render(request, 'TEACHER/Teacher_Personal_Info.html', context)
+
+
+# =====================================================
+# TEACHER — HISTORY
+# =====================================================
 
 @login_required
 def teacher_history(request):
-    return render(request,'TEACHER/Teacher_History.html')
+    teacher = get_teacher(request)
+
+    # Filter students ayon sa teacher's class
+    students_qs = Student.objects.filter(is_active=True)
+    if teacher and teacher.grade and teacher.section:
+        students_qs = students_qs.filter(
+            grade=teacher.grade,
+            section=teacher.section,
+        )
+
+    students = students_qs.order_by('last_name', 'first_name')
+    student_names = [s.full_name for s in students]
+    student_ids = list(students.values_list('id', flat=True))
+
+    # Records — filtered by teacher's students
+    records = Attendance.objects.filter(
+        student_id__in=student_ids,
+    ).select_related('student').order_by('-date')
+
+    records_by_date = {}
+    for record in records:
+        date_key = record.date.isoformat()
+        if date_key not in records_by_date:
+            records_by_date[date_key] = {}
+        records_by_date[date_key][record.student.id] = record
+
+    history_records = []
+    for date_key in sorted(records_by_date.keys(), reverse=True):
+        daily = records_by_date[date_key]
+
+        attendance = []
+        for student in students:
+            record = daily.get(student.id)
+            if record:
+                attendance.append([
+                    record.time_in_am.strftime("%#I:%M %p") if record.time_in_am else "—",
+                    record.time_out_am.strftime("%#I:%M %p") if record.time_out_am else "—",
+                    record.time_in_pm.strftime("%#I:%M %p") if record.time_in_pm else "—",
+                    record.time_out_pm.strftime("%#I:%M %p") if record.time_out_pm else "—",
+                ])
+            else:
+                attendance.append(None)
+
+        history_records.append({
+            'date': date_key,
+            'attendance': attendance,
+        })
+
+    context = {
+        'student_names': student_names,
+        'history_records': history_records,
+    }
+
+    return render(request, 'TEACHER/Teacher_History.html', context)
+
+
+# =====================================================
+# TEACHER — SECURITY
+# =====================================================
+
 @login_required
 def teacher_security(request):
-    return render(request, 'TEACHER/Teacher_Security.html')
+    teacher = get_teacher(request)
+
+    context = {
+        'security': teacher,
+    }
+
+    return render(request, 'TEACHER/Teacher_Security.html', context)
+
+
+@login_required
+def teacher_change_password(request):
+    """Handle password change."""
+
+    if request.method == 'POST':
+
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if not request.user.check_password(current_password):
+            messages.error(request, "Current password is incorrect.")
+            return redirect('teacher_security')
+
+        if new_password != confirm_password:
+            messages.error(request, "New passwords do not match.")
+            return redirect('teacher_security')
+
+        if len(new_password) < 8:
+            messages.error(request, "Password must be at least 8 characters.")
+            return redirect('teacher_security')
+
+        request.user.set_password(new_password)
+        request.user.save()
+
+        update_session_auth_hash(request, request.user)
+
+        messages.success(request, "Password changed successfully!")
+        return redirect('teacher_security')
+
+    return redirect('teacher_security')
+
+
+@login_required
+def teacher_save_security(request):
+    """Handle security question save."""
+
+    if request.method == 'POST':
+
+        try:
+            teacher = request.user.teacher_profile
+            teacher.security_question = request.POST.get('security_question', '')
+            teacher.security_answer = make_password(
+                request.POST.get('security_answer', '')
+            )
+            teacher.plain_security_answer = request.POST.get('security_answer', '')
+            teacher.save()
+
+            messages.success(request, "Security settings saved successfully!")
+
+        except Teacher.DoesNotExist:
+            messages.error(request, "Teacher profile not found.")
+
+        return redirect('teacher_security')
+
+    return redirect('teacher_security')

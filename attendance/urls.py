@@ -22,9 +22,9 @@ urlpatterns = [
     path('admin/teachers/delete/<int:teacher_id>/', views.delete_teacher, name='delete_teacher'),
     path('admin/add-teacher/', views.admin_add_teacher, name='admin_add_teacher'),
     path('admin/classes/', views.admin_classes, name='admin_classes'),
-    path('admin/classes/add/', views.add_class, name='add_class'),                              # ← BAGO
-    path('admin/classes/edit/<int:class_id>/', views.edit_class, name='edit_class'),           # ← BAGO
-    path('admin/classes/delete/<int:class_id>/', views.delete_class, name='delete_class'),     # ← BAGO
+    path('admin/classes/add/', views.add_class, name='add_class'),
+    path('admin/classes/edit/<int:class_id>/', views.edit_class, name='edit_class'),
+    path('admin/classes/delete/<int:class_id>/', views.delete_class, name='delete_class'),
     path('admin/students/', views.admin_students, name='admin_students'),
     path('admin/students/delete/<int:student_id>/', views.delete_student, name='delete_student'),
     path('admin/register-rfid/', views.admin_register_rfid, name='admin_register_rfid'),
@@ -47,4 +47,14 @@ urlpatterns = [
     path('teacher/history/', views.teacher_history, name="teacher_history"),
     path('teacher/security/', views.teacher_security, name='teacher_security'),
 
+    path(
+        'teacher/security/change-password/',
+        views.teacher_change_password,
+        name='teacher_change_password'
+    ),
+    path(
+        'teacher/security/save/',
+        views.teacher_save_security,
+        name='teacher_save_security'
+    ),
 ]

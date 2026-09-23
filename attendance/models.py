@@ -18,7 +18,6 @@ class Admin(models.Model):
     security_question = models.CharField(max_length=200)
     security_answer = models.CharField(max_length=200)
 
-    # BAGONG FIELDS — plain text para makita sa admin view
     plain_password = models.CharField(max_length=100, blank=True, null=True)
     plain_security_answer = models.CharField(max_length=200, blank=True, null=True)
 
@@ -51,7 +50,6 @@ class Teacher(models.Model):
     security_question = models.CharField(max_length=200)
     security_answer = models.CharField(max_length=200)
 
-    # BAGONG FIELDS — plain text para makita sa admin view
     plain_password = models.CharField(max_length=100, blank=True, null=True)
     plain_security_answer = models.CharField(max_length=200, blank=True, null=True)
 
@@ -60,6 +58,19 @@ class Teacher(models.Model):
 
     def __str__(self):
         return f"{self.last_name}, {self.first_name} ({self.teacher_id})"
+
+    # =====================================================
+    # PROPERTIES
+    # =====================================================
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}".strip()
+
+    @property
+    def initials(self):
+        parts = [self.first_name, self.last_name]
+        return ''.join([p[0].upper() for p in parts if p])
 
 
 class Student(models.Model):
@@ -77,12 +88,10 @@ class Student(models.Model):
     email = models.EmailField(blank=True, null=True)
     contact = models.CharField(max_length=20, blank=True, null=True)
 
-    # Guardian info
     parent_name = models.CharField(max_length=200)
     parent_contact = models.CharField(max_length=20)
     parent_relationship = models.CharField(max_length=50, blank=True, null=True)
 
-    # Address
     barangay = models.CharField(max_length=100, blank=True, null=True)
     municipality = models.CharField(max_length=100, blank=True, null=True)
     province = models.CharField(max_length=100, blank=True, null=True)
@@ -107,6 +116,44 @@ class Student(models.Model):
     def full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
 
+    # =====================================================
+    # PROPERTIES
+    # =====================================================
+
+    @property
+    def initials(self):
+        parts = [self.first_name, self.last_name]
+        return ''.join([p[0].upper() for p in parts if p])
+
+    @property
+    def attendance_rate(self):
+        total = self.attendances.count()
+        if total == 0:
+            return 0
+        present = self.attendances.filter(status='present').count()
+        return round((present / total) * 100)
+
+    @property
+    def attendance_class(self):
+        rate = self.attendance_rate
+        if rate >= 90:
+            return 'high'
+        elif rate >= 85:
+            return 'medium'
+        return 'low'
+
+    @property
+    def guardian_name(self):
+        return self.parent_name
+
+    @property
+    def guardian_contact(self):
+        return self.parent_contact
+
+    @property
+    def contact_number(self):
+        return self.contact
+
 
 class Class(models.Model):
     DEPARTMENT_CHOICES = [
@@ -128,7 +175,6 @@ class Class(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        # Isang section lang per grade (1 teacher per section)
         unique_together = ('grade', 'section')
 
     def __str__(self):
@@ -161,6 +207,26 @@ class Attendance(models.Model):
     class Meta:
         unique_together = ('student', 'date')
 
+    # =====================================================
+    # PROPERTIES
+    # =====================================================
+
+    @property
+    def lrn(self):
+        return self.student.lrn
+
+    @property
+    def student_name(self):
+        return self.student.full_name
+
+    @property
+    def time_in(self):
+        return self.time_in_am or self.time_in_pm
+
+    @property
+    def time_out(self):
+        return self.time_out_pm or self.time_out_am
+
 
 class RFIDLog(models.Model):
     rfid = models.CharField(max_length=50)
@@ -182,3 +248,21 @@ class SystemLog(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.action} - {self.created_at}"
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='notifications'
+    )
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title

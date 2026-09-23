@@ -1,4 +1,3 @@
-
 {% extends 'IN_BASE/Teacher_Base.html' %}
 {% load static %}
 
@@ -19,17 +18,14 @@ Personal Information - RFID Attendance Management System
 
 
 {% block extra_css %}
-
 <link
     rel="stylesheet"
     href="{% static 'css/TEACHER/Teacher_Personal_Info.css' %}"
 >
-
 {% endblock %}
 
 
 {% block content %}
-
 
 <!-- =====================================================
      PERSONAL INFORMATION PAGE
@@ -37,54 +33,29 @@ Personal Information - RFID Attendance Management System
 
 <section class="page-section active" id="personalPage">
 
-
-    <!-- =================================================
-         SECTION HEADING
-    ================================================= -->
-
     <div class="section-header">
-
         <div>
-
             <h2>Personal Information</h2>
-
-            <p>
-                View and update your registered teacher information.
-            </p>
-
+            <p>View and update your registered teacher information.</p>
         </div>
-
     </div>
 
 
-    <!-- =================================================
-         PERSONAL INFORMATION CARD
-    ================================================= -->
-
+    <!-- PERSONAL INFORMATION CARD -->
     <div class="content-card personal-card">
 
-
-        <!-- =============================================
-             PROFILE HEADER
-        ============================================= -->
-
+        <!-- PROFILE HEADER -->
         <div class="personal-profile">
 
-            <div
-                class="large-avatar"
-                id="personalAvatar"
-            >
-                JT
+            <div class="large-avatar" id="personalAvatar">
+                {{ teacher.initials|default:"T" }}
             </div>
 
             <div class="personal-profile-info">
-
                 <h3 id="personalProfileName">
-                    Juan Teacher
+                    {{ teacher.full_name|default:user.get_username }}
                 </h3>
-
                 <span>Teacher</span>
-
             </div>
 
         </div>
@@ -93,41 +64,35 @@ Personal Information - RFID Attendance Management System
         <div class="divider"></div>
 
 
-        <!-- =============================================
-             PERSONAL INFORMATION FORM
-        ============================================= -->
-
+        <!-- PERSONAL INFORMATION FORM -->
         <form
             id="personalInformationForm"
+            method="post"
+            action="{% url 'teacher_profile' %}"
             autocomplete="on"
         >
 
-            <div
-                class="information-grid"
-                id="personalInfoGrid"
-            >
+            {% csrf_token %}
 
 
-                <!-- =====================================
-                     ID NUMBER
-                ===================================== -->
+            <div class="information-grid" id="personalInfoGrid">
 
+
+                <!-- ID NUMBER -->
                 <div class="information-item editable-item">
 
-                    <label for="personalId">
-                        ID Number
-                    </label>
+                    <label for="personalId">ID Number</label>
 
                     <div class="information-value editable-value">
-                        TCH-2026-001
+                        {{ teacher.teacher_id|default:"—" }}
                     </div>
 
                     <input
                         class="editable-input readonly-field"
                         id="personalId"
-                        name="id_number"
+                        name="teacher_id"
                         type="text"
-                        value="TCH-2026-001"
+                        value="{{ teacher.teacher_id|default:'' }}"
                         readonly
                         disabled
                     >
@@ -135,18 +100,13 @@ Personal Information - RFID Attendance Management System
                 </div>
 
 
-                <!-- =====================================
-                     FULL NAME
-                ===================================== -->
-
+                <!-- FULL NAME -->
                 <div class="information-item editable-item">
 
-                    <label for="personalFullName">
-                        Full Name
-                    </label>
+                    <label for="personalFullName">Full Name</label>
 
                     <div class="information-value editable-value">
-                        Juan Teacher
+                        {{ teacher.full_name|default:user.get_username }}
                     </div>
 
                     <input
@@ -154,7 +114,7 @@ Personal Information - RFID Attendance Management System
                         id="personalFullName"
                         name="full_name"
                         type="text"
-                        value="Juan Teacher"
+                        value="{{ teacher.full_name|default:user.get_username }}"
                         required
                         disabled
                     >
@@ -162,18 +122,13 @@ Personal Information - RFID Attendance Management System
                 </div>
 
 
-                <!-- =====================================
-                     AGE
-                ===================================== -->
-
+                <!-- AGE -->
                 <div class="information-item editable-item">
 
-                    <label for="personalAge">
-                        Age
-                    </label>
+                    <label for="personalAge">Age</label>
 
                     <div class="information-value editable-value">
-                        30
+                        {{ teacher.age|default:"—" }}
                     </div>
 
                     <input
@@ -183,25 +138,20 @@ Personal Information - RFID Attendance Management System
                         type="number"
                         min="1"
                         max="100"
-                        value="30"
+                        value="{{ teacher.age|default:'' }}"
                         disabled
                     >
 
                 </div>
 
 
-                <!-- =====================================
-                     SEX
-                ===================================== -->
-
+                <!-- SEX -->
                 <div class="information-item editable-item">
 
-                    <label for="personalSex">
-                        Sex
-                    </label>
+                    <label for="personalSex">Sex</label>
 
                     <div class="information-value editable-value">
-                        Male
+                        {{ teacher.sex|default:"—" }}
                     </div>
 
                     <select
@@ -210,32 +160,24 @@ Personal Information - RFID Attendance Management System
                         name="sex"
                         disabled
                     >
-
-                        <option value="Male" selected>
+                        <option value="Male" {% if teacher.sex == "Male" %}selected{% endif %}>
                             Male
                         </option>
-
-                        <option value="Female">
+                        <option value="Female" {% if teacher.sex == "Female" %}selected{% endif %}>
                             Female
                         </option>
-
                     </select>
 
                 </div>
 
 
-                <!-- =====================================
-                     BIRTHDAY
-                ===================================== -->
-
+                <!-- BIRTHDAY -->
                 <div class="information-item editable-item">
 
-                    <label for="personalBirthday">
-                        Birthday
-                    </label>
+                    <label for="personalBirthday">Birthday</label>
 
                     <div class="information-value editable-value">
-                        January 15, 1996
+                        {{ teacher.birthday|date:"F j, Y"|default:"—" }}
                     </div>
 
                     <input
@@ -243,25 +185,20 @@ Personal Information - RFID Attendance Management System
                         id="personalBirthday"
                         name="birthday"
                         type="date"
-                        value="1996-01-15"
+                        value="{{ teacher.birthday|date:'Y-m-d' }}"
                         disabled
                     >
 
                 </div>
 
 
-                <!-- =====================================
-                     EMAIL
-                ===================================== -->
-
+                <!-- EMAIL -->
                 <div class="information-item editable-item">
 
-                    <label for="personalEmail">
-                        Email
-                    </label>
+                    <label for="personalEmail">Email</label>
 
                     <div class="information-value editable-value">
-                        juanteacher@email.com
+                        {{ teacher.email|default:"—" }}
                     </div>
 
                     <input
@@ -269,51 +206,41 @@ Personal Information - RFID Attendance Management System
                         id="personalEmail"
                         name="email"
                         type="email"
-                        value="juanteacher@email.com"
+                        value="{{ teacher.email|default:'' }}"
                         disabled
                     >
 
                 </div>
 
 
-                <!-- =====================================
-                     CONTACT NUMBER
-                ===================================== -->
-
+                <!-- CONTACT NUMBER -->
                 <div class="information-item editable-item">
 
-                    <label for="personalContact">
-                        Contact Number
-                    </label>
+                    <label for="personalContact">Contact Number</label>
 
                     <div class="information-value editable-value">
-                        0912 345 6789
+                        {{ teacher.contact|default:"—" }}
                     </div>
 
                     <input
                         class="editable-input"
                         id="personalContact"
-                        name="contact_number"
+                        name="contact"
                         type="tel"
-                        value="0912 345 6789"
+                        value="{{ teacher.contact|default:'' }}"
                         disabled
                     >
 
                 </div>
 
 
-                <!-- =====================================
-                     DEPARTMENT
-                ===================================== -->
-
+                <!-- DEPARTMENT -->
                 <div class="information-item editable-item">
 
-                    <label for="personalDepartment">
-                        Department
-                    </label>
+                    <label for="personalDepartment">Department</label>
 
                     <div class="information-value editable-value">
-                        SHS
+                        {{ teacher.department|default:"—" }}
                     </div>
 
                     <select
@@ -322,108 +249,57 @@ Personal Information - RFID Attendance Management System
                         name="department"
                         disabled
                     >
-
-                        <option value="JHS">
+                        <option value="JHS" {% if teacher.department == "JHS" %}selected{% endif %}>
                             JHS
                         </option>
-
-                        <option value="SHS" selected>
+                        <option value="SHS" {% if teacher.department == "SHS" %}selected{% endif %}>
                             SHS
                         </option>
-
                     </select>
 
                 </div>
 
 
-                <!-- =====================================
-                     ASSIGNED GRADE
-                ===================================== -->
+                <!-- ASSIGNED GRADE (READ-ONLY) -->
+                <div class="information-item editable-item readonly-item">
 
-                <div class="information-item editable-item">
-
-                    <label for="personalGrade">
-                        Assigned Class (Grade)
-                    </label>
+                    <label for="personalGrade">Assigned Class (Grade)</label>
 
                     <div class="information-value editable-value">
-                        Grade 11
+                        {{ teacher.grade|default:"Not assigned" }}
                     </div>
 
-                    <select
-                        class="editable-input"
+                    <input
+                        class="editable-input readonly-field"
                         id="personalGrade"
-                        name="assigned_grade"
+                        name="grade"
+                        type="text"
+                        value="{{ teacher.grade|default:'' }}"
+                        readonly
                         disabled
                     >
-
-                        <option value="Grade 7">
-                            Grade 7
-                        </option>
-
-                        <option value="Grade 8">
-                            Grade 8
-                        </option>
-
-                        <option value="Grade 9">
-                            Grade 9
-                        </option>
-
-                        <option value="Grade 10">
-                            Grade 10
-                        </option>
-
-                        <option value="Grade 11" selected>
-                            Grade 11
-                        </option>
-
-                        <option value="Grade 12">
-                            Grade 12
-                        </option>
-
-                    </select>
 
                 </div>
 
 
-                <!-- =====================================
-                     ASSIGNED SECTION
-                ===================================== -->
+                <!-- ASSIGNED SECTION (READ-ONLY) -->
+                <div class="information-item editable-item readonly-item">
 
-                <div class="information-item editable-item">
-
-                    <label for="personalSection">
-                        Assigned Class (Section)
-                    </label>
+                    <label for="personalSection">Assigned Class (Section)</label>
 
                     <div class="information-value editable-value">
-                        Section A
+                        {{ teacher.section|default:"Not assigned" }}
                     </div>
 
-                    <select
-                        class="editable-input"
+                    <input
+                        class="editable-input readonly-field"
                         id="personalSection"
-                        name="assigned_section"
+                        name="section"
+                        type="text"
+                        value="{{ teacher.section|default:'' }}"
+                        readonly
                         disabled
                     >
-
-                        <option value="Section A" selected>
-                            Section A
-                        </option>
-
-                        <option value="Section B">
-                            Section B
-                        </option>
-
-                        <option value="Section C">
-                            Section C
-                        </option>
-
-                        <option value="Section D">
-                            Section D
-                        </option>
-
-                    </select>
 
                 </div>
 
@@ -431,54 +307,31 @@ Personal Information - RFID Attendance Management System
             </div>
 
 
-            <!-- =============================================
-                 EDIT INFORMATION NOTE
-            ============================================= -->
-
-            <div
-                class="form-note personal-edit-note"
-                id="personalEditNote"
-            >
-
+            <!-- EDIT NOTE -->
+            <div class="form-note personal-edit-note" id="personalEditNote">
                 <i class="fa-solid fa-circle-info"></i>
-
                 <span>
                     You are editing your personal information.
                     Click Save Changes to update the displayed
                     information, or Cancel to discard your changes.
                 </span>
-
             </div>
 
 
-            <!-- =============================================
-                 ACTION BUTTONS
-            ============================================= -->
-
+            <!-- ACTION BUTTONS -->
             <div class="personal-actions">
-
-
-                <!-- UPDATE BUTTON -->
 
                 <button
                     class="primary-btn update-personal-btn"
                     id="updatePersonalBtn"
                     type="button"
                 >
-
                     <i class="fa-solid fa-pen-to-square"></i>
-
                     Update Personal Information
-
                 </button>
 
 
-                <!-- CANCEL AND SAVE BUTTONS -->
-
-                <div
-                    class="personal-edit-actions"
-                    id="personalEditActions"
-                >
+                <div class="personal-edit-actions" id="personalEditActions">
 
                     <button
                         class="secondary-btn"
@@ -493,27 +346,19 @@ Personal Information - RFID Attendance Management System
                         id="savePersonalEdit"
                         type="submit"
                     >
-
                         <i class="fa-solid fa-floppy-disk"></i>
-
                         Save Changes
-
                     </button>
 
                 </div>
 
-
             </div>
-
 
         </form>
 
-
     </div>
 
-
 </section>
-
 
 {% endblock %}
 
@@ -524,44 +369,28 @@ Personal Information - RFID Attendance Management System
 
 document.addEventListener("DOMContentLoaded", function () {
 
-
     // =====================================================
     // ELEMENTS
     // =====================================================
 
-    const personalForm =
-        document.getElementById("personalInformationForm");
+    const personalForm = document.getElementById("personalInformationForm");
+    const updatePersonalBtn = document.getElementById("updatePersonalBtn");
+    const cancelPersonalBtn = document.getElementById("cancelPersonalEdit");
+    const personalActions = document.getElementById("personalEditActions");
+    const personalNote = document.getElementById("personalEditNote");
 
-    const updatePersonalBtn =
-        document.getElementById("updatePersonalBtn");
+    const personalItems = document.querySelectorAll("#personalInfoGrid .editable-item");
+    const personalInputs = document.querySelectorAll("#personalInfoGrid .editable-input");
 
-    const savePersonalBtn =
-        document.getElementById("savePersonalEdit");
+    const personalProfileName = document.getElementById("personalProfileName");
+    const personalAvatar = document.getElementById("personalAvatar");
 
-    const cancelPersonalBtn =
-        document.getElementById("cancelPersonalEdit");
 
-    const personalActions =
-        document.getElementById("personalEditActions");
+    // =====================================================
+    // READ-ONLY FIELDS (hindi pwedeng i-edit)
+    // =====================================================
 
-    const personalNote =
-        document.getElementById("personalEditNote");
-
-    const personalItems =
-        document.querySelectorAll(
-            "#personalInfoGrid .editable-item"
-        );
-
-    const personalInputs =
-        document.querySelectorAll(
-            "#personalInfoGrid .editable-input"
-        );
-
-    const personalProfileName =
-        document.getElementById("personalProfileName");
-
-    const personalAvatar =
-        document.getElementById("personalAvatar");
+    const READONLY_IDS = ["personalId", "personalGrade", "personalSection"];
 
 
     // =====================================================
@@ -578,46 +407,28 @@ document.addEventListener("DOMContentLoaded", function () {
     function setPersonalEditing(editing) {
 
         personalItems.forEach(function (item) {
-
             item.classList.toggle("editing", editing);
-
         });
 
 
         personalInputs.forEach(function (input) {
-
-            // ID Number remains read-only.
-            input.disabled =
-                !editing || input.id === "personalId";
-
+            // Read-only fields remain disabled.
+            input.disabled = !editing || READONLY_IDS.includes(input.id);
         });
 
 
         if (updatePersonalBtn) {
-
-            updatePersonalBtn.style.display =
-                editing ? "none" : "inline-flex";
-
+            updatePersonalBtn.style.display = editing ? "none" : "inline-flex";
         }
 
 
         if (personalActions) {
-
-            personalActions.classList.toggle(
-                "show",
-                editing
-            );
-
+            personalActions.classList.toggle("show", editing);
         }
 
 
         if (personalNote) {
-
-            personalNote.classList.toggle(
-                "show",
-                editing
-            );
-
+            personalNote.classList.toggle("show", editing);
         }
 
     }
@@ -631,16 +442,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         personalItems.forEach(function (item) {
 
-            const input =
-                item.querySelector(".editable-input");
+            const input = item.querySelector(".editable-input");
+            const display = item.querySelector(".editable-value");
 
-            const display =
-                item.querySelector(".editable-value");
-
-
-            if (!input || !display) {
-                return;
-            }
+            if (!input || !display) return;
 
 
             let value = input.value.trim();
@@ -657,15 +462,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     Number(parts[2])
                 );
 
-                value = date.toLocaleDateString(
-                    "en-US",
-                    {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric"
-                    }
-                );
+                value = date.toLocaleDateString("en-US", {
+                    month: "long",
+                    day: "numeric",
+                    year: "numeric"
+                });
 
+            }
+
+
+            // Handle select elements.
+            if (input.tagName === "SELECT") {
+                const selectedOption = input.options[input.selectedIndex];
+                value = selectedOption ? selectedOption.text : "";
             }
 
 
@@ -674,19 +483,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-        // Update the name shown in the profile card.
-        const nameInput =
-            document.getElementById("personalFullName");
-
-        const fullName =
-            nameInput ? nameInput.value.trim() : "";
+        // Update name shown in profile card.
+        const nameInput = document.getElementById("personalFullName");
+        const fullName = nameInput ? nameInput.value.trim() : "";
 
 
         if (personalProfileName) {
-
-            personalProfileName.textContent =
-                fullName || "Teacher";
-
+            personalProfileName.textContent = fullName || "Teacher";
         }
 
 
@@ -697,13 +500,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 .split(/\s+/)
                 .filter(Boolean)
                 .slice(0, 2)
-                .map(function (part) {
-                    return part.charAt(0).toUpperCase();
-                })
+                .map(function (part) { return part.charAt(0).toUpperCase(); })
                 .join("");
 
-            personalAvatar.textContent =
-                initials || "T";
+            personalAvatar.textContent = initials || "T";
 
         }
 
@@ -711,41 +511,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // =====================================================
-    // UPDATE PERSONAL INFORMATION BUTTON
+    // UPDATE BUTTON
     // =====================================================
 
     if (updatePersonalBtn) {
 
-        updatePersonalBtn.addEventListener(
-            "click",
-            function () {
+        updatePersonalBtn.addEventListener("click", function () {
 
-                personalOriginalValues = {};
+            personalOriginalValues = {};
 
+            personalInputs.forEach(function (input) {
+                personalOriginalValues[input.id] = input.value;
+            });
 
-                // Store values so Cancel can restore them.
-                personalInputs.forEach(function (input) {
+            setPersonalEditing(true);
 
-                    personalOriginalValues[input.id] =
-                        input.value;
+            const nameInput = document.getElementById("personalFullName");
+            if (nameInput) nameInput.focus();
 
-                });
-
-
-                setPersonalEditing(true);
-
-
-                const nameInput =
-                    document.getElementById(
-                        "personalFullName"
-                    );
-
-                if (nameInput) {
-                    nameInput.focus();
-                }
-
-            }
-        );
+        });
 
     }
 
@@ -756,26 +540,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (personalForm) {
 
-        personalForm.addEventListener(
-            "submit",
-            function (event) {
+        personalForm.addEventListener("submit", function (event) {
 
-                // Temporary frontend-only save.
-                // Prevent submission to Django for now.
+            if (!personalForm.reportValidity()) {
                 event.preventDefault();
-
-
-                if (!personalForm.reportValidity()) {
-                    return;
-                }
-
-
-                updatePersonalDisplay();
-
-                setPersonalEditing(false);
-
+                return;
             }
-        );
+
+            // Mag-submit na sa Django backend.
+
+        });
 
     }
 
@@ -786,32 +560,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (cancelPersonalBtn) {
 
-        cancelPersonalBtn.addEventListener(
-            "click",
-            function () {
+        cancelPersonalBtn.addEventListener("click", function () {
 
+            personalInputs.forEach(function (input) {
 
-                personalInputs.forEach(function (input) {
+                if (Object.prototype.hasOwnProperty.call(personalOriginalValues, input.id)) {
+                    input.value = personalOriginalValues[input.id];
+                }
 
-                    if (
-                        Object.prototype.hasOwnProperty.call(
-                            personalOriginalValues,
-                            input.id
-                        )
-                    ) {
+            });
 
-                        input.value =
-                            personalOriginalValues[input.id];
+            setPersonalEditing(false);
 
-                    }
-
-                });
-
-
-                setPersonalEditing(false);
-
-            }
-        );
+        });
 
     }
 
@@ -821,7 +582,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // =====================================================
 
     setPersonalEditing(false);
-
 
 });
 

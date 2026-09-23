@@ -57,6 +57,34 @@ Security / Account - RFID Attendance Management System
 
 
     <!-- =================================================
+         DJANGO MESSAGES (Success / Error)
+    ================================================= -->
+
+    {% if messages %}
+
+    <div class="security-messages">
+
+        {% for message in messages %}
+
+        <div class="security-message {{ message.tags }}">
+
+            <i class="fa-solid
+                {% if message.tags == 'success' %}fa-circle-check
+                {% elif message.tags == 'error' %}fa-circle-xmark
+                {% else %}fa-circle-info{% endif %}"></i>
+
+            <span>{{ message }}</span>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =================================================
          SECURITY CARDS
     ================================================= -->
 
@@ -67,7 +95,14 @@ Security / Account - RFID Attendance Management System
              CHANGE PASSWORD
         ============================================= -->
 
-        <div class="content-card security-card">
+        <form
+            class="content-card security-card"
+            method="post"
+            action="{% url 'teacher_change_password' %}"
+            id="changePasswordForm"
+        >
+
+            {% csrf_token %}
 
 
             <!-- =========================================
@@ -111,6 +146,7 @@ Security / Account - RFID Attendance Management System
                         type="password"
                         placeholder="Enter current password"
                         autocomplete="current-password"
+                        required
                     >
 
                     <button
@@ -151,6 +187,8 @@ Security / Account - RFID Attendance Management System
                         type="password"
                         placeholder="Enter new password"
                         autocomplete="new-password"
+                        minlength="8"
+                        required
                     >
 
                     <button
@@ -191,6 +229,8 @@ Security / Account - RFID Attendance Management System
                         type="password"
                         placeholder="Confirm new password"
                         autocomplete="new-password"
+                        minlength="8"
+                        required
                     >
 
                     <button
@@ -222,7 +262,7 @@ Security / Account - RFID Attendance Management System
                 <button
                     class="primary-btn"
                     id="changePasswordBtn"
-                    type="button"
+                    type="submit"
                 >
 
                     <i class="fa-solid fa-key"></i>
@@ -233,14 +273,21 @@ Security / Account - RFID Attendance Management System
 
             </div>
 
-        </div>
+        </form>
 
 
         <!-- =============================================
              SECURITY QUESTION
         ============================================= -->
 
-        <div class="content-card security-card">
+        <form
+            class="content-card security-card"
+            method="post"
+            action="{% url 'teacher_save_security' %}"
+            id="securityQuestionForm"
+        >
+
+            {% csrf_token %}
 
 
             <!-- =========================================
@@ -281,25 +328,30 @@ Security / Account - RFID Attendance Management System
                 <select
                     id="securityQuestion"
                     name="security_question"
+                    required
                 >
 
                     <option value="">
                         Select a security question
                     </option>
 
-                    <option value="What is your mother's maiden name?">
+                    <option value="What is your mother's maiden name?"
+                        {% if security.security_question == "What is your mother's maiden name?" %}selected{% endif %}>
                         What is your mother's maiden name?
                     </option>
 
-                    <option value="What was the name of your first pet?">
+                    <option value="What was the name of your first pet?"
+                        {% if security.security_question == "What was the name of your first pet?" %}selected{% endif %}>
                         What was the name of your first pet?
                     </option>
 
-                    <option value="What is the name of your favorite teacher?">
+                    <option value="What is the name of your favorite teacher?"
+                        {% if security.security_question == "What is the name of your favorite teacher?" %}selected{% endif %}>
                         What is the name of your favorite teacher?
                     </option>
 
-                    <option value="What is your favorite childhood place?">
+                    <option value="What is your favorite childhood place?"
+                        {% if security.security_question == "What is your favorite childhood place?" %}selected{% endif %}>
                         What is your favorite childhood place?
                     </option>
 
@@ -319,11 +371,13 @@ Security / Account - RFID Attendance Management System
                 </label>
 
                 <input
-                    id="securityAnswer"
-                    name="security_answer"
-                    type="text"
-                    placeholder="Enter your security answer"
-                    autocomplete="off"
+    id="securityAnswer"
+    name="security_answer"
+    type="text"
+    placeholder="Enter your security answer"
+    autocomplete="off"
+    value="{{ security.plain_security_answer|default:'' }}"  
+    required
                 >
 
             </div>
@@ -338,7 +392,7 @@ Security / Account - RFID Attendance Management System
                 <button
                     class="primary-btn blue-btn"
                     id="saveSecuritySettingsBtn"
-                    type="button"
+                    type="submit"
                 >
 
                     <i class="fa-solid fa-floppy-disk"></i>
@@ -349,7 +403,7 @@ Security / Account - RFID Attendance Management System
 
             </div>
 
-        </div>
+        </form>
 
     </div>
 
@@ -409,6 +463,38 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     });
+
+
+    /* =====================================================
+       PASSWORD MATCH VALIDATION
+    ===================================================== */
+
+    const changePasswordForm =
+        document.getElementById("changePasswordForm");
+
+    const newPassword =
+        document.getElementById("newPassword");
+
+    const confirmPassword =
+        document.getElementById("confirmPassword");
+
+    if (changePasswordForm && newPassword && confirmPassword) {
+
+        changePasswordForm.addEventListener("submit", function (event) {
+
+            if (newPassword.value !== confirmPassword.value) {
+
+                event.preventDefault();
+
+                alert("New passwords do not match. Please try again.");
+
+                confirmPassword.focus();
+
+            }
+
+        });
+
+    }
 
 });
 </script>

@@ -1,4 +1,3 @@
-
 {% extends 'IN_BASE/Teacher_Base.html' %}
 {% load static %}
 
@@ -39,7 +38,7 @@ Class Record - RFID Attendance Management System
         <div class="card-header">
             <div>
                 <h3>List of Students</h3>
-                <p>Grade 11 - Section A</p>
+                <p>{{ grade }} - {{ section }}</p>
             </div>
 
             <div class="class-tools">
@@ -99,195 +98,55 @@ Class Record - RFID Attendance Management System
 
                 <tbody>
 
-                    <!-- SAMPLE STUDENT 1 -->
+                    {% for student in students %}
                     <tr
-                        data-student-name="Juan Dela Cruz"
-                        data-lrn="123456789012"
+                        data-student-name="{{ student.full_name }}"
+                        data-lrn="{{ student.lrn }}"
                     >
                         <td class="select-column">
                             <label class="student-checkbox">
                                 <input
                                     class="student-select"
                                     type="checkbox"
-                                    value="123456789012"
-                                    data-student-name="Juan Dela Cruz"
-                                    aria-label="Select Juan Dela Cruz"
+                                    value="{{ student.lrn }}"
+                                    data-student-name="{{ student.full_name }}"
+                                    aria-label="Select {{ student.full_name }}"
                                 >
                                 <span></span>
                             </label>
                         </td>
 
                         <td class="picture-column">
-                            <div class="student-photo" title="Juan Dela Cruz">
-                                <span>JDC</span>
+                            <div class="student-photo" title="{{ student.full_name }}">
+                                <span>{{ student.initials }}</span>
                             </div>
                         </td>
 
-                        <td>123456789012</td>
-                        <td>Juan Dela Cruz</td>
-                        <td>17</td>
-                        <td>Male</td>
-                        <td>juan@email.com</td>
-                        <td>0912 111 1111</td>
-                        <td>Pedro Dela Cruz</td>
-                        <td>0912 222 2222</td>
+                        <td>{{ student.lrn }}</td>
+                        <td>{{ student.full_name }}</td>
+                        <td>{{ student.age }}</td>
+                        <td>{{ student.sex }}</td>
+                        <td>{{ student.email|default:"—" }}</td>
+                        <td>{{ student.contact_number|default:"—" }}</td>
+                        <td>{{ student.guardian_name|default:"—" }}</td>
+                        <td>{{ student.guardian_contact|default:"—" }}</td>
 
                         <td>
-                            <span class="attendance-rate high">95%</span>
+                            <span class="attendance-rate {{ student.attendance_class }}">
+                                {{ student.attendance_rate }}%
+                            </span>
                         </td>
                     </tr>
 
-                    <!-- SAMPLE STUDENT 2 -->
-                    <tr
-                        data-student-name="Maria Santos"
-                        data-lrn="123456789013"
-                    >
-                        <td class="select-column">
-                            <label class="student-checkbox">
-                                <input
-                                    class="student-select"
-                                    type="checkbox"
-                                    value="123456789013"
-                                    data-student-name="Maria Santos"
-                                    aria-label="Select Maria Santos"
-                                >
-                                <span></span>
-                            </label>
-                        </td>
-
-                        <td class="picture-column">
-                            <div class="student-photo" title="Maria Santos">
-                                <span>MS</span>
-                            </div>
-                        </td>
-
-                        <td>123456789013</td>
-                        <td>Maria Santos</td>
-                        <td>17</td>
-                        <td>Female</td>
-                        <td>maria@email.com</td>
-                        <td>0912 333 3333</td>
-                        <td>Rosa Santos</td>
-                        <td>0912 444 4444</td>
-
-                        <td>
-                            <span class="attendance-rate high">92%</span>
+                    {% empty %}
+                    <tr>
+                        <td colspan="11" style="text-align:center; padding: 40px;">
+                            <i class="fa-solid fa-users" style="font-size: 40px; color: #ccc; display: block; margin-bottom: 10px;"></i>
+                            <strong>No students found</strong>
+                            <p>Add students via the admin panel to see them here.</p>
                         </td>
                     </tr>
-
-                    <!-- SAMPLE STUDENT 3 -->
-                    <tr
-                        data-student-name="Pedro Aquino"
-                        data-lrn="123456789014"
-                    >
-                        <td class="select-column">
-                            <label class="student-checkbox">
-                                <input
-                                    class="student-select"
-                                    type="checkbox"
-                                    value="123456789014"
-                                    data-student-name="Pedro Aquino"
-                                    aria-label="Select Pedro Aquino"
-                                >
-                                <span></span>
-                            </label>
-                        </td>
-
-                        <td class="picture-column">
-                            <div class="student-photo" title="Pedro Aquino">
-                                <span>PA</span>
-                            </div>
-                        </td>
-
-                        <td>123456789014</td>
-                        <td>Pedro Aquino</td>
-                        <td>18</td>
-                        <td>Male</td>
-                        <td>pedro@email.com</td>
-                        <td>0912 555 5555</td>
-                        <td>Jose Aquino</td>
-                        <td>0912 666 6666</td>
-
-                        <td>
-                            <span class="attendance-rate medium">86%</span>
-                        </td>
-                    </tr>
-
-                    <!-- SAMPLE STUDENT 4 -->
-                    <tr
-                        data-student-name="Rica Cruz"
-                        data-lrn="123456789015"
-                    >
-                        <td class="select-column">
-                            <label class="student-checkbox">
-                                <input
-                                    class="student-select"
-                                    type="checkbox"
-                                    value="123456789015"
-                                    data-student-name="Rica Cruz"
-                                    aria-label="Select Rica Cruz"
-                                >
-                                <span></span>
-                            </label>
-                        </td>
-
-                        <td class="picture-column">
-                            <div class="student-photo" title="Rica Cruz">
-                                <span>RC</span>
-                            </div>
-                        </td>
-
-                        <td>123456789015</td>
-                        <td>Rica Cruz</td>
-                        <td>17</td>
-                        <td>Female</td>
-                        <td>rica@email.com</td>
-                        <td>0912 777 7777</td>
-                        <td>Mario Cruz</td>
-                        <td>0912 888 8888</td>
-
-                        <td>
-                            <span class="attendance-rate high">94%</span>
-                        </td>
-                    </tr>
-
-                    <!-- SAMPLE STUDENT 5 -->
-                    <tr
-                        data-student-name="Ana Santiago"
-                        data-lrn="123456789016"
-                    >
-                        <td class="select-column">
-                            <label class="student-checkbox">
-                                <input
-                                    class="student-select"
-                                    type="checkbox"
-                                    value="123456789016"
-                                    data-student-name="Ana Santiago"
-                                    aria-label="Select Ana Santiago"
-                                >
-                                <span></span>
-                            </label>
-                        </td>
-
-                        <td class="picture-column">
-                            <div class="student-photo" title="Ana Santiago">
-                                <span>AS</span>
-                            </div>
-                        </td>
-
-                        <td>123456789016</td>
-                        <td>Ana Santiago</td>
-                        <td>17</td>
-                        <td>Female</td>
-                        <td>ana@email.com</td>
-                        <td>0912 999 9999</td>
-                        <td>Linda Santiago</td>
-                        <td>0912 000 0000</td>
-
-                        <td>
-                            <span class="attendance-rate medium">88%</span>
-                        </td>
-                    </tr>
+                    {% endfor %}
 
                 </tbody>
             </table>
@@ -353,12 +212,11 @@ Class Record - RFID Attendance Management System
 
                 <select id="promoteGrade">
                     <option value="">Select grade</option>
-                    <option value="Grade 7">Grade 7</option>
-                    <option value="Grade 8">Grade 8</option>
-                    <option value="Grade 9">Grade 9</option>
-                    <option value="Grade 10">Grade 10</option>
-                    <option value="Grade 11">Grade 11</option>
-                    <option value="Grade 12">Grade 12</option>
+                    {% for g in grade_options %}
+                    <option value="{{ g }}" {% if g == grade %}selected{% endif %}>
+                        {{ g }}
+                    </option>
+                    {% endfor %}
                 </select>
             </div>
 
@@ -367,10 +225,11 @@ Class Record - RFID Attendance Management System
 
                 <select id="promoteSection" disabled>
                     <option value="">Select section</option>
-                    <option value="Section A">Section A</option>
-                    <option value="Section B">Section B</option>
-                    <option value="Section C">Section C</option>
-                    <option value="Section D">Section D</option>
+                    {% for s in section_options %}
+                    <option value="{{ s }}" {% if s == section %}selected{% endif %}>
+                        {{ s }}
+                    </option>
+                    {% endfor %}
                 </select>
             </div>
 
@@ -412,6 +271,13 @@ Class Record - RFID Attendance Management System
     </div>
 </div>
 
-<script src="{% static 'js/TEACHER/Teacher_Class_Record.js' %}" defer></script>
+{% endblock %}
 
+
+<!-- =====================================================
+     PAGE-SPECIFIC JAVASCRIPT
+===================================================== -->
+
+{% block extra_js %}
+<script src="{% static 'js/TEACHER/Teacher_Class_Record.js' %}" defer></script>
 {% endblock %}

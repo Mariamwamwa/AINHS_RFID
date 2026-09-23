@@ -1,4 +1,3 @@
-
 {% extends 'IN_BASE/Teacher_Base.html' %}
 {% load static %}
 
@@ -32,7 +31,6 @@ Teacher Dashboard - RFID Attendance Management System
 >
 
 {% endblock %}
-
 
 
 {% block content %}
@@ -215,7 +213,6 @@ Teacher Dashboard - RFID Attendance Management System
 
 
         </div>
-
 
     </div>
 
@@ -593,15 +590,11 @@ Teacher Dashboard - RFID Attendance Management System
 
                 </a>
 
-
             </div>
-
 
         </div>
 
-
     </div>
-
 
 </section>
 
@@ -623,7 +616,6 @@ Teacher Dashboard - RFID Attendance Management System
 
     <div class="section-header">
 
-
         <div>
 
             <h2>Notifications</h2>
@@ -633,7 +625,6 @@ Teacher Dashboard - RFID Attendance Management System
             </p>
 
         </div>
-
 
     </div>
 
@@ -645,15 +636,11 @@ Teacher Dashboard - RFID Attendance Management System
 
     <div class="content-card notifications-page-card">
 
-
         <div class="notifications-page-list">
-
 
             {% for notification in notifications %}
 
-
             <div class="full-notification {% if not notification.is_read %}unread{% endif %}">
-
 
                 <div class="notification-icon blue">
 
@@ -664,7 +651,6 @@ Teacher Dashboard - RFID Attendance Management System
 
 
                 <div class="notification-content">
-
 
                     <strong>
                         {{ notification.title }}
@@ -682,9 +668,7 @@ Teacher Dashboard - RFID Attendance Management System
                         {{ notification.created_at|date:"F j, Y, g:i A" }}
                     </small>
 
-
                 </div>
-
 
             </div>
 
@@ -697,7 +681,6 @@ Teacher Dashboard - RFID Attendance Management System
 
             <div class="full-notification">
 
-
                 <div class="notification-icon purple">
 
                     <i class="fa-regular fa-bell"></i>
@@ -707,7 +690,6 @@ Teacher Dashboard - RFID Attendance Management System
 
 
                 <div class="notification-content">
-
 
                     <strong>
                         No notifications
@@ -719,21 +701,15 @@ Teacher Dashboard - RFID Attendance Management System
                         You have no notifications at the moment.
                     </p>
 
-
                 </div>
-
 
             </div>
 
-
             {% endfor %}
-
 
         </div>
 
-
     </div>
-
 
 </section>
 
@@ -768,8 +744,8 @@ Teacher Dashboard - RFID Attendance Management System
 
         const pageSubtitle =
             document.getElementById("pageSubtitle");
-const dashboardLink =
-    document.querySelector(".sidebar .menu-item.active");
+
+
         /* =================================================
            PAGE DISPLAY
            ================================================= */
@@ -831,17 +807,6 @@ const dashboardLink =
                         : "Teacher Management Panel";
 
             }
-
-
-
-            /* KEEP SIDEBAR DASHBOARD ACTIVE */
-
-            if (dashboardLink) {
-
-                dashboardLink.classList.add("active");
-
-            }
-
 
         }
 
