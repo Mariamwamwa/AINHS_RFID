@@ -1,0 +1,607 @@
+
+/* =========================================================
+   TEACHER CLASS ATTENDANCE
+   RFID ATTENDANCE MANAGEMENT SYSTEM
+========================================================= */
+
+
+/* =========================================================
+   PAGE CONTENT
+========================================================= */
+
+.teacher-attendance-page {
+
+    padding: 20px 32px 40px;
+
+    min-height: 100%;
+
+}
+
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.teacher-attendance-page .section-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.teacher-attendance-page .section-heading h2 {
+
+    font-size: 21px;
+
+    font-weight: 700;
+
+    color: var(--dark, #212529);
+
+    margin-bottom: 5px;
+
+}
+
+
+.teacher-attendance-page .section-heading p {
+
+    font-size: 12px;
+
+    color: var(--gray, #6C757D);
+
+}
+
+
+/* =========================================================
+   DATE SELECTOR
+========================================================= */
+
+.teacher-attendance-page .date-selector {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+
+.teacher-attendance-page .date-selector label {
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: var(--gray-dark, #495057);
+
+}
+
+
+.teacher-attendance-page .date-selector input {
+
+    height: 38px;
+
+    padding: 0 10px;
+
+    border: 1px solid var(--border, #E9ECEF);
+
+    border-radius: 8px;
+
+    outline: none;
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    color: var(--dark, #212529);
+
+    background: var(--white, #FFFFFF);
+
+}
+
+
+.teacher-attendance-page .date-selector input:focus {
+
+    border-color: var(--primary-purple, #6F42C1);
+
+    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.08);
+
+}
+
+
+/* =========================================================
+   ATTENDANCE SUMMARY
+========================================================= */
+
+.teacher-attendance-page .attendance-summary {
+
+    display: grid;
+
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* =========================================================
+   SUMMARY CARD
+========================================================= */
+
+.teacher-attendance-page .summary-card {
+
+    background: var(--white, #FFFFFF);
+
+    border: 1px solid var(--border, #E9ECEF);
+
+    border-radius: 14px;
+
+    padding: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    min-width: 0;
+
+}
+
+
+/* =========================================================
+   SUMMARY ICON
+========================================================= */
+
+.teacher-attendance-page .summary-icon {
+
+    width: 46px;
+
+    height: 46px;
+
+    flex-shrink: 0;
+
+    border-radius: 11px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 18px;
+
+}
+
+
+.teacher-attendance-page .summary-icon.purple {
+
+    color: var(--primary-purple, #6F42C1);
+
+    background: rgba(111, 66, 193, 0.10);
+
+}
+
+
+.teacher-attendance-page .summary-icon.blue {
+
+    color: var(--primary-blue, #007BFF);
+
+    background: rgba(0, 123, 255, 0.10);
+
+}
+
+
+.teacher-attendance-page .summary-icon.red {
+
+    color: #DC3545;
+
+    background: rgba(220, 53, 69, 0.10);
+
+}
+
+
+/* =========================================================
+   SUMMARY INFORMATION
+========================================================= */
+
+.teacher-attendance-page .summary-info {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+}
+
+
+.teacher-attendance-page .summary-info span {
+
+    font-size: 11px;
+
+    color: var(--gray, #6C757D);
+
+    margin-bottom: 4px;
+
+}
+
+
+.teacher-attendance-page .summary-info strong {
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+    color: var(--dark, #212529);
+
+}
+
+
+/* =========================================================
+   ATTENDANCE RECORD CARD
+========================================================= */
+
+.teacher-attendance-page .content-card {
+
+    background: var(--white, #FFFFFF);
+
+    border: 1px solid var(--border, #E9ECEF);
+
+    border-radius: 14px;
+
+    padding: 22px;
+
+}
+
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.teacher-attendance-page .card-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 18px;
+
+}
+
+
+.teacher-attendance-page .card-header h3 {
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    color: var(--dark, #212529);
+
+    margin-bottom: 4px;
+
+}
+
+
+.teacher-attendance-page .card-header p {
+
+    font-size: 12px;
+
+    color: var(--gray, #6C757D);
+
+}
+
+
+/* =========================================================
+   ATTENDANCE TABLE CONTAINER
+========================================================= */
+
+.teacher-attendance-page .table-container {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+
+.teacher-attendance-page .large-table table {
+
+    width: 100%;
+
+    min-width: 1250px;
+
+    border-collapse: collapse;
+
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.teacher-attendance-page .attendance-table th {
+
+    text-align: left;
+
+    padding: 12px 14px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    color: var(--gray, #6C757D);
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
+
+    border-bottom: 1px solid var(--border, #E9ECEF);
+
+    white-space: nowrap;
+
+}
+
+
+/* =========================================================
+   TABLE DATA
+========================================================= */
+
+.teacher-attendance-page .attendance-table td {
+
+    padding: 14px;
+
+    font-size: 12px;
+
+    color: var(--gray-dark, #495057);
+
+    border-bottom: 1px solid #F1F3F5;
+
+    white-space: nowrap;
+
+}
+
+
+.teacher-attendance-page .attendance-table tbody tr:hover {
+
+    background: #FAFBFD;
+
+}
+
+
+.teacher-attendance-page .attendance-table tbody tr:last-child td {
+
+    border-bottom: none;
+
+}
+
+
+/* =========================================================
+   ATTENDANCE STATUS
+========================================================= */
+
+.teacher-attendance-page .status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+}
+
+
+.teacher-attendance-page .status.present {
+
+    background: rgba(40, 167, 69, 0.10);
+
+    color: #28A745;
+
+}
+
+
+.teacher-attendance-page .status.absent {
+
+    background: rgba(220, 53, 69, 0.10);
+
+    color: #DC3545;
+
+}
+
+
+/* =========================================================
+   NO ATTENDANCE RECORDS
+========================================================= */
+
+.teacher-attendance-page .attendance-no-records {
+
+    display: none;
+
+    min-height: 230px;
+
+    padding: 35px 20px;
+
+    background: var(--white, #FFFFFF);
+
+    border: 1px solid var(--border, #E9ECEF);
+
+    border-radius: 14px;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    text-align: center;
+
+    color: var(--gray, #6C757D);
+
+}
+
+
+.teacher-attendance-page .attendance-no-records.show {
+
+    display: flex;
+
+}
+
+
+.teacher-attendance-page .attendance-no-records i {
+
+    font-size: 32px;
+
+    color: var(--primary-purple, #6F42C1);
+
+    margin-bottom: 4px;
+
+}
+
+
+.teacher-attendance-page .attendance-no-records strong {
+
+    font-size: 14px;
+
+    color: var(--dark, #212529);
+
+}
+
+
+.teacher-attendance-page .attendance-no-records span {
+
+    font-size: 11px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .teacher-attendance-page {
+
+        padding: 20px 24px 35px;
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .teacher-attendance-page {
+
+        padding: 18px 18px 35px;
+
+    }
+
+
+    .teacher-attendance-page .section-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+
+    .teacher-attendance-page .date-selector {
+
+        width: 100%;
+
+    }
+
+
+    .teacher-attendance-page .date-selector input {
+
+        flex: 1;
+
+        min-width: 0;
+
+    }
+
+
+    .teacher-attendance-page .attendance-summary {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .teacher-attendance-page .card-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .teacher-attendance-page {
+
+        padding: 15px 12px 30px;
+
+    }
+
+
+    .teacher-attendance-page .content-card {
+
+        padding: 16px;
+
+    }
+
+
+    .teacher-attendance-page .section-heading h2 {
+
+        font-size: 19px;
+
+    }
+
+
+    .teacher-attendance-page .summary-card {
+
+        padding: 16px;
+
+    }
+
+}

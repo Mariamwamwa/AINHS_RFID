@@ -1,0 +1,449 @@
+
+{% extends 'IN_BASE/Teacher_Base.html' %}
+{% load static %}
+
+{% block title %}
+Class Attendance - RFID Attendance Management System
+{% endblock %}
+
+{% block page_heading %}
+<h2>Class Attendance</h2>
+{% endblock %}
+
+{% block page_subheading %}
+<p>Student Attendance Records</p>
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/TEACHER/Teacher_Class_Attendance.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<!-- =====================================================
+     CLASS ATTENDANCE
+===================================================== -->
+
+<section class="teacher-attendance-page">
+
+    <!-- =================================================
+         SECTION HEADER AND DATE SELECTOR
+    ================================================= -->
+
+    <div class="section-header">
+
+        <div class="section-heading">
+
+            <h2>Class Attendance</h2>
+
+            <p>
+                View daily attendance records of your students.
+            </p>
+
+        </div>
+
+        <div class="date-selector">
+
+            <label for="attendanceDate">
+                Date
+            </label>
+
+            <input
+                type="date"
+                id="attendanceDate"
+                value="2026-09-09"
+            >
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ATTENDANCE SUMMARY
+    ================================================= -->
+
+    <div
+        class="attendance-summary"
+        id="attendanceSummary"
+    >
+
+        <!-- Total Students -->
+
+        <div class="summary-card">
+
+            <div class="summary-icon purple">
+
+                <i class="fa-solid fa-users"></i>
+
+            </div>
+
+            <div class="summary-info">
+
+                <span>Total Students</span>
+
+                <strong>40</strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Total Present -->
+
+        <div class="summary-card">
+
+            <div class="summary-icon blue">
+
+                <i class="fa-solid fa-user-check"></i>
+
+            </div>
+
+            <div class="summary-info">
+
+                <span>Total Present</span>
+
+                <strong>36</strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Total Absent -->
+
+        <div class="summary-card">
+
+            <div class="summary-icon red">
+
+                <i class="fa-solid fa-user-xmark"></i>
+
+            </div>
+
+            <div class="summary-info">
+
+                <span>Total Absent</span>
+
+                <strong>4</strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ATTENDANCE RECORD TABLE
+    ================================================= -->
+
+    <div
+        class="content-card attendance-record-card"
+        id="attendanceRecordCard"
+    >
+
+        <div class="card-header">
+
+            <div>
+
+                <h3>Attendance Record</h3>
+
+                <p>Grade 11 - Section A</p>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-container large-table">
+
+            <table class="attendance-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>LRN</th>
+
+                        <th>Student Name</th>
+
+                        <th>Time In (AM)</th>
+
+                        <th>Time Out (AM)</th>
+
+                        <th>Time In (PM)</th>
+
+                        <th>Time Out (PM)</th>
+
+                        <th>Status</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <!-- Student 1 -->
+
+                    <tr>
+
+                        <td>123456789012</td>
+
+                        <td>Juan Dela Cruz</td>
+
+                        <td>7:45 AM</td>
+
+                        <td>12:00 PM</td>
+
+                        <td>1:00 PM</td>
+
+                        <td>4:55 PM</td>
+
+                        <td>
+
+                            <span class="status present">
+                                Present
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- Student 2 -->
+
+                    <tr>
+
+                        <td>123456789013</td>
+
+                        <td>Maria Santos</td>
+
+                        <td>7:50 AM</td>
+
+                        <td>12:00 PM</td>
+
+                        <td>1:02 PM</td>
+
+                        <td>4:58 PM</td>
+
+                        <td>
+
+                            <span class="status present">
+                                Present
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- Student 3 -->
+
+                    <tr>
+
+                        <td>123456789014</td>
+
+                        <td>Pedro Aquino</td>
+
+                        <td>—</td>
+
+                        <td>—</td>
+
+                        <td>—</td>
+
+                        <td>—</td>
+
+                        <td>
+
+                            <span class="status absent">
+                                Absent
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- Student 4 -->
+
+                    <tr>
+
+                        <td>123456789015</td>
+
+                        <td>Rica Cruz</td>
+
+                        <td>7:55 AM</td>
+
+                        <td>12:01 PM</td>
+
+                        <td>1:00 PM</td>
+
+                        <td>5:00 PM</td>
+
+                        <td>
+
+                            <span class="status present">
+                                Present
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- Student 5 -->
+
+                    <tr>
+
+                        <td>123456789016</td>
+
+                        <td>Ana Santiago</td>
+
+                        <td>8:02 AM</td>
+
+                        <td>12:00 PM</td>
+
+                        <td>1:05 PM</td>
+
+                        <td>4:57 PM</td>
+
+                        <td>
+
+                            <span class="status present">
+                                Present
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         NO ATTENDANCE RECORDS
+    ================================================= -->
+
+    <div
+        class="attendance-no-records"
+        id="attendanceNoRecords"
+    >
+
+        <i class="fa-regular fa-calendar-xmark"></i>
+
+        <strong>No records found</strong>
+
+        <span>
+            No attendance record is available for the selected date.
+        </span>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // =====================================================
+    // CLASS ATTENDANCE DATE SELECTOR
+    // =====================================================
+
+    const attendanceDate =
+        document.getElementById("attendanceDate");
+
+    const attendanceSummary =
+        document.getElementById("attendanceSummary");
+
+    const attendanceRecordCard =
+        document.getElementById("attendanceRecordCard");
+
+    const attendanceNoRecords =
+        document.getElementById("attendanceNoRecords");
+
+
+    // Tentative dates with attendance records.
+    // Replace this list when attendance data is connected
+    // to your Django backend.
+
+    const attendanceDatesWithRecords = new Set([
+
+        "2026-09-09",
+        "2026-09-08",
+        "2026-09-07",
+        "2026-09-04"
+
+    ]);
+
+
+    function updateAttendanceDate() {
+
+        if (
+            !attendanceDate ||
+            !attendanceSummary ||
+            !attendanceRecordCard ||
+            !attendanceNoRecords
+        ) {
+            return;
+        }
+
+
+        const selectedDate = attendanceDate.value;
+
+        const hasRecord =
+            attendanceDatesWithRecords.has(selectedDate);
+
+
+        // Show or hide the attendance summary.
+
+        attendanceSummary.style.display =
+            hasRecord ? "grid" : "none";
+
+
+        // Show or hide the attendance table.
+
+        attendanceRecordCard.style.display =
+            hasRecord ? "block" : "none";
+
+
+        // Show the empty state if no record exists.
+
+        attendanceNoRecords.classList.toggle(
+            "show",
+            !hasRecord
+        );
+
+    }
+
+
+    if (attendanceDate) {
+
+        attendanceDate.addEventListener(
+            "change",
+            updateAttendanceDate
+        );
+
+        updateAttendanceDate();
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,830 @@
+
+{% extends 'IN_BASE/Teacher_Base.html' %}
+{% load static %}
+
+
+{% block title %}
+Personal Information - RFID Attendance Management System
+{% endblock %}
+
+
+{% block page_heading %}
+<h2>Personal Information</h2>
+{% endblock %}
+
+
+{% block page_subheading %}
+<p>Teacher Profile</p>
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/TEACHER/Teacher_Personal_Info.css' %}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- =====================================================
+     PERSONAL INFORMATION PAGE
+===================================================== -->
+
+<section class="page-section active" id="personalPage">
+
+
+    <!-- =================================================
+         SECTION HEADING
+    ================================================= -->
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>Personal Information</h2>
+
+            <p>
+                View and update your registered teacher information.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         PERSONAL INFORMATION CARD
+    ================================================= -->
+
+    <div class="content-card personal-card">
+
+
+        <!-- =============================================
+             PROFILE HEADER
+        ============================================= -->
+
+        <div class="personal-profile">
+
+            <div
+                class="large-avatar"
+                id="personalAvatar"
+            >
+                JT
+            </div>
+
+            <div class="personal-profile-info">
+
+                <h3 id="personalProfileName">
+                    Juan Teacher
+                </h3>
+
+                <span>Teacher</span>
+
+            </div>
+
+        </div>
+
+
+        <div class="divider"></div>
+
+
+        <!-- =============================================
+             PERSONAL INFORMATION FORM
+        ============================================= -->
+
+        <form
+            id="personalInformationForm"
+            autocomplete="on"
+        >
+
+            <div
+                class="information-grid"
+                id="personalInfoGrid"
+            >
+
+
+                <!-- =====================================
+                     ID NUMBER
+                ===================================== -->
+
+                <div class="information-item editable-item">
+
+                    <label for="personalId">
+                        ID Number
+                    </label>
+
+                    <div class="information-value editable-value">
+                        TCH-2026-001
+                    </div>
+
+                    <input
+                        class="editable-input readonly-field"
+                        id="personalId"
+                        name="id_number"
+                        type="text"
+                        value="TCH-2026-001"
+                        readonly
+                        disabled
+                    >
+
+                </div>
+
+
+                <!-- =====================================
+                     FULL NAME
+                ===================================== -->
+
+                <div class="information-item editable-item">
+
+                    <label for="personalFullName">
+                        Full Name
+                    </label>
+
+                    <div class="information-value editable-value">
+                        Juan Teacher
+                    </div>
+
+                    <input
+                        class="editable-input"
+                        id="personalFullName"
+                        name="full_name"
+                        type="text"
+                        value="Juan Teacher"
+                        required
+                        disabled
+                    >
+
+                </div>
+
+
+                <!-- =====================================
+                     AGE
+                ===================================== -->
+
+                <div class="information-item editable-item">
+
+                    <label for="personalAge">
+                        Age
+                    </label>
+
+                    <div class="information-value editable-value">
+                        30
+                    </div>
+
+                    <input
+                        class="editable-input"
+                        id="personalAge"
+                        name="age"
+                        type="number"
+                        min="1"
+                        max="100"
+                        value="30"
+                        disabled
+                    >
+
+                </div>
+
+
+                <!-- =====================================
+                     SEX
+                ===================================== -->
+
+                <div class="information-item editable-item">
+
+                    <label for="personalSex">
+                        Sex
+                    </label>
+
+                    <div class="information-value editable-value">
+                        Male
+                    </div>
+
+                    <select
+                        class="editable-input"
+                        id="personalSex"
+                        name="sex"
+                        disabled
+                    >
+
+                        <option value="Male" selected>
+                            Male
+                        </option>
+
+                        <option value="Female">
+                            Female
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- =====================================
+                     BIRTHDAY
+                ===================================== -->
+
+                <div class="information-item editable-item">
+
+                    <label for="personalBirthday">
+                        Birthday
+                    </label>
+
+                    <div class="information-value editable-value">
+                        January 15, 1996
+                    </div>
+
+                    <input
+                        class="editable-input"
+                        id="personalBirthday"
+                        name="birthday"
+                        type="date"
+                        value="1996-01-15"
+                        disabled
+                    >
+
+                </div>
+
+
+                <!-- =====================================
+                     EMAIL
+                ===================================== -->
+
+                <div class="information-item editable-item">
+
+                    <label for="personalEmail">
+                        Email
+                    </label>
+
+                    <div class="information-value editable-value">
+                        juanteacher@email.com
+                    </div>
+
+                    <input
+                        class="editable-input"
+                        id="personalEmail"
+                        name="email"
+                        type="email"
+                        value="juanteacher@email.com"
+                        disabled
+                    >
+
+                </div>
+
+
+                <!-- =====================================
+                     CONTACT NUMBER
+                ===================================== -->
+
+                <div class="information-item editable-item">
+
+                    <label for="personalContact">
+                        Contact Number
+                    </label>
+
+                    <div class="information-value editable-value">
+                        0912 345 6789
+                    </div>
+
+                    <input
+                        class="editable-input"
+                        id="personalContact"
+                        name="contact_number"
+                        type="tel"
+                        value="0912 345 6789"
+                        disabled
+                    >
+
+                </div>
+
+
+                <!-- =====================================
+                     DEPARTMENT
+                ===================================== -->
+
+                <div class="information-item editable-item">
+
+                    <label for="personalDepartment">
+                        Department
+                    </label>
+
+                    <div class="information-value editable-value">
+                        SHS
+                    </div>
+
+                    <select
+                        class="editable-input"
+                        id="personalDepartment"
+                        name="department"
+                        disabled
+                    >
+
+                        <option value="JHS">
+                            JHS
+                        </option>
+
+                        <option value="SHS" selected>
+                            SHS
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- =====================================
+                     ASSIGNED GRADE
+                ===================================== -->
+
+                <div class="information-item editable-item">
+
+                    <label for="personalGrade">
+                        Assigned Class (Grade)
+                    </label>
+
+                    <div class="information-value editable-value">
+                        Grade 11
+                    </div>
+
+                    <select
+                        class="editable-input"
+                        id="personalGrade"
+                        name="assigned_grade"
+                        disabled
+                    >
+
+                        <option value="Grade 7">
+                            Grade 7
+                        </option>
+
+                        <option value="Grade 8">
+                            Grade 8
+                        </option>
+
+                        <option value="Grade 9">
+                            Grade 9
+                        </option>
+
+                        <option value="Grade 10">
+                            Grade 10
+                        </option>
+
+                        <option value="Grade 11" selected>
+                            Grade 11
+                        </option>
+
+                        <option value="Grade 12">
+                            Grade 12
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- =====================================
+                     ASSIGNED SECTION
+                ===================================== -->
+
+                <div class="information-item editable-item">
+
+                    <label for="personalSection">
+                        Assigned Class (Section)
+                    </label>
+
+                    <div class="information-value editable-value">
+                        Section A
+                    </div>
+
+                    <select
+                        class="editable-input"
+                        id="personalSection"
+                        name="assigned_section"
+                        disabled
+                    >
+
+                        <option value="Section A" selected>
+                            Section A
+                        </option>
+
+                        <option value="Section B">
+                            Section B
+                        </option>
+
+                        <option value="Section C">
+                            Section C
+                        </option>
+
+                        <option value="Section D">
+                            Section D
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =============================================
+                 EDIT INFORMATION NOTE
+            ============================================= -->
+
+            <div
+                class="form-note personal-edit-note"
+                id="personalEditNote"
+            >
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                <span>
+                    You are editing your personal information.
+                    Click Save Changes to update the displayed
+                    information, or Cancel to discard your changes.
+                </span>
+
+            </div>
+
+
+            <!-- =============================================
+                 ACTION BUTTONS
+            ============================================= -->
+
+            <div class="personal-actions">
+
+
+                <!-- UPDATE BUTTON -->
+
+                <button
+                    class="primary-btn update-personal-btn"
+                    id="updatePersonalBtn"
+                    type="button"
+                >
+
+                    <i class="fa-solid fa-pen-to-square"></i>
+
+                    Update Personal Information
+
+                </button>
+
+
+                <!-- CANCEL AND SAVE BUTTONS -->
+
+                <div
+                    class="personal-edit-actions"
+                    id="personalEditActions"
+                >
+
+                    <button
+                        class="secondary-btn"
+                        id="cancelPersonalEdit"
+                        type="button"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        class="primary-btn"
+                        id="savePersonalEdit"
+                        type="submit"
+                    >
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Save Changes
+
+                    </button>
+
+                </div>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</section>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+    // =====================================================
+    // ELEMENTS
+    // =====================================================
+
+    const personalForm =
+        document.getElementById("personalInformationForm");
+
+    const updatePersonalBtn =
+        document.getElementById("updatePersonalBtn");
+
+    const savePersonalBtn =
+        document.getElementById("savePersonalEdit");
+
+    const cancelPersonalBtn =
+        document.getElementById("cancelPersonalEdit");
+
+    const personalActions =
+        document.getElementById("personalEditActions");
+
+    const personalNote =
+        document.getElementById("personalEditNote");
+
+    const personalItems =
+        document.querySelectorAll(
+            "#personalInfoGrid .editable-item"
+        );
+
+    const personalInputs =
+        document.querySelectorAll(
+            "#personalInfoGrid .editable-input"
+        );
+
+    const personalProfileName =
+        document.getElementById("personalProfileName");
+
+    const personalAvatar =
+        document.getElementById("personalAvatar");
+
+
+    // =====================================================
+    // ORIGINAL VALUES
+    // =====================================================
+
+    let personalOriginalValues = {};
+
+
+    // =====================================================
+    // ENABLE / DISABLE EDITING
+    // =====================================================
+
+    function setPersonalEditing(editing) {
+
+        personalItems.forEach(function (item) {
+
+            item.classList.toggle("editing", editing);
+
+        });
+
+
+        personalInputs.forEach(function (input) {
+
+            // ID Number remains read-only.
+            input.disabled =
+                !editing || input.id === "personalId";
+
+        });
+
+
+        if (updatePersonalBtn) {
+
+            updatePersonalBtn.style.display =
+                editing ? "none" : "inline-flex";
+
+        }
+
+
+        if (personalActions) {
+
+            personalActions.classList.toggle(
+                "show",
+                editing
+            );
+
+        }
+
+
+        if (personalNote) {
+
+            personalNote.classList.toggle(
+                "show",
+                editing
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // UPDATE DISPLAYED INFORMATION
+    // =====================================================
+
+    function updatePersonalDisplay() {
+
+        personalItems.forEach(function (item) {
+
+            const input =
+                item.querySelector(".editable-input");
+
+            const display =
+                item.querySelector(".editable-value");
+
+
+            if (!input || !display) {
+                return;
+            }
+
+
+            let value = input.value.trim();
+
+
+            // Format birthday for display.
+            if (input.type === "date" && value) {
+
+                const parts = value.split("-");
+
+                const date = new Date(
+                    Number(parts[0]),
+                    Number(parts[1]) - 1,
+                    Number(parts[2])
+                );
+
+                value = date.toLocaleDateString(
+                    "en-US",
+                    {
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric"
+                    }
+                );
+
+            }
+
+
+            display.textContent = value || "—";
+
+        });
+
+
+        // Update the name shown in the profile card.
+        const nameInput =
+            document.getElementById("personalFullName");
+
+        const fullName =
+            nameInput ? nameInput.value.trim() : "";
+
+
+        if (personalProfileName) {
+
+            personalProfileName.textContent =
+                fullName || "Teacher";
+
+        }
+
+
+        // Update avatar initials.
+        if (personalAvatar) {
+
+            const initials = fullName
+                .split(/\s+/)
+                .filter(Boolean)
+                .slice(0, 2)
+                .map(function (part) {
+                    return part.charAt(0).toUpperCase();
+                })
+                .join("");
+
+            personalAvatar.textContent =
+                initials || "T";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // UPDATE PERSONAL INFORMATION BUTTON
+    // =====================================================
+
+    if (updatePersonalBtn) {
+
+        updatePersonalBtn.addEventListener(
+            "click",
+            function () {
+
+                personalOriginalValues = {};
+
+
+                // Store values so Cancel can restore them.
+                personalInputs.forEach(function (input) {
+
+                    personalOriginalValues[input.id] =
+                        input.value;
+
+                });
+
+
+                setPersonalEditing(true);
+
+
+                const nameInput =
+                    document.getElementById(
+                        "personalFullName"
+                    );
+
+                if (nameInput) {
+                    nameInput.focus();
+                }
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // SAVE CHANGES
+    // =====================================================
+
+    if (personalForm) {
+
+        personalForm.addEventListener(
+            "submit",
+            function (event) {
+
+                // Temporary frontend-only save.
+                // Prevent submission to Django for now.
+                event.preventDefault();
+
+
+                if (!personalForm.reportValidity()) {
+                    return;
+                }
+
+
+                updatePersonalDisplay();
+
+                setPersonalEditing(false);
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // CANCEL CHANGES
+    // =====================================================
+
+    if (cancelPersonalBtn) {
+
+        cancelPersonalBtn.addEventListener(
+            "click",
+            function () {
+
+
+                personalInputs.forEach(function (input) {
+
+                    if (
+                        Object.prototype.hasOwnProperty.call(
+                            personalOriginalValues,
+                            input.id
+                        )
+                    ) {
+
+                        input.value =
+                            personalOriginalValues[input.id];
+
+                    }
+
+                });
+
+
+                setPersonalEditing(false);
+
+            }
+        );
+
+    }
+
+
+    // =====================================================
+    // INITIAL STATE
+    // =====================================================
+
+    setPersonalEditing(false);
+
+
+});
+
+</script>
+
+{% endblock %}

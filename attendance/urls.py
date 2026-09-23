@@ -44,5 +44,7 @@ urlpatterns = [
     path('teacher/profile/', views.teacher_profile, name='teacher_profile'),
     path('teacher/class-record/', views.teacher_class_record, name='teacher_class_record'),
     path('teacher/class-attendance/', views.teacher_class_attendance, name='teacher_class_attendance'),
+    path('teacher/history/', views.teacher_history, name="teacher_history"),
     path('teacher/security/', views.teacher_security, name='teacher_security'),
+
 ]

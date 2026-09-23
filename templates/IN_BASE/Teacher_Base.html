@@ -1,0 +1,926 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        {% block title %}
+        Teacher Dashboard - RFID Attendance Management System
+        {% endblock %}
+    </title>
+
+    <!-- FONT AWESOME -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- TEACHER BASE CSS -->
+    <link
+        rel="stylesheet"
+        href="{% static 'css/IN_BASE/Teacher_Base.css' %}"
+    >
+
+    <!-- PAGE-SPECIFIC CSS -->
+    {% block extra_css %}
+    {% endblock %}
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         TOP HEADER
+         ===================================================== -->
+
+    <header class="topbar">
+
+
+        <!-- =================================================
+             LEFT SIDE
+             ================================================= -->
+
+        <div class="topbar-left">
+
+
+            <!-- SIDEBAR TOGGLE -->
+
+            <button
+                class="sidebar-toggle"
+                id="sidebarToggle"
+                type="button"
+                aria-label="Toggle sidebar"
+                aria-expanded="true"
+                aria-controls="sidebar"
+            >
+
+                <i class="fa-solid fa-bars"></i>
+
+            </button>
+
+
+
+            <!-- PAGE HEADING -->
+
+            <div class="page-heading">
+
+
+                {% block page_heading %}
+
+                <h1 id="pageTitle">
+                    Dashboard
+                </h1>
+
+                {% endblock %}
+
+
+
+                {% block page_subheading %}
+
+                <p id="pageSubtitle">
+                    Teacher Management Panel
+                </p>
+
+                {% endblock %}
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             RIGHT SIDE
+             ================================================= -->
+
+        <div class="topbar-right">
+
+
+            <!-- =================================================
+                 NOTIFICATION BUTTON
+                 ================================================= -->
+
+            <button
+                class="notification-btn"
+                id="notificationBtn"
+                type="button"
+                aria-label="Notifications"
+                aria-expanded="false"
+                aria-controls="notificationPanel"
+            >
+
+                <i class="fa-regular fa-bell"></i>
+
+                {% if unread_notification_count %}
+
+                <span class="notification-dot"></span>
+
+                {% endif %}
+
+            </button>
+
+
+
+            <!-- =================================================
+                 NOTIFICATION PANEL
+                 ================================================= -->
+
+            <div
+                class="notification-panel"
+                id="notificationPanel"
+            >
+
+
+                <!-- NOTIFICATION HEADER -->
+
+                <div class="notification-panel-header">
+
+
+                    <div>
+
+                        <h3>Notifications</h3>
+
+                        <p>
+                            Latest system updates
+                        </p>
+
+                    </div>
+
+
+
+                    <span class="notification-count">
+
+                        {{ unread_notification_count|default:"0" }}
+
+                    </span>
+
+
+                </div>
+
+
+
+                <!-- =================================================
+                     LATEST NOTIFICATIONS
+                     ================================================= -->
+
+                {% for notification in latest_notifications %}
+
+
+                <div class="{% if forloop.first %}latest-notification{% else %}notification-item{% endif %}">
+
+
+                    <div class="notification-icon blue">
+
+                        <i class="fa-solid fa-bell"></i>
+
+                    </div>
+
+
+
+                    <div class="notification-content">
+
+
+                        <strong>
+
+                            {{ notification.title }}
+
+                        </strong>
+
+
+
+                        <p>
+
+                            {{ notification.message }}
+
+                        </p>
+
+
+
+                        <small>
+
+                            {% if notification.created_at %}
+
+                                {{ notification.created_at|timesince }} ago
+
+                            {% endif %}
+
+                        </small>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                {% empty %}
+
+
+                <!-- NO NOTIFICATIONS -->
+
+                <div class="notification-item">
+
+
+                    <div class="notification-icon purple">
+
+                        <i class="fa-regular fa-bell"></i>
+
+                    </div>
+
+
+
+                    <div class="notification-content">
+
+
+                        <strong>
+                            No new notifications
+                        </strong>
+
+
+
+                        <p>
+                            You have no notifications at the moment.
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+                {% endfor %}
+
+
+
+                <!-- =================================================
+                     VIEW ALL NOTIFICATIONS
+                     ================================================= -->
+
+                <a
+                    href="{% url 'teacher_dashboard' %}#notificationsPage"
+                    class="view-all-notifications"
+                    id="viewAllNotifications"
+                >
+
+                    View All Notifications
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TEACHER PROFILE
+                 ================================================= -->
+
+            <div class="profile-wrapper">
+
+
+                <!-- PROFILE BUTTON -->
+
+                <button
+                    class="profile-btn"
+                    id="profileBtn"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="profileDropdown"
+                >
+
+
+                    <!-- PROFILE AVATAR -->
+
+                    <div class="profile-avatar">
+
+                        {{ teacher_initials|default:"T" }}
+
+                    </div>
+
+
+
+                    <!-- PROFILE DETAILS -->
+
+                    <div class="profile-details">
+
+
+                        <strong>
+
+                            {{ teacher_name|default:user.get_username }}
+
+                        </strong>
+
+
+
+                        <span>
+                            Teacher
+                        </span>
+
+
+                    </div>
+
+
+
+                    <i class="fa-solid fa-chevron-down profile-chevron"></i>
+
+
+                </button>
+
+
+
+                <!-- =================================================
+                     PROFILE DROPDOWN
+                     ================================================= -->
+
+                <div
+                    class="profile-dropdown"
+                    id="profileDropdown"
+                >
+
+
+                    <!-- PROFILE INFORMATION -->
+
+                    <div class="dropdown-user">
+
+
+                        <div class="dropdown-avatar">
+
+                            {{ teacher_initials|default:"T" }}
+
+                        </div>
+
+
+
+                        <div>
+
+
+                            <strong>
+
+                                {{ teacher_name|default:user.get_username }}
+
+                            </strong>
+
+
+
+                            <span>
+                                Teacher
+                            </span>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="dropdown-divider"></div>
+
+
+
+                    <!-- =================================================
+                         PERSONAL INFORMATION
+                         ================================================= -->
+
+                    <a
+                        href="{% url 'teacher_profile' %}"
+                        class="dropdown-item"
+                    >
+
+                        <i class="fa-regular fa-user"></i>
+
+                        <span>
+                            Personal Information
+                        </span>
+
+                    </a>
+
+
+
+                    <!-- =================================================
+                         SECURITY / ACCOUNT
+                         ================================================= -->
+
+                    <a
+                        href="{% url 'teacher_security' %}"
+                        class="dropdown-item"
+                    >
+
+                        <i class="fa-solid fa-lock"></i>
+
+                        <span>
+                            Security / Account
+                        </span>
+
+                    </a>
+
+
+
+                    <div class="dropdown-divider"></div>
+
+
+
+                    <!-- =================================================
+                         LOGOUT
+                         ================================================= -->
+
+                    <form
+                        method="post"
+                        action="{% url 'logout' %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="dropdown-item logout"
+                        >
+
+                            <i class="fa-solid fa-right-from-bracket"></i>
+
+                            <span>
+                                Logout
+                            </span>
+
+                        </button>
+
+                    </form>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </header>
+
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+
+        <div class="sidebar-menu">
+
+
+            <!-- =================================================
+                 MAIN MENU
+                 ================================================= -->
+
+            <div class="menu-label">
+
+                MAIN
+
+            </div>
+
+
+
+            <!-- =================================================
+                 DASHBOARD
+                 ================================================= -->
+
+            <a
+                href="{% url 'teacher_dashboard' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-gauge-high"></i>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+
+            <!-- =================================================
+                 TEACHER MENU
+                 ================================================= -->
+
+            <div class="menu-label">
+
+                TEACHER
+
+            </div>
+
+
+
+            <!-- =================================================
+                 PERSONAL INFORMATION
+                 ================================================= -->
+
+            <a
+                href="{% url 'teacher_profile' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'teacher_profile' %}active{% endif %}"
+            >
+
+                <i class="fa-regular fa-id-card"></i>
+
+                <span>
+                    Personal Information
+                </span>
+
+            </a>
+
+
+
+            <!-- =================================================
+                 CLASS RECORD
+                 ================================================= -->
+
+            <a
+                href="{% url 'teacher_class_record' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'teacher_class_record' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-users"></i>
+
+                <span>
+                    Class Record
+                </span>
+
+            </a>
+
+
+
+            <!-- =================================================
+                 CLASS ATTENDANCE
+                 ================================================= -->
+
+            <a
+                href="{% url 'teacher_class_attendance' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'teacher_class_attendance' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-calendar-check"></i>
+
+                <span>
+                    Class Attendance
+                </span>
+
+            </a>
+
+
+
+            <!-- =================================================
+                 HISTORY
+                 ================================================= -->
+
+            <!--
+                Your current urls.py does not contain a
+                teacher_history route.
+
+                Keep this button disabled until the
+                History page and its URL are created.
+            -->
+
+       <!-- =================================================
+     HISTORY
+================================================= -->
+
+<a
+    href="{% url 'teacher_history' %}"
+    class="menu-item {% if request.resolver_match.url_name == 'teacher_history' %}active{% endif %}"
+>
+
+    <i class="fa-solid fa-clock-rotate-left"></i>
+
+    <span>History</span>
+
+</a>
+
+
+
+            <!-- =================================================
+                 ACCOUNT MENU
+                 ================================================= -->
+
+            <div class="menu-label">
+
+                ACCOUNT
+
+            </div>
+
+
+
+            <!-- =================================================
+                 SECURITY / ACCOUNT
+                 ================================================= -->
+
+            <a
+                href="{% url 'teacher_security' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'teacher_security' %}active{% endif %}"
+            >
+
+                <i class="fa-solid fa-shield-halved"></i>
+
+                <span>
+                    Security / Account
+                </span>
+
+            </a>
+
+
+        </div>
+
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main
+        class="main-content"
+        id="mainContent"
+    >
+
+
+        {% block content %}
+
+        {% endblock %}
+
+
+    </main>
+
+
+
+    <!-- =====================================================
+         SHARED JAVASCRIPT
+         ===================================================== -->
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+
+            /* =================================================
+               ELEMENTS
+               ================================================= */
+
+            const sidebar =
+                document.getElementById("sidebar");
+
+            const sidebarToggle =
+                document.getElementById("sidebarToggle");
+
+            const profileBtn =
+                document.getElementById("profileBtn");
+
+            const profileDropdown =
+                document.getElementById("profileDropdown");
+
+            const notificationBtn =
+                document.getElementById("notificationBtn");
+
+            const notificationPanel =
+                document.getElementById("notificationPanel");
+
+            const viewAllNotifications =
+                document.getElementById("viewAllNotifications");
+
+
+
+            /* =================================================
+               SIDEBAR TOGGLE
+               ================================================= */
+
+            if (sidebar && sidebarToggle) {
+
+                sidebarToggle.addEventListener("click", function (event) {
+
+                    event.stopPropagation();
+
+                    const isCollapsed =
+                        sidebar.classList.toggle("collapsed");
+
+                    sidebarToggle.setAttribute(
+                        "aria-expanded",
+                        String(!isCollapsed)
+                    );
+
+                });
+
+            }
+
+
+
+            /* =================================================
+               CLOSE PROFILE DROPDOWN
+               ================================================= */
+
+            function closeProfileDropdown() {
+
+                if (profileDropdown) {
+
+                    profileDropdown.classList.remove("show");
+
+                }
+
+
+                if (profileBtn) {
+
+                    profileBtn.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+                }
+
+            }
+
+
+
+            /* =================================================
+               CLOSE NOTIFICATION PANEL
+               ================================================= */
+
+            function closeNotificationPanel() {
+
+                if (notificationPanel) {
+
+                    notificationPanel.classList.remove("show");
+
+                }
+
+
+                if (notificationBtn) {
+
+                    notificationBtn.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+
+                }
+
+            }
+
+
+
+            /* =================================================
+               PROFILE DROPDOWN
+               ================================================= */
+
+            if (profileBtn && profileDropdown) {
+
+                profileBtn.addEventListener("click", function (event) {
+
+                    event.stopPropagation();
+
+                    const isOpen =
+                        profileDropdown.classList.toggle("show");
+
+                    profileBtn.setAttribute(
+                        "aria-expanded",
+                        String(isOpen)
+                    );
+
+                    closeNotificationPanel();
+
+                });
+
+
+
+                profileDropdown.addEventListener("click", function (event) {
+
+                    event.stopPropagation();
+
+                });
+
+            }
+
+
+
+            /* =================================================
+               NOTIFICATION PANEL
+               ================================================= */
+
+            if (notificationBtn && notificationPanel) {
+
+                notificationBtn.addEventListener("click", function (event) {
+
+                    event.preventDefault();
+
+                    event.stopPropagation();
+
+                    const isOpen =
+                        notificationPanel.classList.toggle("show");
+
+                    notificationBtn.setAttribute(
+                        "aria-expanded",
+                        String(isOpen)
+                    );
+
+                    closeProfileDropdown();
+
+                });
+
+
+
+                notificationPanel.addEventListener("click", function (event) {
+
+                    event.stopPropagation();
+
+                });
+
+            }
+
+
+
+            /* =================================================
+               VIEW ALL NOTIFICATIONS
+               ================================================= */
+
+            if (viewAllNotifications) {
+
+                viewAllNotifications.addEventListener("click", function () {
+
+                    closeNotificationPanel();
+
+                    closeProfileDropdown();
+
+                });
+
+            }
+
+
+
+            /* =================================================
+               CLOSE PANELS WHEN CLICKING OUTSIDE
+               ================================================= */
+
+            document.addEventListener("click", function () {
+
+                closeProfileDropdown();
+
+                closeNotificationPanel();
+
+            });
+
+
+
+            /* =================================================
+               ESCAPE KEY
+               ================================================= */
+
+            document.addEventListener("keydown", function (event) {
+
+                if (event.key === "Escape") {
+
+                    closeProfileDropdown();
+
+                    closeNotificationPanel();
+
+                }
+
+            });
+
+
+        });
+
+    </script>
+
+
+
+    <!-- =====================================================
+         PAGE-SPECIFIC JAVASCRIPT
+         ===================================================== -->
+
+    {% block extra_js %}
+    {% endblock %}
+
+
+</body>
+
+</html>

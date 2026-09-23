@@ -1,0 +1,872 @@
+
+{% extends 'IN_BASE/Teacher_Base.html' %}
+{% load static %}
+
+
+{% block title %}
+Teacher Dashboard - RFID Attendance Management System
+{% endblock %}
+
+
+{% block page_heading %}
+
+<h1 id="pageTitle">Dashboard</h1>
+
+{% endblock %}
+
+
+{% block page_subheading %}
+
+<p id="pageSubtitle">
+    Teacher Management Panel
+</p>
+
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/TEACHER/Teacher_Dashboard.css' %}"
+>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<!-- =====================================================
+     TEACHER DASHBOARD
+     ===================================================== -->
+
+<section
+    class="page-section active"
+    id="dashboardPage"
+>
+
+
+    <!-- =================================================
+         WELCOME CARD
+         ================================================= -->
+
+    <div class="welcome-card">
+
+
+        <div class="welcome-content">
+
+
+            <span class="welcome-label">
+                TEACHER PORTAL
+            </span>
+
+
+
+            <h2>
+                Welcome, {{ teacher_name|default:user.get_username }}!
+            </h2>
+
+
+
+            <p>
+                Manage your personal information, class records,
+                and student attendance from your teacher dashboard.
+            </p>
+
+
+        </div>
+
+
+
+        <div class="welcome-icon">
+
+            <i class="fa-solid fa-chalkboard-user"></i>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         STATISTICS
+         ===================================================== -->
+
+    <div class="stats-grid">
+
+
+        <!-- =================================================
+             TOTAL STUDENTS
+             ================================================= -->
+
+        <div class="stat-card">
+
+
+            <div class="stat-icon purple">
+
+                <i class="fa-solid fa-users"></i>
+
+            </div>
+
+
+
+            <div class="stat-info">
+
+                <span>Total Students</span>
+
+                <strong>
+                    {{ total_students|default:"0" }}
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             TOTAL PRESENT
+             ================================================= -->
+
+        <div class="stat-card">
+
+
+            <div class="stat-icon blue">
+
+                <i class="fa-solid fa-user-check"></i>
+
+            </div>
+
+
+
+            <div class="stat-info">
+
+                <span>Total Present</span>
+
+                <strong>
+                    {{ total_present|default:"0" }}
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             TOTAL ABSENT
+             ================================================= -->
+
+        <div class="stat-card">
+
+
+            <div class="stat-icon red">
+
+                <i class="fa-solid fa-user-xmark"></i>
+
+            </div>
+
+
+
+            <div class="stat-info">
+
+                <span>Total Absent</span>
+
+                <strong>
+                    {{ total_absent|default:"0" }}
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             ATTENDANCE RATE
+             ================================================= -->
+
+        <div class="stat-card">
+
+
+            <div class="stat-icon teal">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+            </div>
+
+
+
+            <div class="stat-info">
+
+                <span>Attendance Rate</span>
+
+                <strong>
+                    {{ attendance_rate|default:"0" }}%
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         DASHBOARD BOTTOM
+         ===================================================== -->
+
+    <div class="dashboard-grid">
+
+
+        <!-- =================================================
+             RECENT ATTENDANCE
+             ================================================= -->
+
+        <div class="content-card">
+
+
+            <div class="card-header">
+
+
+                <div>
+
+                    <h3>Recent Attendance</h3>
+
+                    <p>
+                        Latest student attendance records
+                    </p>
+
+                </div>
+
+
+
+                <!-- VIEW ALL ATTENDANCE -->
+
+                <a
+                    href="{% url 'teacher_class_attendance' %}"
+                    class="view-all-btn"
+                >
+
+                    View All
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 ATTENDANCE TABLE
+                 ================================================= -->
+
+            <div class="table-container">
+
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>LRN</th>
+
+                            <th>Student Name</th>
+
+                            <th>Time In</th>
+
+                            <th>Time Out</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+
+                    <tbody>
+
+
+                        {% for record in recent_attendance %}
+
+
+                        <tr>
+
+
+                            <!-- LRN -->
+
+                            <td>
+                                {{ record.lrn }}
+                            </td>
+
+
+
+                            <!-- STUDENT NAME -->
+
+                            <td>
+                                {{ record.student_name }}
+                            </td>
+
+
+
+                            <!-- TIME IN -->
+
+                            <td>
+
+                                {% if record.time_in %}
+
+                                    {{ record.time_in|time:"g:i A" }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <!-- TIME OUT -->
+
+                            <td>
+
+                                {% if record.time_out %}
+
+                                    {{ record.time_out|time:"g:i A" }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+
+
+                            <!-- STATUS -->
+
+                            <td>
+
+                                <span class="status {{ record.status|lower }}">
+
+                                    {{ record.status }}
+
+                                </span>
+
+                            </td>
+
+
+                        </tr>
+
+
+
+                        {% empty %}
+
+
+                        <!-- NO ATTENDANCE RECORDS -->
+
+                        <tr>
+
+                            <td
+                                colspan="5"
+                                style="text-align: center; padding: 20px;"
+                            >
+
+                                No attendance records found.
+
+                            </td>
+
+                        </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =====================================================
+             QUICK ACTIONS
+             ===================================================== -->
+
+        <div class="content-card quick-actions-card">
+
+
+            <div class="card-header">
+
+
+                <div>
+
+                    <h3>Quick Actions</h3>
+
+                    <p>
+                        Access teacher functions
+                    </p>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="quick-actions">
+
+
+                <!-- =================================================
+                     CLASS RECORD
+                     ================================================= -->
+
+                <a
+                    href="{% url 'teacher_class_record' %}"
+                    class="quick-action"
+                >
+
+
+                    <div class="quick-icon purple">
+
+                        <i class="fa-solid fa-users"></i>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <strong>
+                            Class Record
+                        </strong>
+
+                        <span>
+                            View list of students
+                        </span>
+
+                    </div>
+
+
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+
+                </a>
+
+
+
+                <!-- =================================================
+                     CLASS ATTENDANCE
+                     ================================================= -->
+
+                <a
+                    href="{% url 'teacher_class_attendance' %}"
+                    class="quick-action"
+                >
+
+
+                    <div class="quick-icon blue">
+
+                        <i class="fa-solid fa-calendar-check"></i>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <strong>
+                            Class Attendance
+                        </strong>
+
+                        <span>
+                            View attendance records
+                        </span>
+
+                    </div>
+
+
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+
+                </a>
+
+
+
+                <!-- =================================================
+                     PERSONAL INFORMATION
+                     ================================================= -->
+
+                <a
+                    href="{% url 'teacher_profile' %}"
+                    class="quick-action"
+                >
+
+
+                    <div class="quick-icon teal">
+
+                        <i class="fa-regular fa-id-card"></i>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <strong>
+                            Personal Information
+                        </strong>
+
+                        <span>
+                            View teacher information
+                        </span>
+
+                    </div>
+
+
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+
+                </a>
+
+
+
+                <!-- =================================================
+                     SECURITY / ACCOUNT
+                     ================================================= -->
+
+                <a
+                    href="{% url 'teacher_security' %}"
+                    class="quick-action"
+                >
+
+
+                    <div class="quick-icon gray">
+
+                        <i class="fa-solid fa-shield-halved"></i>
+
+                    </div>
+
+
+
+                    <div>
+
+                        <strong>
+                            Security / Account
+                        </strong>
+
+                        <span>
+                            Manage account security
+                        </span>
+
+                    </div>
+
+
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+
+<!-- =====================================================
+     NOTIFICATIONS PAGE
+     ===================================================== -->
+
+<section
+    class="page-section"
+    id="notificationsPage"
+>
+
+
+    <!-- =================================================
+         SECTION HEADER
+         ================================================= -->
+
+    <div class="section-header">
+
+
+        <div>
+
+            <h2>Notifications</h2>
+
+            <p>
+                View all recent notifications and system updates.
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+         NOTIFICATIONS CARD
+         ================================================= -->
+
+    <div class="content-card notifications-page-card">
+
+
+        <div class="notifications-page-list">
+
+
+            {% for notification in notifications %}
+
+
+            <div class="full-notification {% if not notification.is_read %}unread{% endif %}">
+
+
+                <div class="notification-icon blue">
+
+                    <i class="fa-solid fa-bell"></i>
+
+                </div>
+
+
+
+                <div class="notification-content">
+
+
+                    <strong>
+                        {{ notification.title }}
+                    </strong>
+
+
+
+                    <p>
+                        {{ notification.message }}
+                    </p>
+
+
+
+                    <small>
+                        {{ notification.created_at|date:"F j, Y, g:i A" }}
+                    </small>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            {% empty %}
+
+
+            <!-- NO NOTIFICATIONS -->
+
+            <div class="full-notification">
+
+
+                <div class="notification-icon purple">
+
+                    <i class="fa-regular fa-bell"></i>
+
+                </div>
+
+
+
+                <div class="notification-content">
+
+
+                    <strong>
+                        No notifications
+                    </strong>
+
+
+
+                    <p>
+                        You have no notifications at the moment.
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+    </div>
+
+
+</section>
+
+
+{% endblock %}
+
+
+
+<!-- =====================================================
+     DASHBOARD JAVASCRIPT
+     ===================================================== -->
+
+{% block extra_js %}
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+
+        /* =================================================
+           ELEMENTS
+           ================================================= */
+
+        const dashboardPage =
+            document.getElementById("dashboardPage");
+
+        const notificationsPage =
+            document.getElementById("notificationsPage");
+
+        const pageTitle =
+            document.getElementById("pageTitle");
+
+        const pageSubtitle =
+            document.getElementById("pageSubtitle");
+const dashboardLink =
+    document.querySelector(".sidebar .menu-item.active");
+        /* =================================================
+           PAGE DISPLAY
+           ================================================= */
+
+        function updateDashboardPage() {
+
+
+            const showNotifications =
+                window.location.hash === "#notificationsPage";
+
+
+
+            /* SHOW / HIDE DASHBOARD */
+
+            if (dashboardPage) {
+
+                dashboardPage.classList.toggle(
+                    "active",
+                    !showNotifications
+                );
+
+            }
+
+
+
+            /* SHOW / HIDE NOTIFICATIONS */
+
+            if (notificationsPage) {
+
+                notificationsPage.classList.toggle(
+                    "active",
+                    showNotifications
+                );
+
+            }
+
+
+
+            /* UPDATE PAGE TITLE */
+
+            if (pageTitle) {
+
+                pageTitle.textContent =
+                    showNotifications
+                        ? "Notifications"
+                        : "Dashboard";
+
+            }
+
+
+
+            /* UPDATE PAGE SUBTITLE */
+
+            if (pageSubtitle) {
+
+                pageSubtitle.textContent =
+                    showNotifications
+                        ? "System Notifications"
+                        : "Teacher Management Panel";
+
+            }
+
+
+
+            /* KEEP SIDEBAR DASHBOARD ACTIVE */
+
+            if (dashboardLink) {
+
+                dashboardLink.classList.add("active");
+
+            }
+
+
+        }
+
+
+
+        /* =================================================
+           HANDLE NOTIFICATION NAVIGATION
+           ================================================= */
+
+        window.addEventListener(
+            "hashchange",
+            updateDashboardPage
+        );
+
+
+
+        /* =================================================
+           INITIAL PAGE DISPLAY
+           ================================================= */
+
+        updateDashboardPage();
+
+
+    });
+
+</script>
+
+{% endblock %}

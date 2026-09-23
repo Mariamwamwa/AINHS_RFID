@@ -1,0 +1,1063 @@
+/* =========================================================
+   TEACHER ATTENDANCE HISTORY
+   RFID ATTENDANCE MANAGEMENT SYSTEM
+========================================================= */
+
+
+/* =========================================================
+   PAGE VARIABLES
+========================================================= */
+
+.teacher-history-page {
+
+    --history-purple: #6F42C1;
+    --history-blue: #007BFF;
+
+    --history-white: #FFFFFF;
+
+    --history-dark: #212529;
+    --history-gray-dark: #495057;
+    --history-gray: #6C757D;
+    --history-gray-light: #ADB5BD;
+
+    --history-border: #E9ECEF;
+
+    width: 100%;
+    min-width: 0;
+
+    padding: 20px 32px 40px;
+
+    color: var(--history-dark);
+
+}
+
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.teacher-history-page .history-section-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.teacher-history-page .history-section-header h2 {
+
+    margin: 0 0 5px;
+
+    font-size: 21px;
+
+    font-weight: 700;
+
+    color: var(--history-dark);
+
+}
+
+
+.teacher-history-page .history-section-header p {
+
+    margin: 0;
+
+    font-size: 12px;
+
+    color: var(--history-gray);
+
+}
+
+
+/* =========================================================
+   HISTORY FILTER CARD
+========================================================= */
+
+.teacher-history-page .history-tools-card {
+
+    max-width: 1100px;
+
+    margin-bottom: 16px;
+
+    padding: 20px;
+
+    background: var(--history-white);
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 14px;
+
+}
+
+
+.teacher-history-page .history-tools {
+
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+}
+
+
+/* =========================================================
+   DATE SEARCH
+========================================================= */
+
+.teacher-history-page .history-search {
+
+    position: relative;
+
+    flex: 1;
+
+    min-width: 220px;
+
+}
+
+
+.teacher-history-page .history-search > i {
+
+    position: absolute;
+
+    top: 50%;
+    left: 12px;
+
+    transform: translateY(-50%);
+
+    color: var(--history-gray);
+
+    font-size: 12px;
+
+    pointer-events: none;
+
+}
+
+
+.teacher-history-page .history-search input {
+
+    width: 100%;
+
+    height: 42px;
+
+    padding: 0 12px 0 36px;
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 8px;
+
+    outline: none;
+
+    background: var(--history-white);
+
+    color: var(--history-dark);
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    box-sizing: border-box;
+
+}
+
+
+.teacher-history-page .history-search input:focus {
+
+    border-color: var(--history-purple);
+
+    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.08);
+
+}
+
+
+/* =========================================================
+   SORT CONTROL
+========================================================= */
+
+.teacher-history-page .history-sort {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+}
+
+
+.teacher-history-page .history-sort label {
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    color: var(--history-gray-dark);
+
+}
+
+
+.teacher-history-page .history-sort select {
+
+    height: 42px;
+
+    padding: 0 32px 0 11px;
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 8px;
+
+    outline: none;
+
+    background: var(--history-white);
+
+    color: var(--history-dark);
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+}
+
+
+.teacher-history-page .history-sort select:focus {
+
+    border-color: var(--history-purple);
+
+}
+
+
+/* =========================================================
+   CLEAR BUTTON
+========================================================= */
+
+.teacher-history-page .history-clear-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    height: 42px;
+
+    padding: 0 18px;
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 8px;
+
+    background: var(--history-white);
+
+    color: var(--history-gray-dark);
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+}
+
+
+.teacher-history-page .history-clear-btn:hover {
+
+    background: #F5F7FB;
+
+    border-color: #D9DDE5;
+
+    color: var(--history-purple);
+
+}
+
+
+/* =========================================================
+   HISTORY LIST
+========================================================= */
+
+.teacher-history-page .history-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 16px;
+
+    max-width: 1100px;
+
+}
+
+
+/* =========================================================
+   MONTH CARD
+========================================================= */
+
+.teacher-history-page .history-month-card {
+
+    overflow: hidden;
+
+    background: var(--history-white);
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 16px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.025);
+
+}
+
+
+/* =========================================================
+   MONTH HEADER
+========================================================= */
+
+.teacher-history-page .history-month-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 16px 18px;
+
+    background: linear-gradient(
+        180deg,
+        #FFFFFF,
+        #FAFBFE
+    );
+
+    border-bottom: 1px solid var(--history-border);
+
+}
+
+
+.teacher-history-page .history-month-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 0;
+
+}
+
+
+.teacher-history-page .history-month-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 44px;
+    height: 44px;
+
+    border-radius: 11px;
+
+    background: rgba(0, 123, 255, 0.09);
+
+    color: var(--history-blue);
+
+    font-size: 17px;
+
+}
+
+
+.teacher-history-page .history-month-title > div:last-child {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+}
+
+
+.teacher-history-page .history-month-title strong {
+
+    font-size: 14px;
+
+    color: var(--history-dark);
+
+}
+
+
+.teacher-history-page .history-month-title span {
+
+    margin-top: 3px;
+
+    font-size: 10px;
+
+    color: var(--history-gray);
+
+}
+
+
+/* =========================================================
+   MONTH TOGGLE BUTTON
+========================================================= */
+
+.teacher-history-page .history-month-toggle {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 34px;
+    height: 34px;
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 9px;
+
+    background: var(--history-white);
+
+    color: var(--history-gray-dark);
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+}
+
+
+.teacher-history-page .history-month-toggle:hover {
+
+    color: var(--history-purple);
+
+    border-color: var(--history-purple);
+
+}
+
+
+/* =========================================================
+   MONTH BODY
+========================================================= */
+
+.teacher-history-page .history-month-body {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    padding: 12px;
+
+    background: #F8F9FC;
+
+}
+
+
+.teacher-history-page .history-month-card.minimized
+.history-month-body {
+
+    display: none;
+
+}
+
+
+/* =========================================================
+   DAILY ATTENDANCE CARD
+========================================================= */
+
+.teacher-history-page .history-card {
+
+    overflow: hidden;
+
+    margin: 0;
+
+    padding: 0;
+
+    background: var(--history-white);
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 12px;
+
+}
+
+
+/* =========================================================
+   DAILY CARD HEADER
+========================================================= */
+
+.teacher-history-page .history-card-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 13px 15px;
+
+}
+
+
+.teacher-history-page .history-date {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 0;
+
+}
+
+
+.teacher-history-page .history-date-icon {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 10px;
+
+    background: rgba(111, 66, 193, 0.10);
+
+    color: var(--history-purple);
+
+}
+
+
+.teacher-history-page .history-date > div:last-child {
+
+    display: flex;
+
+    flex-direction: column;
+
+    min-width: 0;
+
+}
+
+
+.teacher-history-page .history-date strong {
+
+    font-size: 12px;
+
+    color: var(--history-dark);
+
+}
+
+
+.teacher-history-page .history-date span {
+
+    margin-top: 3px;
+
+    font-size: 9px;
+
+    color: var(--history-gray);
+
+}
+
+
+/* =========================================================
+   DAILY SUMMARY
+========================================================= */
+
+.teacher-history-page .history-header-right {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.teacher-history-page .history-day-summary {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+}
+
+
+.teacher-history-page .history-day-summary span {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 5px 8px;
+
+    border-radius: 20px;
+
+    white-space: nowrap;
+
+}
+
+
+.teacher-history-page .present-count {
+
+    background: rgba(40, 167, 69, 0.10);
+
+    color: #28A745;
+
+}
+
+
+.teacher-history-page .absent-count {
+
+    background: rgba(220, 53, 69, 0.10);
+
+    color: #DC3545;
+
+}
+
+
+/* =========================================================
+   DAILY TOGGLE BUTTON
+========================================================= */
+
+.teacher-history-page .history-minimize {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid var(--history-border);
+
+    border-radius: 8px;
+
+    background: var(--history-white);
+
+    color: var(--history-gray-dark);
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+}
+
+
+.teacher-history-page .history-minimize:hover {
+
+    color: var(--history-purple);
+
+    border-color: var(--history-purple);
+
+}
+
+
+/* =========================================================
+   DAILY CARD BODY
+========================================================= */
+
+.teacher-history-page .history-card-body {
+
+    border-top: 1px solid var(--history-border);
+
+}
+
+
+.teacher-history-page .history-card.minimized
+.history-card-body {
+
+    display: none;
+
+}
+
+
+/* =========================================================
+   ATTENDANCE TABLE
+========================================================= */
+
+.teacher-history-page .history-table-wrap {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+}
+
+
+.teacher-history-page .history-table {
+
+    width: 100%;
+
+    min-width: 760px;
+
+    border-collapse: collapse;
+
+}
+
+
+.teacher-history-page .history-table th {
+
+    padding: 10px 13px;
+
+    background: #F7F9FC;
+
+    color: var(--history-gray-dark);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    text-align: left;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.3px;
+
+    white-space: nowrap;
+
+}
+
+
+.teacher-history-page .history-table td {
+
+    padding: 11px 13px;
+
+    border-top: 1px solid var(--history-border);
+
+    color: var(--history-dark);
+
+    font-size: 11px;
+
+    text-align: left;
+
+    white-space: nowrap;
+
+}
+
+
+.teacher-history-page .history-table tbody tr:hover {
+
+    background: #FAFBFD;
+
+}
+
+
+/* =========================================================
+   NO RESULTS
+========================================================= */
+
+.teacher-history-page .history-no-results {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    max-width: 1100px;
+
+    min-height: 230px;
+
+    padding: 35px 20px;
+
+    background: var(--history-white);
+
+    border: 1px dashed var(--history-border);
+
+    border-radius: 14px;
+
+    color: var(--history-gray);
+
+    text-align: center;
+
+}
+
+
+.teacher-history-page .history-no-results[hidden] {
+
+    display: none;
+
+}
+
+
+.teacher-history-page .history-no-results > i {
+
+    margin-bottom: 5px;
+
+    color: var(--history-purple);
+
+    font-size: 30px;
+
+}
+
+
+.teacher-history-page .history-no-results strong {
+
+    color: var(--history-dark);
+
+    font-size: 13px;
+
+}
+
+
+.teacher-history-page .history-no-results span {
+
+    font-size: 11px;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - 850px
+========================================================= */
+
+@media (max-width: 850px) {
+
+    .teacher-history-page .history-header-right {
+
+        gap: 8px;
+
+    }
+
+    .teacher-history-page .history-day-summary {
+
+        flex-direction: column;
+
+        align-items: flex-end;
+
+        gap: 3px;
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - 650px
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .teacher-history-page {
+
+        padding: 18px 18px 35px;
+
+    }
+
+
+    .teacher-history-page .history-tools {
+
+        align-items: stretch;
+
+        flex-direction: column;
+
+    }
+
+
+    .teacher-history-page .history-search {
+
+        width: 100%;
+
+        min-width: 0;
+
+    }
+
+
+    .teacher-history-page .history-sort {
+
+        width: 100%;
+
+    }
+
+
+    .teacher-history-page .history-sort select {
+
+        flex: 1;
+
+        min-width: 0;
+
+    }
+
+
+    .teacher-history-page .history-clear-btn {
+
+        width: 100%;
+
+    }
+
+
+    .teacher-history-page .history-month-header {
+
+        padding: 14px;
+
+    }
+
+
+    .teacher-history-page .history-month-body {
+
+        padding: 9px;
+
+    }
+
+
+    .teacher-history-page .history-month-title strong {
+
+        font-size: 13px;
+
+    }
+
+
+    .teacher-history-page .history-card-header {
+
+        align-items: flex-start;
+
+        flex-direction: column;
+
+    }
+
+
+    .teacher-history-page .history-header-right {
+
+        width: 100%;
+
+        justify-content: space-between;
+
+    }
+
+
+    .teacher-history-page .history-day-summary {
+
+        flex-direction: row;
+
+        align-items: center;
+
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - 480px
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .teacher-history-page {
+
+        padding: 15px 12px 30px;
+
+    }
+
+
+    .teacher-history-page .history-tools-card {
+
+        padding: 16px;
+
+    }
+
+
+    .teacher-history-page .history-section-header h2 {
+
+        font-size: 19px;
+
+    }
+
+
+    .teacher-history-page .history-month-header {
+
+        gap: 10px;
+
+        padding: 12px;
+
+    }
+
+
+    .teacher-history-page .history-month-icon {
+
+        width: 38px;
+        height: 38px;
+
+        font-size: 15px;
+
+    }
+
+
+    .teacher-history-page .history-month-body {
+
+        padding: 8px;
+
+    }
+
+
+    .teacher-history-page .history-card-header {
+
+        padding: 12px;
+
+    }
+
+
+    .teacher-history-page .history-day-summary {
+
+        gap: 5px;
+
+        font-size: 9px;
+
+    }
+
+
+    .teacher-history-page .history-day-summary span {
+
+        padding: 5px 7px;
+
+    }
+
+}

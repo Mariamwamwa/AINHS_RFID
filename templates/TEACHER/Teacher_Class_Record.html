@@ -1,0 +1,417 @@
+
+{% extends 'IN_BASE/Teacher_Base.html' %}
+{% load static %}
+
+{% block title %}
+Class Record - RFID Attendance Management System
+{% endblock %}
+
+{% block page_heading %}
+<h2>Class Record</h2>
+{% endblock %}
+
+{% block page_subheading %}
+<p>List of Students</p>
+{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/TEACHER/Teacher_Class_Record.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<section class="class-record-page">
+
+    <!-- PAGE HEADING -->
+    <div class="section-header">
+        <div>
+            <h2>Class Record</h2>
+            <p>List of students assigned to your class.</p>
+        </div>
+    </div>
+
+    <!-- STUDENT LIST -->
+    <div class="content-card class-record-card">
+
+        <div class="card-header">
+            <div>
+                <h3>List of Students</h3>
+                <p>Grade 11 - Section A</p>
+            </div>
+
+            <div class="class-tools">
+
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input
+                        id="studentSearch"
+                        type="search"
+                        placeholder="Search student..."
+                        aria-label="Search students"
+                    >
+                </div>
+
+                <button
+                    class="promote-btn"
+                    id="promoteBtn"
+                    type="button"
+                    hidden
+                >
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    <span>Promote</span>
+                </button>
+
+            </div>
+        </div>
+
+        <div class="table-container large-table">
+            <table id="studentTable">
+
+                <thead>
+                    <tr>
+                        <th class="select-column">
+                            <label class="select-all-control">
+                                <input
+                                    id="selectAllStudents"
+                                    type="checkbox"
+                                    aria-label="Select all students"
+                                >
+                                <span></span>
+                                <em>Select All</em>
+                            </label>
+                        </th>
+
+                        <th class="picture-column">Picture</th>
+                        <th>LRN</th>
+                        <th>Student Name</th>
+                        <th>Age</th>
+                        <th>Sex</th>
+                        <th>Email</th>
+                        <th>Contact Number</th>
+                        <th>Parent / Guardian Name</th>
+                        <th>Parent / Guardian Contact Number</th>
+                        <th>Attendance</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <!-- SAMPLE STUDENT 1 -->
+                    <tr
+                        data-student-name="Juan Dela Cruz"
+                        data-lrn="123456789012"
+                    >
+                        <td class="select-column">
+                            <label class="student-checkbox">
+                                <input
+                                    class="student-select"
+                                    type="checkbox"
+                                    value="123456789012"
+                                    data-student-name="Juan Dela Cruz"
+                                    aria-label="Select Juan Dela Cruz"
+                                >
+                                <span></span>
+                            </label>
+                        </td>
+
+                        <td class="picture-column">
+                            <div class="student-photo" title="Juan Dela Cruz">
+                                <span>JDC</span>
+                            </div>
+                        </td>
+
+                        <td>123456789012</td>
+                        <td>Juan Dela Cruz</td>
+                        <td>17</td>
+                        <td>Male</td>
+                        <td>juan@email.com</td>
+                        <td>0912 111 1111</td>
+                        <td>Pedro Dela Cruz</td>
+                        <td>0912 222 2222</td>
+
+                        <td>
+                            <span class="attendance-rate high">95%</span>
+                        </td>
+                    </tr>
+
+                    <!-- SAMPLE STUDENT 2 -->
+                    <tr
+                        data-student-name="Maria Santos"
+                        data-lrn="123456789013"
+                    >
+                        <td class="select-column">
+                            <label class="student-checkbox">
+                                <input
+                                    class="student-select"
+                                    type="checkbox"
+                                    value="123456789013"
+                                    data-student-name="Maria Santos"
+                                    aria-label="Select Maria Santos"
+                                >
+                                <span></span>
+                            </label>
+                        </td>
+
+                        <td class="picture-column">
+                            <div class="student-photo" title="Maria Santos">
+                                <span>MS</span>
+                            </div>
+                        </td>
+
+                        <td>123456789013</td>
+                        <td>Maria Santos</td>
+                        <td>17</td>
+                        <td>Female</td>
+                        <td>maria@email.com</td>
+                        <td>0912 333 3333</td>
+                        <td>Rosa Santos</td>
+                        <td>0912 444 4444</td>
+
+                        <td>
+                            <span class="attendance-rate high">92%</span>
+                        </td>
+                    </tr>
+
+                    <!-- SAMPLE STUDENT 3 -->
+                    <tr
+                        data-student-name="Pedro Aquino"
+                        data-lrn="123456789014"
+                    >
+                        <td class="select-column">
+                            <label class="student-checkbox">
+                                <input
+                                    class="student-select"
+                                    type="checkbox"
+                                    value="123456789014"
+                                    data-student-name="Pedro Aquino"
+                                    aria-label="Select Pedro Aquino"
+                                >
+                                <span></span>
+                            </label>
+                        </td>
+
+                        <td class="picture-column">
+                            <div class="student-photo" title="Pedro Aquino">
+                                <span>PA</span>
+                            </div>
+                        </td>
+
+                        <td>123456789014</td>
+                        <td>Pedro Aquino</td>
+                        <td>18</td>
+                        <td>Male</td>
+                        <td>pedro@email.com</td>
+                        <td>0912 555 5555</td>
+                        <td>Jose Aquino</td>
+                        <td>0912 666 6666</td>
+
+                        <td>
+                            <span class="attendance-rate medium">86%</span>
+                        </td>
+                    </tr>
+
+                    <!-- SAMPLE STUDENT 4 -->
+                    <tr
+                        data-student-name="Rica Cruz"
+                        data-lrn="123456789015"
+                    >
+                        <td class="select-column">
+                            <label class="student-checkbox">
+                                <input
+                                    class="student-select"
+                                    type="checkbox"
+                                    value="123456789015"
+                                    data-student-name="Rica Cruz"
+                                    aria-label="Select Rica Cruz"
+                                >
+                                <span></span>
+                            </label>
+                        </td>
+
+                        <td class="picture-column">
+                            <div class="student-photo" title="Rica Cruz">
+                                <span>RC</span>
+                            </div>
+                        </td>
+
+                        <td>123456789015</td>
+                        <td>Rica Cruz</td>
+                        <td>17</td>
+                        <td>Female</td>
+                        <td>rica@email.com</td>
+                        <td>0912 777 7777</td>
+                        <td>Mario Cruz</td>
+                        <td>0912 888 8888</td>
+
+                        <td>
+                            <span class="attendance-rate high">94%</span>
+                        </td>
+                    </tr>
+
+                    <!-- SAMPLE STUDENT 5 -->
+                    <tr
+                        data-student-name="Ana Santiago"
+                        data-lrn="123456789016"
+                    >
+                        <td class="select-column">
+                            <label class="student-checkbox">
+                                <input
+                                    class="student-select"
+                                    type="checkbox"
+                                    value="123456789016"
+                                    data-student-name="Ana Santiago"
+                                    aria-label="Select Ana Santiago"
+                                >
+                                <span></span>
+                            </label>
+                        </td>
+
+                        <td class="picture-column">
+                            <div class="student-photo" title="Ana Santiago">
+                                <span>AS</span>
+                            </div>
+                        </td>
+
+                        <td>123456789016</td>
+                        <td>Ana Santiago</td>
+                        <td>17</td>
+                        <td>Female</td>
+                        <td>ana@email.com</td>
+                        <td>0912 999 9999</td>
+                        <td>Linda Santiago</td>
+                        <td>0912 000 0000</td>
+
+                        <td>
+                            <span class="attendance-rate medium">88%</span>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="class-record-empty" id="studentSearchEmpty" hidden>
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <strong>No students found</strong>
+            <p>Try a different name or LRN.</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PROMOTE / TRANSFER MODAL
+===================================================== -->
+
+<div
+    class="promote-modal"
+    id="promoteModal"
+    aria-hidden="true"
+>
+    <div
+        class="promote-modal-overlay"
+        id="promoteModalOverlay"
+    ></div>
+
+    <div
+        class="promote-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="promotePanelTitle"
+    >
+
+        <div class="promote-panel-header">
+            <div>
+                <h3 id="promotePanelTitle">
+                    Promote / Transfer Students
+                </h3>
+
+                <p id="selectedStudentCount">
+                    0 students selected
+                </p>
+            </div>
+
+            <button
+                class="promote-close-btn"
+                id="closePromoteModal"
+                type="button"
+                aria-label="Close"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="promote-form promote-form-row">
+
+            <div class="form-group">
+                <label for="promoteGrade">Grade</label>
+
+                <select id="promoteGrade">
+                    <option value="">Select grade</option>
+                    <option value="Grade 7">Grade 7</option>
+                    <option value="Grade 8">Grade 8</option>
+                    <option value="Grade 9">Grade 9</option>
+                    <option value="Grade 10">Grade 10</option>
+                    <option value="Grade 11">Grade 11</option>
+                    <option value="Grade 12">Grade 12</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="promoteSection">Section</label>
+
+                <select id="promoteSection" disabled>
+                    <option value="">Select section</option>
+                    <option value="Section A">Section A</option>
+                    <option value="Section B">Section B</option>
+                    <option value="Section C">Section C</option>
+                    <option value="Section D">Section D</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="promote-panel-actions">
+
+            <button
+                class="clear-promote-btn"
+                id="clearPromoteBtn"
+                type="button"
+            >
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Clear</span>
+            </button>
+
+            <div class="promote-right-actions">
+
+                <button
+                    class="cancel-promote-btn"
+                    id="cancelPromoteBtn"
+                    type="button"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    class="confirm-promote-btn"
+                    id="confirmPromoteBtn"
+                    type="button"
+                >
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    <span>Promote</span>
+                </button>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="{% static 'js/TEACHER/Teacher_Class_Record.js' %}" defer></script>
+
+{% endblock %}

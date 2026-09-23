@@ -1,0 +1,904 @@
+{% extends 'IN_BASE/Teacher_Base.html' %}
+{% load static %}
+
+
+{% block title %}
+Attendance History - RFID Attendance Management System
+{% endblock %}
+
+
+{% block page_heading %}
+<h2>Attendance History</h2>
+{% endblock %}
+
+
+{% block page_subheading %}
+<p>Daily Attendance History</p>
+{% endblock %}
+
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="{% static 'css/TEACHER/Teacher_History.css' %}"
+>
+{% endblock %}
+
+
+{% block content %}
+
+<!-- =====================================================
+     TEACHER ATTENDANCE HISTORY
+===================================================== -->
+
+<section class="teacher-history-page" id="historyPage">
+
+    <!-- =================================================
+         SECTION HEADER
+    ================================================= -->
+
+    <div class="history-section-header">
+
+        <div>
+            <h2>Attendance History</h2>
+            <p>View daily attendance records and summaries.</p>
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         HISTORY FILTERS
+    ================================================= -->
+
+    <div class="history-tools-card">
+
+        <div class="history-tools">
+
+            <div class="history-search">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="date"
+                    id="historyDateSearch"
+                    aria-label="Search attendance history by date"
+                >
+
+            </div>
+
+
+            <div class="history-sort">
+
+                <label for="historySort">Sort</label>
+
+                <select id="historySort">
+
+                    <option value="desc">
+                        Descending (Newest First)
+                    </option>
+
+                    <option value="asc">
+                        Ascending (Oldest First)
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="history-clear-btn"
+                id="clearHistoryFilter"
+            >
+
+                <i class="fa-solid fa-rotate-left"></i>
+                Clear
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         HISTORY RECORDS
+
+         The sample records are rendered by the page-specific
+         JavaScript below. Replace them with Django data later.
+    ================================================= -->
+
+    <div class="history-list" id="historyList"></div>
+
+
+    <!-- =================================================
+         EMPTY STATE
+    ================================================= -->
+
+    <div
+        class="history-no-results"
+        id="historyNoResults"
+        hidden
+    >
+
+        <i class="fa-regular fa-calendar-xmark"></i>
+
+        <strong>No attendance history found</strong>
+
+        <span>
+            No record matches the selected date.
+        </span>
+
+    </div>
+
+</section>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // =====================================================
+    // ELEMENTS
+    // =====================================================
+
+    const historyList =
+        document.getElementById("historyList");
+
+    const historySearch =
+        document.getElementById("historyDateSearch");
+
+    const historySort =
+        document.getElementById("historySort");
+
+    const clearHistory =
+        document.getElementById("clearHistoryFilter");
+
+    const historyNoResults =
+        document.getElementById("historyNoResults");
+
+
+    if (
+        !historyList ||
+        !historySearch ||
+        !historySort ||
+        !clearHistory ||
+        !historyNoResults
+    ) {
+        return;
+    }
+
+
+    // =====================================================
+    // SAMPLE STUDENT DATA
+    // =====================================================
+
+    const studentNames = [
+        "Juan Dela Cruz",
+        "Maria Santos",
+        "Pedro Aquino",
+        "Rica Cruz",
+        "Ana Santiago"
+    ];
+
+
+    // Each student has:
+    // [Time In AM, Time Out AM, Time In PM, Time Out PM]
+    //
+    // null means no recorded attendance for that student.
+
+    const historyRecords = [
+
+        {
+            date: "2026-09-09",
+            attendance: [
+                ["7:45 AM", "12:00 PM", "1:00 PM", "4:55 PM"],
+                ["7:50 AM", "12:00 PM", "1:02 PM", "4:58 PM"],
+                null,
+                ["7:55 AM", "12:01 PM", "1:00 PM", "5:00 PM"],
+                ["8:02 AM", "12:00 PM", "1:05 PM", "4:57 PM"]
+            ]
+        },
+
+        {
+            date: "2026-09-08",
+            attendance: [
+                ["7:35 AM", "12:00 PM", "1:00 PM", "4:58 PM"],
+                ["7:42 AM", "12:00 PM", "1:01 PM", "4:59 PM"],
+                ["7:48 AM", "12:00 PM", "1:03 PM", "5:00 PM"],
+                ["7:52 AM", "12:01 PM", "1:00 PM", "5:01 PM"],
+                ["8:00 AM", "12:00 PM", "1:04 PM", "4:57 PM"]
+            ]
+        },
+
+        {
+            date: "2026-09-07",
+            attendance: [
+                ["7:28 AM", "12:00 PM", "1:00 PM", "5:03 PM"],
+                ["7:40 AM", "12:00 PM", "1:02 PM", "4:58 PM"],
+                null,
+                ["7:55 AM", "12:01 PM", "1:00 PM", "5:00 PM"],
+                null
+            ]
+        },
+
+        {
+            date: "2026-09-04",
+            attendance: [
+                null,
+                null,
+                null,
+                null,
+                null
+            ]
+        },
+
+        {
+            date: "2026-08-28",
+            attendance: [
+                ["7:38 AM", "12:00 PM", "1:00 PM", "4:58 PM"],
+                ["7:44 AM", "12:00 PM", "1:02 PM", "5:00 PM"],
+                ["7:51 AM", "12:01 PM", "1:00 PM", "4:59 PM"],
+                ["7:56 AM", "12:00 PM", "1:03 PM", "5:01 PM"],
+                ["8:03 AM", "12:00 PM", "1:04 PM", "4:57 PM"]
+            ]
+        },
+
+        {
+            date: "2026-08-21",
+            attendance: [
+                ["7:42 AM", "12:00 PM", "1:00 PM", "4:56 PM"],
+                ["7:49 AM", "12:00 PM", "1:01 PM", "4:59 PM"],
+                null,
+                ["7:58 AM", "12:01 PM", "1:02 PM", "5:00 PM"],
+                ["8:01 AM", "12:00 PM", "1:04 PM", "4:58 PM"]
+            ]
+        },
+
+        {
+            date: "2026-08-14",
+            attendance: [
+                ["7:47 AM", "12:00 PM", "1:00 PM", "4:55 PM"],
+                ["7:53 AM", "12:00 PM", "1:03 PM", "4:57 PM"],
+                null,
+                null,
+                ["8:05 AM", "12:00 PM", "1:05 PM", "4:59 PM"]
+            ]
+        },
+
+        {
+            date: "2026-07-31",
+            attendance: [
+                ["7:36 AM", "12:00 PM", "1:00 PM", "4:57 PM"],
+                ["7:43 AM", "12:00 PM", "1:02 PM", "4:59 PM"],
+                ["7:50 AM", "12:01 PM", "1:00 PM", "5:00 PM"],
+                ["7:54 AM", "12:00 PM", "1:03 PM", "5:01 PM"],
+                ["8:00 AM", "12:00 PM", "1:04 PM", "4:58 PM"]
+            ]
+        },
+
+        {
+            date: "2026-07-24",
+            attendance: [
+                ["7:40 AM", "12:00 PM", "1:00 PM", "4:56 PM"],
+                ["7:46 AM", "12:00 PM", "1:01 PM", "4:58 PM"],
+                null,
+                ["7:55 AM", "12:01 PM", "1:02 PM", "5:00 PM"],
+                ["8:02 AM", "12:00 PM", "1:04 PM", "4:57 PM"]
+            ]
+        },
+
+        {
+            date: "2026-07-17",
+            attendance: [
+                ["7:58 AM", "12:00 PM", "1:00 PM", "4:55 PM"],
+                null,
+                null,
+                ["8:04 AM", "12:00 PM", "1:05 PM", "4:59 PM"],
+                null
+            ]
+        },
+
+        {
+            date: "2026-06-26",
+            attendance: [
+                ["7:35 AM", "12:00 PM", "1:00 PM", "4:58 PM"],
+                ["7:41 AM", "12:00 PM", "1:01 PM", "5:00 PM"],
+                ["7:49 AM", "12:00 PM", "1:02 PM", "4:59 PM"],
+                ["7:53 AM", "12:01 PM", "1:00 PM", "5:01 PM"],
+                ["8:01 AM", "12:00 PM", "1:04 PM", "4:57 PM"]
+            ]
+        },
+
+        {
+            date: "2026-06-19",
+            attendance: [
+                ["7:44 AM", "12:00 PM", "1:00 PM", "4:56 PM"],
+                ["7:50 AM", "12:00 PM", "1:02 PM", "4:59 PM"],
+                null,
+                ["7:57 AM", "12:01 PM", "1:03 PM", "5:00 PM"],
+                null
+            ]
+        }
+
+    ];
+
+
+    // =====================================================
+    // DATE HELPERS
+    // =====================================================
+
+    function parseLocalDate(dateString) {
+
+        const [year, month, day] =
+            dateString.split("-").map(Number);
+
+        return new Date(year, month - 1, day);
+
+    }
+
+
+    function formatDay(dateString) {
+
+        return parseLocalDate(dateString)
+            .toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric"
+            });
+
+    }
+
+
+    function formatWeekday(dateString) {
+
+        return parseLocalDate(dateString)
+            .toLocaleDateString("en-US", {
+                weekday: "long"
+            });
+
+    }
+
+
+    function formatMonth(monthKey) {
+
+        return parseLocalDate(monthKey + "-01")
+            .toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric"
+            });
+
+    }
+
+
+    // =====================================================
+    // BUILD STUDENT TABLE ROWS
+    // =====================================================
+
+    function buildStudentRows(record) {
+
+        return studentNames.map(function (name, index) {
+
+            const times = record.attendance[index] || [
+                "—",
+                "—",
+                "—",
+                "—"
+            ];
+
+            return `
+                <tr>
+                    <td>${name}</td>
+                    <td>${times[0]}</td>
+                    <td>${times[1]}</td>
+                    <td>${times[2]}</td>
+                    <td>${times[3]}</td>
+                </tr>
+            `;
+
+        }).join("");
+
+    }
+
+
+    // =====================================================
+    // BUILD DAILY ATTENDANCE CARD
+    // =====================================================
+
+    function buildDailyCard(record) {
+
+        const presentCount = record.attendance.filter(
+            function (attendance) {
+                return attendance !== null;
+            }
+        ).length;
+
+        const absentCount =
+            studentNames.length - presentCount;
+
+
+        return `
+
+            <article
+                class="history-card minimized"
+                data-date="${record.date}"
+            >
+
+                <div class="history-card-header">
+
+                    <div class="history-date">
+
+                        <div class="history-date-icon">
+
+                            <i class="fa-regular fa-calendar"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                ${formatDay(record.date)}
+                            </strong>
+
+                            <span>
+                                ${formatWeekday(record.date)}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="history-header-right">
+
+                        <div class="history-day-summary">
+
+                            <span class="present-count">
+                                ${presentCount} Present
+                            </span>
+
+                            <span class="absent-count">
+                                ${absentCount} Absent
+                            </span>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="history-minimize"
+                            aria-label="Expand attendance for ${formatDay(record.date)}"
+                            aria-expanded="false"
+                        >
+
+                            <i class="fa-solid fa-chevron-down"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="history-card-body">
+
+                    <div class="history-table-wrap">
+
+                        <table class="history-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Student Name</th>
+
+                                    <th>Time In (AM)</th>
+
+                                    <th>Time Out (AM)</th>
+
+                                    <th>Time In (PM)</th>
+
+                                    <th>Time Out (PM)</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                ${buildStudentRows(record)}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        `;
+
+    }
+
+
+    // =====================================================
+    // BUILD MONTH CARD
+    // =====================================================
+
+    function buildMonthCard(monthKey, records) {
+
+        const monthName = formatMonth(monthKey);
+
+        const dayCount = records.length;
+
+        return `
+
+            <article
+                class="history-month-card"
+                data-month="${monthKey}"
+            >
+
+                <div class="history-month-header">
+
+                    <div class="history-month-title">
+
+                        <div class="history-month-icon">
+
+                            <i class="fa-regular fa-calendar-days"></i>
+
+                        </div>
+
+                        <div>
+
+                            <strong>${monthName}</strong>
+
+                            <span>
+                                ${dayCount}
+                                attendance
+                                ${dayCount === 1 ? "day" : "days"}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="history-month-toggle"
+                        aria-label="Collapse ${monthName}"
+                        aria-expanded="true"
+                    >
+
+                        <i class="fa-solid fa-chevron-up"></i>
+
+                    </button>
+
+                </div>
+
+
+                <div class="history-month-body">
+
+                    ${records.map(buildDailyCard).join("")}
+
+                </div>
+
+            </article>
+
+        `;
+
+    }
+
+
+    // =====================================================
+    // FILTER, SORT, AND RENDER
+    // =====================================================
+
+    function renderHistory() {
+
+        const selectedDate = historySearch.value;
+
+        const sortMode = historySort.value;
+
+
+        // Filter by selected date.
+
+        const filteredRecords = historyRecords.filter(
+            function (record) {
+
+                return !selectedDate ||
+                    record.date === selectedDate;
+
+            }
+        );
+
+
+        // Sort by date.
+
+        filteredRecords.sort(function (a, b) {
+
+            return sortMode === "asc"
+
+                ? a.date.localeCompare(b.date)
+
+                : b.date.localeCompare(a.date);
+
+        });
+
+
+        // Show empty state when no date matches.
+
+        historyNoResults.hidden =
+            filteredRecords.length > 0;
+
+
+        if (filteredRecords.length === 0) {
+
+            historyList.innerHTML = "";
+
+            return;
+
+        }
+
+
+        // Group records by month.
+
+        const groupedRecords = {};
+
+        filteredRecords.forEach(function (record) {
+
+            const monthKey = record.date.slice(0, 7);
+
+            if (!groupedRecords[monthKey]) {
+
+                groupedRecords[monthKey] = [];
+
+            }
+
+            groupedRecords[monthKey].push(record);
+
+        });
+
+
+        // Sort month groups.
+
+        const sortedMonths =
+            Object.keys(groupedRecords).sort(
+                function (a, b) {
+
+                    return sortMode === "asc"
+
+                        ? a.localeCompare(b)
+
+                        : b.localeCompare(a);
+
+                }
+            );
+
+
+        // Render the grouped records.
+
+        historyList.innerHTML = sortedMonths.map(
+            function (monthKey) {
+
+                return buildMonthCard(
+                    monthKey,
+                    groupedRecords[monthKey]
+                );
+
+            }
+        ).join("");
+
+
+        // Expand matching day when filtering by a date.
+
+        if (selectedDate) {
+
+            const matchingCard =
+                historyList.querySelector(".history-card");
+
+            if (matchingCard) {
+
+                setDailyCardExpanded(matchingCard, true);
+
+            }
+
+        }
+
+    }
+
+
+    // =====================================================
+    // EXPAND / COLLAPSE HELPERS
+    // =====================================================
+
+    function setDailyCardExpanded(card, expanded) {
+
+        const button =
+            card.querySelector(".history-minimize");
+
+        const icon =
+            button ? button.querySelector("i") : null;
+
+
+        card.classList.toggle("minimized", !expanded);
+
+
+        if (button) {
+
+            button.setAttribute(
+                "aria-expanded",
+                String(expanded)
+            );
+
+            button.setAttribute(
+                "aria-label",
+                (expanded ? "Collapse" : "Expand") +
+                " attendance for " +
+                formatDay(card.dataset.date)
+            );
+
+        }
+
+
+        if (icon) {
+
+            icon.className = expanded
+
+                ? "fa-solid fa-chevron-up"
+
+                : "fa-solid fa-chevron-down";
+
+        }
+
+    }
+
+
+    function setMonthCardExpanded(card, expanded) {
+
+        const button =
+            card.querySelector(".history-month-toggle");
+
+        const icon =
+            button ? button.querySelector("i") : null;
+
+
+        card.classList.toggle("minimized", !expanded);
+
+
+        if (button) {
+
+            button.setAttribute(
+                "aria-expanded",
+                String(expanded)
+            );
+
+            button.setAttribute(
+                "aria-label",
+                (expanded ? "Collapse " : "Expand ") +
+                formatMonth(card.dataset.month)
+            );
+
+        }
+
+
+        if (icon) {
+
+            icon.className = expanded
+
+                ? "fa-solid fa-chevron-up"
+
+                : "fa-solid fa-chevron-down";
+
+        }
+
+    }
+
+
+    // =====================================================
+    // CARD BUTTON EVENTS
+    // =====================================================
+
+    historyList.addEventListener("click", function (event) {
+
+        // Daily card toggle.
+
+        const dailyButton =
+            event.target.closest(".history-minimize");
+
+        if (dailyButton) {
+
+            const dailyCard =
+                dailyButton.closest(".history-card");
+
+            if (!dailyCard) return;
+
+
+            const shouldExpand =
+                dailyCard.classList.contains("minimized");
+
+
+            setDailyCardExpanded(
+                dailyCard,
+                shouldExpand
+            );
+
+            return;
+
+        }
+
+
+        // Month card toggle.
+
+        const monthButton =
+            event.target.closest(".history-month-toggle");
+
+        if (monthButton) {
+
+            const monthCard =
+                monthButton.closest(".history-month-card");
+
+            if (!monthCard) return;
+
+
+            const shouldExpand =
+                monthCard.classList.contains("minimized");
+
+
+            setMonthCardExpanded(
+                monthCard,
+                shouldExpand
+            );
+
+        }
+
+    });
+
+
+    // =====================================================
+    // FILTER EVENTS
+    // =====================================================
+
+    historySearch.addEventListener(
+        "change",
+        renderHistory
+    );
+
+
+    historySort.addEventListener(
+        "change",
+        renderHistory
+    );
+
+
+    clearHistory.addEventListener("click", function () {
+
+        historySearch.value = "";
+
+        historySort.value = "desc";
+
+        renderHistory();
+
+    });
+
+
+    // =====================================================
+    // INITIALIZE PAGE
+    // =====================================================
+
+    renderHistory();
+
+});
+
+</script>
+
+{% endblock %}

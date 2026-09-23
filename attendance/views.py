@@ -1143,5 +1143,8 @@ def teacher_profile(request):
 
 
 @login_required
+def teacher_history(request):
+    return render(request,'TEACHER/Teacher_History.html')
+@login_required
 def teacher_security(request):
     return render(request, 'TEACHER/Teacher_Security.html')

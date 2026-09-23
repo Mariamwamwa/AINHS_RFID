@@ -1,0 +1,416 @@
+{% extends 'IN_BASE/Teacher_Base.html' %}
+{% load static %}
+
+
+{% block title %}
+Security / Account - RFID Attendance Management System
+{% endblock %}
+
+
+{% block page_heading %}
+<h2>Security / Account</h2>
+{% endblock %}
+
+
+{% block page_subheading %}
+<p>Account Security Settings</p>
+{% endblock %}
+
+
+{% block extra_css %}
+
+<link
+    rel="stylesheet"
+    href="{% static 'css/TEACHER/Teacher_Security.css' %}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<!-- =====================================================
+     TEACHER SECURITY / ACCOUNT
+===================================================== -->
+
+<section class="teacher-security-page" id="securityPage">
+
+
+    <!-- =================================================
+         SECTION HEADER
+    ================================================= -->
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>Security / Account</h2>
+
+            <p>
+                Manage your password and security information.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         SECURITY CARDS
+    ================================================= -->
+
+    <div class="security-grid">
+
+
+        <!-- =============================================
+             CHANGE PASSWORD
+        ============================================= -->
+
+        <div class="content-card security-card">
+
+
+            <!-- =========================================
+                 CARD HEADER
+            ========================================= -->
+
+            <div class="security-title">
+
+                <div class="security-icon purple">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>Change Password</h3>
+
+                    <p>Update your account password.</p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 CURRENT PASSWORD
+            ========================================= -->
+
+            <div class="form-group">
+
+                <label for="currentPassword">
+                    Current Password
+                </label>
+
+                <div class="password-input">
+
+                    <input
+                        id="currentPassword"
+                        name="current_password"
+                        type="password"
+                        placeholder="Enter current password"
+                        autocomplete="current-password"
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-password-target="currentPassword"
+                        aria-label="Show current password"
+                        aria-pressed="false"
+                    >
+
+                        <i
+                            class="fa-solid fa-eye"
+                            aria-hidden="true"
+                        ></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 NEW PASSWORD
+            ========================================= -->
+
+            <div class="form-group">
+
+                <label for="newPassword">
+                    New Password
+                </label>
+
+                <div class="password-input">
+
+                    <input
+                        id="newPassword"
+                        name="new_password"
+                        type="password"
+                        placeholder="Enter new password"
+                        autocomplete="new-password"
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-password-target="newPassword"
+                        aria-label="Show new password"
+                        aria-pressed="false"
+                    >
+
+                        <i
+                            class="fa-solid fa-eye"
+                            aria-hidden="true"
+                        ></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 CONFIRM NEW PASSWORD
+            ========================================= -->
+
+            <div class="form-group">
+
+                <label for="confirmPassword">
+                    Confirm New Password
+                </label>
+
+                <div class="password-input">
+
+                    <input
+                        id="confirmPassword"
+                        name="confirm_password"
+                        type="password"
+                        placeholder="Confirm new password"
+                        autocomplete="new-password"
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-password-target="confirmPassword"
+                        aria-label="Show confirmed password"
+                        aria-pressed="false"
+                    >
+
+                        <i
+                            class="fa-solid fa-eye"
+                            aria-hidden="true"
+                        ></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 CHANGE PASSWORD BUTTON
+            ========================================= -->
+
+            <div class="security-button-wrapper">
+
+                <button
+                    class="primary-btn"
+                    id="changePasswordBtn"
+                    type="button"
+                >
+
+                    <i class="fa-solid fa-key"></i>
+
+                    Change Password
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =============================================
+             SECURITY QUESTION
+        ============================================= -->
+
+        <div class="content-card security-card">
+
+
+            <!-- =========================================
+                 CARD HEADER
+            ========================================= -->
+
+            <div class="security-title">
+
+                <div class="security-icon blue">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                </div>
+
+                <div>
+
+                    <h3>Security Question</h3>
+
+                    <p>
+                        Update your security question and answer.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================================
+                 SECURITY QUESTION
+            ========================================= -->
+
+            <div class="form-group">
+
+                <label for="securityQuestion">
+                    Security Question
+                </label>
+
+                <select
+                    id="securityQuestion"
+                    name="security_question"
+                >
+
+                    <option value="">
+                        Select a security question
+                    </option>
+
+                    <option value="What is your mother's maiden name?">
+                        What is your mother's maiden name?
+                    </option>
+
+                    <option value="What was the name of your first pet?">
+                        What was the name of your first pet?
+                    </option>
+
+                    <option value="What is the name of your favorite teacher?">
+                        What is the name of your favorite teacher?
+                    </option>
+
+                    <option value="What is your favorite childhood place?">
+                        What is your favorite childhood place?
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =========================================
+                 SECURITY ANSWER
+            ========================================= -->
+
+            <div class="form-group">
+
+                <label for="securityAnswer">
+                    Security Answer
+                </label>
+
+                <input
+                    id="securityAnswer"
+                    name="security_answer"
+                    type="text"
+                    placeholder="Enter your security answer"
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <!-- =========================================
+                 SAVE SECURITY SETTINGS BUTTON
+            ========================================= -->
+
+            <div class="security-button-wrapper">
+
+                <button
+                    class="primary-btn blue-btn"
+                    id="saveSecuritySettingsBtn"
+                    type="button"
+                >
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Save Security Settings
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =====================================================
+       SHOW / HIDE PASSWORD
+    ===================================================== */
+
+    const toggleButtons = document.querySelectorAll(
+        "#securityPage .password-toggle"
+    );
+
+    toggleButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const input = document.getElementById(
+                button.dataset.passwordTarget
+            );
+
+            if (!input) return;
+
+            // Show password if hidden; hide it if visible.
+            const showPassword = input.type === "password";
+
+            input.type = showPassword ? "text" : "password";
+
+            // Change eye icon.
+            const icon = button.querySelector("i");
+
+            if (icon) {
+                icon.classList.toggle("fa-eye", !showPassword);
+                icon.classList.toggle("fa-eye-slash", showPassword);
+            }
+
+            // Update button accessibility.
+            button.setAttribute(
+                "aria-pressed",
+                String(showPassword)
+            );
+
+            button.setAttribute(
+                "aria-label",
+                showPassword ? "Hide password" : "Show password"
+            );
+
+        });
+
+    });
+
+});
+</script>
+
+{% endblock %}
