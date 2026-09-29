@@ -39,14 +39,10 @@ Attendance | AINHS Attendance System
 
              RFID reader types the card number here.
              ================================================= -->
-
-        <input
-            type="text"
-            id="rfidInput"
-            class="rfid-hidden-input"
-            autocomplete="off"
-            autofocus
-        >
+<!-- =================================================
+     MANUAL RFID INPUT
+     Temporary bypass while RFID hardware is not used.
+     ================================================= -->
 
         <div
             id="waitingState"
@@ -69,20 +65,43 @@ Attendance | AINHS Attendance System
 
             </span>
 
+<div
+    id="manualRfidContainer"
+    class="manual-rfid-container"
+>
 
-            <button
-                type="button"
-                class="test-student-btn"
-                onclick="showTestStudent()"
-            >
+    <label for="rfidInput">
+        Enter RFID ID
+    </label>
 
-                <span class="material-icons">
-                    visibility
-                </span>
+    <div class="manual-rfid-input-group">
 
-                Student Details
+        <input
+            type="text"
+            id="rfidInput"
+            class="manual-rfid-input"
+            placeholder="Enter RFID card ID"
+            autocomplete="off"
+            inputmode="numeric"
+            autofocus
+        >
 
-            </button>
+        <button
+            type="button"
+            id="rfidEnterBtn"
+            class="rfid-enter-btn"
+        >
+            <span class="material-icons">
+                login
+            </span>
+
+            Enter
+        </button>
+
+    </div>
+
+</div>
+
 
         </div>
 
@@ -339,7 +358,8 @@ Attendance | AINHS Attendance System
     // ============================================================
     // ELEMENTS
     // ============================================================
-
+const manualRfidContainer =
+    document.getElementById("manualRfidContainer");
     const rfidInput =
         document.getElementById("rfidInput");
 
@@ -351,7 +371,29 @@ Attendance | AINHS Attendance System
     const waitingState =
         document.getElementById("waitingState");
 
+    const rfidEnterBtn =
+    document.getElementById("rfidEnterBtn");
 
+
+rfidEnterBtn.addEventListener(
+    "click",
+    function() {
+
+        const rfid =
+            rfidInput.value.trim();
+
+        if (rfid === "") {
+
+            rfidInput.focus();
+
+            return;
+
+        }
+
+        processRFID(rfid);
+
+    }
+);
 
     // ============================================================
     // DEMO STUDENT DATABASE
@@ -546,166 +588,28 @@ Attendance | AINHS Attendance System
     // ============================================================
     // DISPLAY STUDENT INFORMATION
     // ============================================================
+function displayStudent(student) {
 
-    function displayStudent(student) {
+    waitingState.style.display =
+        "none";
 
+    manualRfidContainer.style.display =
+        "none";
 
-        waitingState.style.display =
-            "none";
+    studentCard.style.display =
+        "block";
 
 
-        studentCard.style.display =
-            "block";
+    // Student Picture
 
+    document
+        .getElementById("studentPicture")
+        .src =
+        student.picture;
 
 
-        // Student Picture
-
-        document
-            .getElementById("studentPicture")
-            .src =
-            student.picture;
-
-
-
-        // LRN
-
-        document
-            .getElementById("studentLRN")
-            .textContent =
-            student.lrn;
-
-
-
-        // Full Name
-
-        document
-            .getElementById("studentName")
-            .textContent =
-
-            [
-                student.firstName,
-                student.middleName,
-                student.lastName
-            ]
-
-                .filter(Boolean)
-
-                .join(" ");
-
-
-
-        // Department
-
-        document
-            .getElementById("studentDepartment")
-            .textContent =
-            student.department;
-
-
-
-        // Adviser
-
-        document
-            .getElementById("studentAdviser")
-            .textContent =
-            student.adviser;
-
-
-
-        // Grade
-
-        document
-            .getElementById("studentGrade")
-            .textContent =
-            student.grade;
-
-
-
-        // Section
-
-        document
-            .getElementById("studentSection")
-            .textContent =
-            student.section;
-
-
-
-        // ========================================================
-        // DATE AND TIME RECORDED
-        // ========================================================
-
-        const now =
-            new Date();
-
-
-
-        document
-            .getElementById("recordedDate")
-            .textContent =
-
-            now.toLocaleDateString(
-                "en-US",
-                {
-
-                    year:
-                        "numeric",
-
-                    month:
-                        "long",
-
-                    day:
-                        "numeric"
-
-                }
-            );
-
-
-
-        document
-            .getElementById("recordedTime")
-            .textContent =
-
-            now.toLocaleTimeString(
-                "en-US",
-                {
-
-                    hour:
-                        "2-digit",
-
-                    minute:
-                        "2-digit",
-
-                    second:
-                        "2-digit"
-
-                }
-            );
-
-
-    }
-
-
-
-    // ============================================================
-    // TEST STUDENT
-    // ============================================================
-
-    function showTestStudent() {
-
-
-        const testStudent =
-            students["123456789"];
-
-
-        if (testStudent) {
-
-            displayStudent(testStudent);
-
-        }
-
-
-    }
+    // Continue your existing code...
+}
 
 
 
