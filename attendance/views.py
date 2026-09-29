@@ -9,6 +9,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.http import JsonResponse
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
 from django.db.models import Q
@@ -186,6 +188,207 @@ def register_page(request):
 def attendance_page(request):
     return render(request, 'AUTHENTICATION/Attendance_Page.html')
 
+
+# =====================================================
+# PUBLIC RFID ATTENDANCE
+# =====================================================
+
+# =====================================================
+# PUBLIC RFID ATTENDANCE
+# =====================================================
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def record_rfid_attendance(request):
+
+    try:
+        payload = json.loads(request.body)
+    except (json.JSONDecodeError, TypeError):
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON.'
+        }, status=400)
+
+    rfid = str(payload.get('rfid', '')).strip()
+
+    if not rfid:
+        return JsonResponse({
+            'success': False,
+            'error': 'RFID is required.'
+        }, status=400)
+
+    # =====================================================
+    # FIND STUDENT USING RFID
+    # =====================================================
+
+    try:
+        student = Student.objects.select_related('adviser').get(
+            rfid=rfid
+        )
+    except Student.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'error': 'RFID card not registered.'
+        }, status=404)
+
+    # =====================================================
+    # CURRENT SERVER DATE AND TIME
+    # =====================================================
+
+    now = timezone.localtime()
+
+    current_date = now.date()
+    current_time = now.time()
+
+    # =====================================================
+    # GET OR CREATE TODAY'S ATTENDANCE
+    # =====================================================
+
+    attendance, created = Attendance.objects.get_or_create(
+        student=student,
+        date=current_date,
+    )
+
+    # =====================================================
+    # DETERMINE ATTENDANCE FIELD
+    # =====================================================
+
+    saved_field = None
+
+    # AM
+    if current_time < time_cls(12, 0):
+
+        if not attendance.time_in_am:
+            attendance.time_in_am = current_time
+            saved_field = 'time_in_am'
+
+        elif not attendance.time_out_am:
+            attendance.time_out_am = current_time
+            saved_field = 'time_out_am'
+
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'AM attendance is already complete.'
+            }, status=400)
+
+    # PM
+    else:
+
+        if not attendance.time_in_pm:
+            attendance.time_in_pm = current_time
+            saved_field = 'time_in_pm'
+
+        elif not attendance.time_out_pm:
+            attendance.time_out_pm = current_time
+            saved_field = 'time_out_pm'
+
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'PM attendance is already complete.'
+            }, status=400)
+
+    # =====================================================
+    # UPDATE STATUS
+    # =====================================================
+
+    if attendance.time_in_am:
+
+        if attendance.time_in_am > time_cls(8, 0):
+            attendance.status = 'late'
+        else:
+            attendance.status = 'present'
+
+    else:
+        attendance.status = 'present'
+
+    attendance.save()
+
+    # =====================================================
+    # STUDENT PICTURE
+    # =====================================================
+
+    try:
+       if student.image and student.image.storage.exists(student.image.name):
+            picture = student.image.url
+       else:
+        picture = '/static/images/default-student.png'
+    except (ValueError, OSError):
+          picture = '/static/images/default-student.png'
+
+    # =====================================================
+    # STUDENT NAME
+    # =====================================================
+
+    middle = (student.middle_name or '').strip()
+
+    if middle:
+        student_name = (
+            f"{student.last_name}, "
+            f"{student.first_name} "
+            f"{middle}"
+        )
+    else:
+        student_name = (
+            f"{student.last_name}, "
+            f"{student.first_name}"
+        )
+
+    # =====================================================
+    # ADVISER
+    # =====================================================
+
+    adviser_name = ''
+
+    if student.adviser:
+        adviser_name = (
+            f"{student.adviser.first_name} "
+            f"{student.adviser.last_name}"
+        ).strip()
+
+    # =====================================================
+    # RETURN STUDENT + ATTENDANCE DATA
+    # =====================================================
+
+    return JsonResponse({
+
+        'success': True,
+
+        'attendance': {
+            'date': current_date.strftime('%B %d, %Y'),
+            'time': current_time.strftime('%I:%M:%S %p'),
+            'field': saved_field,
+            'status': attendance.status,
+        },
+
+        'student': {
+
+            'id': student.id,
+
+            'rfid': student.rfid or '',
+
+            'lrn': student.lrn or '',
+
+            'first_name': student.first_name or '',
+
+            'middle_name': student.middle_name or '',
+
+            'last_name': student.last_name or '',
+
+            'name': student_name,
+
+            'department': student.department or '',
+
+            'adviser': adviser_name,
+
+            'grade': student.grade or '',
+
+            'section': student.section or '',
+
+            'picture': picture,
+        }
+    })
 
 # =====================================================
 # ADMIN — DASHBOARD
@@ -424,51 +627,167 @@ def admin_students(request):
 @csrf_protect
 @require_http_methods(["POST"])
 def edit_student(request, student_id):
+
     try:
         student = Student.objects.get(id=student_id)
+
     except Student.DoesNotExist:
         return JsonResponse(
-            {'success': False, 'error': 'Student not found'},
+            {
+                'success': False,
+                'error': 'Student not found'
+            },
             status=404
         )
 
+
     admin_dept = get_admin_department(request)
+
     if admin_dept and student.department != admin_dept:
         return JsonResponse(
-            {'success': False, 'error': 'Not authorized for this department.'},
+            {
+                'success': False,
+                'error': 'Not authorized for this department.'
+            },
             status=403
         )
 
+
     try:
         payload = json.loads(request.body)
+
     except json.JSONDecodeError:
         return JsonResponse(
-            {'success': False, 'error': 'Invalid JSON'},
+            {
+                'success': False,
+                'error': 'Invalid JSON'
+            },
             status=400
         )
 
-    student.lrn          = payload.get('lrn', student.lrn)
-    student.rfid         = payload.get('rfid') or None
-    student.first_name   = payload.get('first_name', student.first_name)
-    student.last_name    = payload.get('last_name', student.last_name)
-    student.middle_name  = payload.get('middle_name', student.middle_name)
-    student.age          = int(payload.get('age') or 0)
-    student.sex          = payload.get('sex', student.sex)
-    student.email        = payload.get('email', student.email)
-    student.contact      = payload.get('contact', student.contact)
-    student.barangay     = payload.get('barangay', student.barangay)
-    student.municipality = payload.get('municipality', student.municipality)
-    student.province     = payload.get('province', student.province)
-    student.grade        = payload.get('grade', student.grade)
-    student.section      = payload.get('section', student.section)
-    student.parent_name  = payload.get('parent_name', student.parent_name)
-    student.parent_relationship = payload.get('parent_relationship', student.parent_relationship)
-    student.parent_contact      = payload.get('parent_contact', student.parent_contact)
+
+    # ============================================
+    # STUDENT INFORMATION
+    # ============================================
+
+    student.lrn = payload.get(
+        'lrn',
+        student.lrn
+    )
+
+    student.rfid = (
+        payload.get('rfid') or None
+    )
+
+    student.first_name = payload.get(
+        'first_name',
+        student.first_name
+    )
+
+    student.last_name = payload.get(
+        'last_name',
+        student.last_name
+    )
+
+    student.middle_name = payload.get(
+        'middle_name',
+        student.middle_name
+    )
+
+    student.age = (
+        int(payload.get('age'))
+        if payload.get('age')
+        else None
+    )
+
+    student.sex = payload.get(
+        'sex',
+        student.sex
+    )
+
+    student.email = payload.get(
+        'email',
+        student.email
+    )
+
+    student.contact = payload.get(
+        'contact',
+        student.contact
+    )
+
+    student.barangay = payload.get(
+        'barangay',
+        student.barangay
+    )
+
+    student.municipality = payload.get(
+        'municipality',
+        student.municipality
+    )
+
+    student.province = payload.get(
+        'province',
+        student.province
+    )
+
+    student.grade = payload.get(
+        'grade',
+        student.grade
+    )
+
+    student.section = payload.get(
+        'section',
+        student.section
+    )
+
+    student.parent_name = payload.get(
+        'parent_name',
+        student.parent_name
+    )
+
+    student.parent_relationship = payload.get(
+        'parent_relationship',
+        student.parent_relationship
+    )
+
+    student.parent_contact = payload.get(
+        'parent_contact',
+        student.parent_contact
+    )
+
+
+    # ============================================
+    # STATUS
+    # ============================================
+
+    status = payload.get(
+        'status',
+        'Active'
+    )
+
+    student.is_active = (
+        str(status).strip().lower() == 'active'
+    )
+
+
+    # ============================================
+    # DEPARTMENT
+    # ============================================
 
     if not admin_dept:
-        student.department = payload.get('department', student.department)
+        student.department = payload.get(
+            'department',
+            student.department
+        )
+
+
+    # ============================================
+    # AUTOMATIC ADVISER
+    # BASED ON GRADE + SECTION
+    # ============================================
 
     if student.grade and student.section:
+
         class_obj = Class.objects.filter(
             grade=student.grade,
             section__iexact=student.section,
@@ -477,8 +796,18 @@ def edit_student(request, student_id):
         if class_obj and class_obj.teacher:
             student.adviser = class_obj.teacher
 
+
+    # ============================================
+    # SAVE TO DATABASE
+    # ============================================
+
     student.save()
-    return JsonResponse({'success': True})
+
+
+    return JsonResponse({
+        'success': True,
+        'message': 'Student information updated successfully.'
+    })
 
 
 # =====================================================

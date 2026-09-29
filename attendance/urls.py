@@ -13,6 +13,15 @@ urlpatterns = [
     path('attendance/', views.attendance_page, name='attendance'),
 
     # =====================================================
+    # PUBLIC RFID ATTENDANCE API
+    # =====================================================
+    path(
+        'api/attendance/rfid/',
+        views.record_rfid_attendance,
+        name='record_rfid_attendance'
+    ),
+
+    # =====================================================
     # ADMIN
     # =====================================================
     path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
@@ -57,4 +66,11 @@ urlpatterns = [
         views.teacher_save_security,
         name='teacher_save_security'
     ),
+    path(
+    'admin/students/edit/<int:student_id>/',
+    views.edit_student,
+    name='edit_student'
+   ),
+
+    
 ]

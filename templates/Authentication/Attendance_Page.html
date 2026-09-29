@@ -1,11 +1,9 @@
-
 {% extends 'AUTHENTICATION/Base.html' %}
 {% load static %}
 
 {% block title %}
 Attendance | AINHS Attendance System
 {% endblock %}
-
 
 {% block extra_css %}
 
@@ -21,9 +19,7 @@ Attendance | AINHS Attendance System
 
 {% endblock %}
 
-
 {% block content %}
-
 
 <!-- =====================================================
      MAIN ATTENDANCE PAGE
@@ -31,137 +27,119 @@ Attendance | AINHS Attendance System
 
 <main>
 
-    <section class="attendance-section">
+```
+<section class="attendance-section">
+
+
+    <!-- =================================================
+         WAITING / RFID INPUT
+         ================================================= -->
+
+    <div
+        id="waitingState"
+        class="waiting-state"
+    >
+
+        <span class="material-icons">
+            contactless
+        </span>
+
+
+        <p>
+            Waiting for RFID card...
+        </p>
+
+
+        <span class="waiting-subtext">
+            Tap your RFID card to record attendance
+        </span>
 
 
         <!-- =================================================
-             HIDDEN RFID INPUT
-
-             RFID reader types the card number here.
-             ================================================= -->
-<!-- =================================================
-     MANUAL RFID INPUT
-     Temporary bypass while RFID hardware is not used.
-     ================================================= -->
-
-        <div
-            id="waitingState"
-            class="waiting-state"
-        >
-
-            <span class="material-icons">
-                contactless
-            </span>
-
-
-            <p>
-                Waiting for RFID card...
-            </p>
-
-
-            <span class="waiting-subtext">
-
-                Tap your RFID card to record attendance
-
-            </span>
-
-<div
-    id="manualRfidContainer"
-    class="manual-rfid-container"
->
-
-    <label for="rfidInput">
-        Enter RFID ID
-    </label>
-
-    <div class="manual-rfid-input-group">
-
-        <input
-            type="text"
-            id="rfidInput"
-            class="manual-rfid-input"
-            placeholder="Enter RFID card ID"
-            autocomplete="off"
-            inputmode="numeric"
-            autofocus
-        >
-
-        <button
-            type="button"
-            id="rfidEnterBtn"
-            class="rfid-enter-btn"
-        >
-            <span class="material-icons">
-                login
-            </span>
-
-            Enter
-        </button>
-
-    </div>
-
-</div>
-
-
-        </div>
-
-
-
-        <!-- =================================================
-             STUDENT DETAILS
-
-             Hidden until RFID is detected.
+             MANUAL RFID INPUT
              ================================================= -->
 
         <div
-            id="studentCard"
-            class="student-card"
-            style="display: none;"
+            id="manualRfidContainer"
+            class="manual-rfid-container"
         >
 
-
-            <!-- =================================================
-                 STUDENT CARD HEADER
-                 ================================================= -->
-
-            <div class="student-card-header">
+            <label for="rfidInput">
+                Enter RFID ID
+            </label>
 
 
-                <div class="student-card-title">
+            <div class="manual-rfid-input-group">
+
+                <input
+                    type="text"
+                    id="rfidInput"
+                    class="manual-rfid-input"
+                    placeholder="Enter RFID card ID"
+                    autocomplete="off"
+                    inputmode="numeric"
+                    autofocus
+                >
 
 
-                    <span class="material-icons">
-                        person
-                    </span>
-
-
-                    <div>
-
-                        <h2>
-                            Student Details
-                        </h2>
-
-                        <p>
-                            Attendance successfully recorded
-                        </p>
-
-                    </div>
-
-
-                </div>
-
-
-
-                <div
-                    id="attendanceBadge"
-                    class="attendance-badge recorded"
+                <button
+                    type="button"
+                    id="rfidEnterBtn"
+                    class="rfid-enter-btn"
                 >
 
                     <span class="material-icons">
-                        check_circle
+                        login
                     </span>
 
-                    Attendance Recorded
+                    Enter
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         STUDENT DETAILS
+         Hidden until RFID is detected.
+         ================================================= -->
+
+    <div
+        id="studentCard"
+        class="student-card"
+        style="display: none;"
+    >
+
+
+        <!-- =================================================
+             STUDENT CARD HEADER
+             ================================================= -->
+
+        <div class="student-card-header">
+
+
+            <div class="student-card-title">
+
+
+                <span class="material-icons">
+                    person
+                </span>
+
+
+                <div>
+
+                    <h2>
+                        Student Details
+                    </h2>
+
+                    <p>
+                        Attendance successfully recorded
+                    </p>
 
                 </div>
 
@@ -171,167 +149,199 @@ Attendance | AINHS Attendance System
 
 
             <!-- =================================================
-                 STUDENT CONTENT
+                 ATTENDANCE STATUS
                  ================================================= -->
 
-            <div class="student-content">
+            <div
+                id="attendanceBadge"
+                class="attendance-badge recorded"
+            >
+
+                <span class="material-icons">
+                    check_circle
+                </span>
+
+                Attendance Recorded
+
+            </div>
 
 
-                <!-- =================================================
-                     STUDENT PICTURE
-                     ================================================= -->
-
-                <div class="student-picture-container">
-
-
-                    <div class="student-picture">
-
-                        <img
-                            id="studentPicture"
-                            src="{% static 'images/default-student.png' %}"
-                            alt="Student Picture"
-                        >
-
-                    </div>
+        </div>
 
 
 
-                    <div class="recorded-datetime">
+        <!-- =================================================
+             STUDENT CONTENT
+             ================================================= -->
 
-                        <div id="recordedDate">
-                            —
-                        </div>
+        <div class="student-content">
 
-                        <div id="recordedTime">
-                            —
-                        </div>
 
-                    </div>
+            <!-- =================================================
+                 STUDENT PICTURE
+                 ================================================= -->
 
+            <div class="student-picture-container">
+
+
+                <div class="student-picture">
+
+                    <img
+                        id="studentPicture"
+                        src="{% static 'images/default-student.png' %}"
+                        alt="Student Picture"
+                    >
 
                 </div>
 
 
 
                 <!-- =================================================
-                     STUDENT INFORMATION
+                     RECORDED DATE / TIME
                      ================================================= -->
 
-                <div class="student-information">
+                <div class="recorded-datetime">
 
 
-                    <!-- LRN -->
-
-                    <div class="student-info-group">
-
-                        <label>
-                            LRN
-                        </label>
-
-                        <div
-                            id="studentLRN"
-                            class="student-value"
-                        >
-                            —
-                        </div>
-
+                    <div id="recordedDate">
+                        —
                     </div>
 
 
-
-                    <!-- STUDENT NAME -->
-
-                    <div class="student-info-group">
-
-                        <label>
-                            Student Name
-                        </label>
-
-                        <div
-                            id="studentName"
-                            class="student-value"
-                        >
-                            —
-                        </div>
-
+                    <div id="recordedTime">
+                        —
                     </div>
 
 
+                </div>
 
-                    <!-- DEPARTMENT -->
 
-                    <div class="student-info-group">
+            </div>
 
-                        <label>
-                            Department
-                        </label>
 
-                        <div
-                            id="studentDepartment"
-                            class="student-value"
-                        >
-                            —
-                        </div>
 
+            <!-- =================================================
+                 STUDENT INFORMATION
+                 ================================================= -->
+
+            <div class="student-information">
+
+
+                <!-- LRN -->
+
+                <div class="student-info-group">
+
+                    <label>
+                        LRN
+                    </label>
+
+
+                    <div
+                        id="studentLRN"
+                        class="student-value"
+                    >
+                        —
                     </div>
 
+                </div>
 
 
-                    <!-- ADVISER -->
 
-                    <div class="student-info-group">
+                <!-- STUDENT NAME -->
 
-                        <label>
-                            Adviser
-                        </label>
+                <div class="student-info-group">
 
-                        <div
-                            id="studentAdviser"
-                            class="student-value"
-                        >
-                            —
-                        </div>
+                    <label>
+                        Student Name
+                    </label>
 
+
+                    <div
+                        id="studentName"
+                        class="student-value"
+                    >
+                        —
                     </div>
 
+                </div>
 
 
-                    <!-- GRADE -->
 
-                    <div class="student-info-group">
+                <!-- DEPARTMENT -->
 
-                        <label>
-                            Grade
-                        </label>
+                <div class="student-info-group">
 
-                        <div
-                            id="studentGrade"
-                            class="student-value"
-                        >
-                            —
-                        </div>
+                    <label>
+                        Department
+                    </label>
 
+
+                    <div
+                        id="studentDepartment"
+                        class="student-value"
+                    >
+                        —
                     </div>
 
+                </div>
 
 
-                    <!-- SECTION -->
 
-                    <div class="student-info-group">
+                <!-- ADVISER -->
 
-                        <label>
-                            Section
-                        </label>
+                <div class="student-info-group">
 
-                        <div
-                            id="studentSection"
-                            class="student-value"
-                        >
-                            —
-                        </div>
+                    <label>
+                        Adviser
+                    </label>
 
+
+                    <div
+                        id="studentAdviser"
+                        class="student-value"
+                    >
+                        —
                     </div>
 
+                </div>
+
+
+
+                <!-- GRADE -->
+
+                <div class="student-info-group">
+
+                    <label>
+                        Grade
+                    </label>
+
+
+                    <div
+                        id="studentGrade"
+                        class="student-value"
+                    >
+                        —
+                    </div>
+
+                </div>
+
+
+
+                <!-- SECTION -->
+
+                <div class="student-info-group">
+
+                    <label>
+                        Section
+                    </label>
+
+
+                    <div
+                        id="studentSection"
+                        class="student-value"
+                    >
+                        —
+                    </div>
 
                 </div>
 
@@ -342,11 +352,13 @@ Attendance | AINHS Attendance System
         </div>
 
 
-    </section>
+    </div>
+
+
+</section>
+```
 
 </main>
-
-
 
 <!-- =====================================================
      RFID JAVASCRIPT
@@ -355,25 +367,41 @@ Attendance | AINHS Attendance System
 <script>
 
 
-    // ============================================================
-    // ELEMENTS
-    // ============================================================
+// ============================================================
+// ELEMENTS
+// ============================================================
+
 const manualRfidContainer =
     document.getElementById("manualRfidContainer");
-    const rfidInput =
-        document.getElementById("rfidInput");
 
 
-    const studentCard =
-        document.getElementById("studentCard");
+const rfidInput =
+    document.getElementById("rfidInput");
 
 
-    const waitingState =
-        document.getElementById("waitingState");
+const studentCard =
+    document.getElementById("studentCard");
 
-    const rfidEnterBtn =
+
+const waitingState =
+    document.getElementById("waitingState");
+
+
+const rfidEnterBtn =
     document.getElementById("rfidEnterBtn");
 
+
+const attendanceBadge =
+    document.getElementById("attendanceBadge");
+
+
+let resetTimer = null;
+
+
+
+// ============================================================
+// MANUAL RFID ENTER BUTTON
+// ============================================================
 
 rfidEnterBtn.addEventListener(
     "click",
@@ -381,6 +409,7 @@ rfidEnterBtn.addEventListener(
 
         const rfid =
             rfidInput.value.trim();
+
 
         if (rfid === "") {
 
@@ -390,144 +419,158 @@ rfidEnterBtn.addEventListener(
 
         }
 
+
         processRFID(rfid);
 
     }
 );
 
-    // ============================================================
-    // DEMO STUDENT DATABASE
-    //
-    // Temporary sample data.
-    // Later this can be replaced with Django backend/database data.
-    // ============================================================
-
-    const students = {
 
 
-        "123456789": {
+// ============================================================
+// RFID READER
+//
+// USB RFID readers normally act like a keyboard.
+// They type the RFID number and send ENTER.
+// ============================================================
 
-            picture:
-                "{% static 'images/default-student.png' %}",
-
-            lrn:
-                "123456789012",
-
-            lastName:
-                "Dela Cruz",
-
-            firstName:
-                "Juan",
-
-            middleName:
-                "Santos",
-
-            department:
-                "SHS",
-
-            adviser:
-                "Maria Santos",
-
-            grade:
-                "Grade 12",
-
-            section:
-                "ICT - A"
-
-        },
+rfidInput.addEventListener(
+    "keydown",
+    function(event) {
 
 
+        if (event.key === "Enter") {
 
-        "987654321": {
+            event.preventDefault();
 
-            picture:
-                "{% static 'images/default-student.png' %}",
 
-            lrn:
-                "987654321012",
+            const rfid =
+                rfidInput.value.trim();
 
-            lastName:
-                "Reyes",
 
-            firstName:
-                "Maria",
+            if (rfid !== "") {
 
-            middleName:
-                "Garcia",
+                processRFID(rfid);
 
-            department:
-                "JHS",
-
-            adviser:
-                "Ana Reyes",
-
-            grade:
-                "Grade 10",
-
-            section:
-                "Emerald"
+            }
 
         }
 
-
-    };
-
-
-
-    // ============================================================
-    // RFID READER
-    //
-    // Most USB RFID readers act like a keyboard.
-    // They type the RFID number and then send ENTER.
-    // ============================================================
-
-    rfidInput.addEventListener(
-        "keydown",
-        function(event) {
+    }
+);
 
 
-            if (event.key === "Enter") {
+
+// ============================================================
+// PROCESS RFID
+// Sends RFID to Django backend.
+// ============================================================
+
+function processRFID(rfid) {
 
 
-                event.preventDefault();
+    fetch(
+        "{% url 'record_rfid_attendance' %}",
+        {
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                rfid: rfid
+            })
+        }
+    )
 
 
-                const rfid =
-                    rfidInput.value.trim();
+    .then(
+        function(response) {
+
+            return response.json();
+
+        }
+    )
 
 
-                if (rfid !== "") {
+    .then(
+        function(data) {
 
-                    processRFID(rfid);
 
-                }
+            console.log(
+                "RFID RESPONSE:",
+                data
+            );
 
+
+            // ====================================================
+            // RFID NOT REGISTERED / ERROR
+            // ====================================================
+
+            if (!data.success) {
+
+
+                studentCard.style.display =
+                    "none";
+
+
+                waitingState.style.display =
+                    "flex";
+
+
+                waitingState
+                    .querySelector("p")
+                    .textContent =
+                    data.error ||
+                    "RFID card not registered";
+
+
+                waitingState
+                    .querySelector(".waiting-subtext")
+                    .textContent =
+                    "Please check the RFID and try again";
+
+
+                rfidInput.value =
+                    "";
+
+
+                rfidInput.focus();
+
+
+                return;
 
             }
 
 
+
+            // ====================================================
+            // STUDENT FOUND
+            // ====================================================
+
+            displayStudent(
+                data.student,
+                data.attendance
+            );
+
+
+            // Clear input.
+            rfidInput.value = "";
+
+
         }
-    );
+    )
 
 
-
-    // ============================================================
-    // PROCESS RFID
-    // ============================================================
-
-    function processRFID(rfid) {
+    .catch(
+        function(error) {
 
 
-        const student =
-            students[rfid];
-
-
-
-        // ========================================================
-        // RFID NOT REGISTERED
-        // ========================================================
-
-        if (!student) {
+            console.error(
+                "RFID ERROR:",
+                error
+            );
 
 
             studentCard.style.display =
@@ -541,13 +584,13 @@ rfidEnterBtn.addEventListener(
             waitingState
                 .querySelector("p")
                 .textContent =
-                "RFID card not registered";
+                "Unable to connect to attendance server";
 
 
             waitingState
                 .querySelector(".waiting-subtext")
                 .textContent =
-                "Please contact the administrator";
+                "Please try again";
 
 
             rfidInput.value =
@@ -556,89 +599,348 @@ rfidEnterBtn.addEventListener(
 
             rfidInput.focus();
 
-
-            return;
-
-
         }
+    );
+
+}
 
 
 
-        // ========================================================
-        // STUDENT FOUND
-        // ========================================================
+// ============================================================
+// DISPLAY STUDENT INFORMATION
+// ============================================================
 
-        displayStudent(student);
-
-
-
-        // Clear input and prepare for next RFID card.
-
-        rfidInput.value =
-            "";
+function displayStudent(
+    student,
+    attendance
+) {
 
 
-        rfidInput.focus();
+    clearTimeout(
+        resetTimer
+    );
 
 
-    }
-
-
-
-    // ============================================================
-    // DISPLAY STUDENT INFORMATION
-    // ============================================================
-function displayStudent(student) {
+    // ========================================================
+    // HIDE WAITING STATE
+    // This also hides the RFID input.
+    // This matches your original design.
+    // ========================================================
 
     waitingState.style.display =
         "none";
 
+
     manualRfidContainer.style.display =
         "none";
+
+
+    // ========================================================
+    // SHOW STUDENT CARD
+    // ========================================================
 
     studentCard.style.display =
         "block";
 
 
-    // Student Picture
+
+    // ========================================================
+    // STUDENT PICTURE
+    // ========================================================
+
+    const studentPicture =
+        document.getElementById(
+            "studentPicture"
+        );
+
+
+    studentPicture.src =
+        student.picture ||
+        "{% static 'images/default-student.png' %}";
+
+
+    // ========================================================
+    // IMAGE FALLBACK
+    // ========================================================
+
+    studentPicture.onerror =
+        function() {
+
+            this.onerror =
+                null;
+
+
+            this.src =
+                "{% static 'images/default-student.png' %}";
+
+        };
+
+
+
+    // ========================================================
+    // LRN
+    // ========================================================
 
     document
-        .getElementById("studentPicture")
-        .src =
-        student.picture;
+        .getElementById("studentLRN")
+        .textContent =
+        student.lrn ||
+        "—";
 
 
-    // Continue your existing code...
+
+    // ========================================================
+    // STUDENT NAME
+    // ========================================================
+
+    document
+        .getElementById("studentName")
+        .textContent =
+        student.name ||
+        "—";
+
+
+
+    // ========================================================
+    // DEPARTMENT
+    // ========================================================
+
+    document
+        .getElementById("studentDepartment")
+        .textContent =
+        student.department ||
+        "—";
+
+
+
+    // ========================================================
+    // ADVISER
+    // ========================================================
+
+    document
+        .getElementById("studentAdviser")
+        .textContent =
+        student.adviser ||
+        "—";
+
+
+
+    // ========================================================
+    // GRADE
+    // ========================================================
+
+    document
+        .getElementById("studentGrade")
+        .textContent =
+        student.grade ||
+        "—";
+
+
+
+    // ========================================================
+    // SECTION
+    // ========================================================
+
+    document
+        .getElementById("studentSection")
+        .textContent =
+        student.section ||
+        "—";
+
+
+
+    // ========================================================
+    // RECORDED DATE
+    //
+    // Comes from Django backend.
+    // ========================================================
+
+    document
+        .getElementById("recordedDate")
+        .textContent =
+        attendance.date ||
+        "—";
+
+
+
+    // ========================================================
+    // RECORDED TIME
+    //
+    // Comes from Django backend.
+    // ========================================================
+
+    document
+        .getElementById("recordedTime")
+        .textContent =
+        attendance.time ||
+        "—";
+
+
+
+    // ========================================================
+    // ATTENDANCE STATUS
+    // ========================================================
+
+    if (
+        attendance.status === "late"
+    ) {
+
+
+        attendanceBadge.className =
+            "attendance-badge late";
+
+
+        attendanceBadge.innerHTML = `
+
+            <span class="material-icons">
+                schedule
+            </span>
+
+            Late
+
+        `;
+
+    }
+
+    else {
+
+
+        attendanceBadge.className =
+            "attendance-badge recorded";
+
+
+        attendanceBadge.innerHTML = `
+
+            <span class="material-icons">
+                check_circle
+            </span>
+
+            Attendance Recorded
+
+        `;
+
+    }
+
+
+
+    // ========================================================
+    // SHOW STUDENT CARD FOR 5 SECONDS
+    // ========================================================
+
+    resetTimer =
+        setTimeout(
+            function() {
+
+                resetAttendanceScreen();
+
+            },
+            5000
+        );
+
 }
 
 
 
-    // ============================================================
-    // KEEP RFID INPUT READY
-    // ============================================================
+// ============================================================
+// RESET ATTENDANCE SCREEN
+// ============================================================
 
-    document.addEventListener(
-        "click",
-        function() {
+function resetAttendanceScreen() {
+
+
+    clearTimeout(
+        resetTimer
+    );
+
+
+    // ========================================================
+    // HIDE STUDENT CARD
+    // ========================================================
+
+    studentCard.style.display =
+        "none";
+
+
+    // ========================================================
+    // SHOW WAITING STATE
+    // This also brings back RFID input.
+    // ========================================================
+
+    waitingState.style.display =
+        "flex";
+
+
+    manualRfidContainer.style.display =
+        "block";
+
+
+
+    // ========================================================
+    // RESTORE ORIGINAL TEXT
+    // ========================================================
+
+    waitingState
+        .querySelector("p")
+        .textContent =
+        "Waiting for RFID card...";
+
+
+    waitingState
+        .querySelector(".waiting-subtext")
+        .textContent =
+        "Tap your RFID card to record attendance";
+
+
+
+    // ========================================================
+    // CLEAR INPUT
+    // ========================================================
+
+    rfidInput.value =
+        "";
+
+
+    rfidInput.focus();
+
+}
+
+
+
+// ============================================================
+// KEEP RFID INPUT READY
+// ============================================================
+
+document.addEventListener(
+    "click",
+    function() {
+
+        if (
+            waitingState.style.display !== "none"
+        ) {
 
             rfidInput.focus();
 
         }
-    );
+
+    }
+);
 
 
 
-    window.addEventListener(
-        "load",
-        function() {
+// ============================================================
+// INITIAL FOCUS
+// ============================================================
 
-            rfidInput.focus();
+window.addEventListener(
+    "load",
+    function() {
 
-        }
-    );
+        rfidInput.focus();
+
+    }
+);
 
 
 </script>
-
 
 {% endblock %}
