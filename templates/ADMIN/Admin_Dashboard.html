@@ -29,38 +29,19 @@ Admin Dashboard - RFID Attendance Management System
 
 {% block content %}
 
-
-<!-- =====================================================
-     DASHBOARD CONTENT
-     ===================================================== -->
-
 <section class="dashboard-content">
-
-
-    <!-- =================================================
-         WELCOME CARD
-         ================================================= -->
-
     <div class="welcome-card">
-
         <div class="welcome-text">
-
-            <span class="welcome-label">
-                ADMINISTRATOR
-            </span>
-
+            <span class="welcome-label">ADMINISTRATOR</span>
             <h2>
                 Welcome to the RFID Attendance
                 Management System
             </h2>
-
             <p>
                 Manage teachers, students, classes, and
                 attendance records from your dashboard.
             </p>
-
         </div>
-
 
         <div class="welcome-icon">
             <i class="fa-solid fa-chart-line"></i>
@@ -68,16 +49,7 @@ Admin Dashboard - RFID Attendance Management System
 
     </div>
 
-
-
-    <!-- =================================================
-         STATISTICS
-         ================================================= -->
-
     <div class="stats-grid">
-
-
-        <!-- TOTAL TEACHERS -->
 
         <div class="stat-card">
 
@@ -86,11 +58,8 @@ Admin Dashboard - RFID Attendance Management System
             </div>
 
             <div class="stat-information">
-
                 <span>Total Teachers</span>
-
                 <h3>{{ total_teachers|default:"0" }}</h3>
-
                 <small>
                     <i class="fa-solid fa-arrow-up"></i>
                     Active teachers
@@ -177,21 +146,9 @@ Admin Dashboard - RFID Attendance Management System
 
     </div>
 
-
-
-    <!-- =================================================
-         LOWER DASHBOARD
-         ================================================= -->
-
     <div class="dashboard-grid">
 
-
-        <!-- =================================================
-             TODAY'S ATTENDANCE
-             ================================================= -->
-
         <div class="dashboard-card attendance-card">
-
 
             <div class="card-header">
 

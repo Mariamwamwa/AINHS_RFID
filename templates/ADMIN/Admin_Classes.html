@@ -29,14 +29,8 @@
         animation: slideDown 0.2s ease;
     }
 
-    .classes-form-error.show {
-        display: flex;
-    }
-
-    .classes-form-error i {
-        font-size: 1rem;
-        color: #dc2626;
-    }
+    .classes-form-error.show {display: flex; }
+    .classes-form-error i {   font-size: 1rem;  color: #dc2626;}
 
     @keyframes slideDown {
         from {
@@ -101,7 +95,6 @@
             <label for="filterGrade"><i class="fas fa-layer-group"></i> Grade</label>
             <select id="filterGrade">
                 <option value="all">All</option>
-                <!-- Options populated by JS -->
             </select>
         </div>
 
@@ -116,7 +109,6 @@
 
     <div id="sectionContainer"></div>
 
-    <!-- ADD MODAL -->
     <div class="classes-modal-overlay" id="modalOverlay" aria-hidden="true">
         <div class="classes-modal" role="dialog" aria-modal="true"
              aria-labelledby="modalTitle">
@@ -128,7 +120,6 @@
                 Fill in the details for the new class section.
             </p>
 
-            <!-- INLINE ERROR MESSAGE -->
             <div class="classes-form-error" id="formError">
                 <i class="fas fa-circle-exclamation"></i>
                 <span id="formErrorText">Error message here</span>
@@ -139,7 +130,6 @@
 
                 <label for="formGrade">Grade Level</label>
                 <select id="formGrade" required>
-                    <!-- Options populated by JS -->
                 </select>
 
                 <label for="formSection">Section Name</label>
@@ -195,9 +185,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const $ = id => document.getElementById(id);
 
-    // =====================================================
-    // ADMIN DEPARTMENT (galing sa Django)
-    // =====================================================
     let ADMIN_DEPT = null;
     try {
         ADMIN_DEPT = JSON.parse(
@@ -216,10 +203,6 @@ document.addEventListener("DOMContentLoaded", function () {
         SHS: ["11", "12"],
         all: ["7", "8", "9", "10", "11", "12"]
     };
-
-    // =====================================================
-    // DATA
-    // =====================================================
     const classesDataEl = document.getElementById("classesData");
 
     let sections = [];
@@ -242,9 +225,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return $("filterDept").value;
     }
 
-    // =====================================================
-    // POPULATE GRADE DROPDOWNS
-    // =====================================================
     function populateFilterGrades() {
         const dept = getEffectiveDept();
         const gradeSelect = $("filterGrade");
@@ -280,9 +260,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // =====================================================
-    // ERROR MESSAGE HELPERS
-    // =====================================================
     function showError(message) {
         const errorBox = $("formError");
         const errorText = $("formErrorText");
@@ -303,9 +280,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (errorBox) errorBox.classList.remove("show");
     }
 
-    // =====================================================
-    // SUCCESS TOAST
-    // =====================================================
     function showSuccessToast(message) {
         const toast = document.createElement("div");
         toast.className = "classes-success-toast";
@@ -346,9 +320,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 2500);
     }
 
-    // =====================================================
-    // HELPERS
-    // =====================================================
     function escapeHTML(value) {
         return String(value).replace(/[&<>"']/g, character => ({
             "&": "&amp;",
@@ -380,9 +351,6 @@ document.addEventListener("DOMContentLoaded", function () {
         return result + escapeHTML(text.slice(start));
     }
 
-    // =====================================================
-    // STATS
-    // =====================================================
     function updateStats() {
         $("totalSections").textContent = sections.length;
         $("totalStudents").textContent = sections.reduce(
@@ -404,9 +372,6 @@ document.addEventListener("DOMContentLoaded", function () {
         ).length;
     }
 
-    // =====================================================
-    // RENDER
-    // =====================================================
     function renderSections() {
         const department = getEffectiveDept();   // ← base sa admin dept
         const gradeFilter = $("filterGrade").value;
@@ -522,9 +487,6 @@ document.addEventListener("DOMContentLoaded", function () {
         updateStats();
     }
 
-    // =====================================================
-    // MODAL
-    // =====================================================
     function openModal() {
         $("sectionForm").reset();
         $("editId").value = "";
@@ -544,9 +506,6 @@ document.addEventListener("DOMContentLoaded", function () {
         hideError();
     }
 
-    // =====================================================
-    // SUBMIT — AJAX POST
-    // =====================================================
     $("sectionForm").addEventListener("submit", async function (event) {
         event.preventDefault();
 
@@ -612,9 +571,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // =====================================================
-    // EVENT DELEGATION
-    // =====================================================
     $("sectionContainer").addEventListener("click", async function (event) {
         const header = event.target.closest(".classes-grade-header");
 
