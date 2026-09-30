@@ -1418,30 +1418,151 @@ def edit_student(
             status=400
         )
 
-    student.lrn = payload.get(
-        'lrn',
-        student.lrn
-    )
+    # =================================================
+    # LRN
+    # =================================================
+
+    new_lrn = str(
+        payload.get(
+            'lrn',
+            student.lrn
+        ) or ''
+    ).strip()
+
+    if not new_lrn:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error': 'LRN is required.'
+            },
+            status=400
+        )
+
+    # Check duplicate LRN
+    if (
+        Student.objects
+        .filter(lrn=new_lrn)
+        .exclude(id=student.id)
+        .exists()
+    ):
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error': 'LRN already exists.'
+            },
+            status=400
+        )
+
+    student.lrn = new_lrn
+
+    # =================================================
+    # STUDENT NAME
+    # =================================================
+
+    name = payload.get('name')
+
+    if name is not None:
+
+        name = ' '.join(
+            str(name).strip().split()
+        )
+
+        if not name:
+
+            return JsonResponse(
+                {
+                    'success': False,
+                    'error': 'Student name is required.'
+                },
+                status=400
+            )
+
+        # Format:
+        # Last Name, First Name Middle Name
+        if ',' in name:
+
+            last_name, remaining_name = (
+                name.split(',', 1)
+            )
+
+            last_name = last_name.strip()
+
+            name_parts = (
+                remaining_name.strip().split()
+            )
+
+            if not name_parts:
+
+                return JsonResponse(
+                    {
+                        'success': False,
+                        'error':
+                            'Please enter a valid student name.'
+                    },
+                    status=400
+                )
+
+            first_name = name_parts[0]
+
+            middle_name = ' '.join(
+                name_parts[1:]
+            )
+
+        # Format:
+        # First Name Middle Name Last Name
+        else:
+
+            name_parts = name.split()
+
+            if len(name_parts) == 1:
+
+                first_name = name_parts[0]
+                middle_name = ''
+                last_name = student.last_name
+
+            elif len(name_parts) == 2:
+
+                first_name = name_parts[0]
+                middle_name = ''
+                last_name = name_parts[1]
+
+            else:
+
+                first_name = name_parts[0]
+                middle_name = ' '.join(
+                    name_parts[1:-1]
+                )
+                last_name = name_parts[-1]
+
+        if not first_name or not last_name:
+
+            return JsonResponse(
+                {
+                    'success': False,
+                    'error':
+                        'Please enter a valid student name.'
+                },
+                status=400
+            )
+
+        student.first_name = first_name
+        student.middle_name = middle_name
+        student.last_name = last_name
+
+    # =================================================
+    # RFID
+    # =================================================
 
     student.rfid = (
         payload.get('rfid')
         or None
     )
 
-    student.first_name = payload.get(
-        'first_name',
-        student.first_name
-    )
-
-    student.last_name = payload.get(
-        'last_name',
-        student.last_name
-    )
-
-    student.middle_name = payload.get(
-        'middle_name',
-        student.middle_name
-    )
+    # =================================================
+    # OTHER STUDENT INFORMATION
+    # =================================================
 
     student.age = (
         int(payload.get('age'))
@@ -1479,6 +1600,10 @@ def edit_student(
         student.province
     )
 
+    # =================================================
+    # GRADE & SECTION
+    # =================================================
+
     student.grade = payload.get(
         'grade',
         student.grade
@@ -1488,6 +1613,10 @@ def edit_student(
         'section',
         student.section
     )
+
+    # =================================================
+    # GUARDIAN
+    # =================================================
 
     student.parent_name = payload.get(
         'parent_name',
@@ -1504,6 +1633,10 @@ def edit_student(
         student.parent_contact
     )
 
+    # =================================================
+    # STATUS
+    # =================================================
+
     status = payload.get(
         'status',
         'Active'
@@ -1516,6 +1649,10 @@ def edit_student(
         ==
         'active'
     )
+
+    # =================================================
+    # DEPARTMENT
+    # =================================================
 
     if not admin_dept:
 
@@ -1568,10 +1705,25 @@ def edit_student(
             True,
 
         'message':
-            'Student information updated successfully.'
+            'Student information updated successfully.',
+
+        'student': {
+
+            'name':
+                student.full_name,
+
+            'lrn':
+                student.lrn,
+
+            'grade':
+                student.grade,
+
+            'section':
+                student.section,
+
+        }
 
     })
-
 
 # =====================================================
 # ADMIN — DELETE STUDENT

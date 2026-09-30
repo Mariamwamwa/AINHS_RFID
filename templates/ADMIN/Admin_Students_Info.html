@@ -1346,10 +1346,11 @@ Students - RFID Attendance Management System
                 </label>
 
                 <input
-                    type="text"
-                    id="editStudentName"
-                    readonly
-                >
+    type="text"
+    id="editStudentName"
+    placeholder="Enter student name"
+    autocomplete="off"
+>
 
             </div>
 
@@ -1363,10 +1364,11 @@ Students - RFID Attendance Management System
                 </label>
 
                 <input
-                    type="text"
-                    id="editLRN"
-                    readonly
-                >
+    type="text"
+    id="editLRN"
+    placeholder="Enter LRN"
+    autocomplete="off"
+>
 
             </div>
 
@@ -1487,11 +1489,13 @@ Students - RFID Attendance Management System
                         Section
                     </label>
 
-                    <input
-                        type="text"
-                        id="editSection"
-                        placeholder="Enter section"
-                    >
+                    <select id="editSection">
+
+    <option value="">
+        Select Section
+    </option>
+
+</select>
 
                 </div>
 
@@ -2572,6 +2576,173 @@ document.addEventListener(
             null;
 
 
+        /* =====================================================
+           SECTION OPTIONS BY GRADE
+           ===================================================== */
+
+        const sectionsByGrade = {};
+
+
+        function buildSectionsByGrade() {
+
+            Object.keys(
+                sectionsByGrade
+            ).forEach(
+                function (key) {
+
+                    delete sectionsByGrade[key];
+
+                }
+            );
+
+
+            const rows =
+                getDataRows();
+
+
+            rows.forEach(
+                function (row) {
+
+                    const grade =
+                        (
+                            row.dataset.grade ||
+                            ""
+                        ).trim();
+
+                    const section =
+                        (
+                            row.dataset.section ||
+                            ""
+                        ).trim();
+
+
+                    if (
+                        !grade ||
+                        !section
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !sectionsByGrade[grade]
+                    ) {
+
+                        sectionsByGrade[grade] = [];
+
+                    }
+
+
+                    if (
+                        sectionsByGrade[grade]
+                            .indexOf(section) === -1
+                    ) {
+
+                        sectionsByGrade[grade].push(
+                            section
+                        );
+
+                    }
+
+                }
+            );
+
+
+            Object.keys(
+                sectionsByGrade
+            ).forEach(
+                function (grade) {
+
+                    sectionsByGrade[grade].sort(
+                        function (a, b) {
+
+                            return a.localeCompare(
+                                b,
+                                undefined,
+                                {
+                                    numeric: true,
+                                    sensitivity: "base"
+                                }
+                            );
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+
+
+        function populateEditSections(
+            selectedGrade,
+            selectedSection = ""
+        ) {
+
+            const sectionSelect =
+                document.getElementById(
+                    "editSection"
+                );
+
+
+            if (!sectionSelect) {
+
+                return;
+
+            }
+
+
+            sectionSelect.innerHTML = `
+                <option value="">
+                    Select Section
+                </option>
+            `;
+
+
+            const sections =
+                sectionsByGrade[selectedGrade] ||
+                [];
+
+
+            sections.forEach(
+                function (section) {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+                    option.value =
+                        section;
+
+                    option.textContent =
+                        section;
+
+                    sectionSelect.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+
+            if (
+                selectedSection &&
+                sections.indexOf(
+                    selectedSection
+                ) !== -1
+            ) {
+
+                sectionSelect.value =
+                    selectedSection;
+
+            }
+
+        }
+
+
         function closeEditStudentModal() {
 
             if (editStudentOverlay) {
@@ -2641,16 +2812,23 @@ document.addEventListener(
                 data.sex || "";
 
 
-            document.getElementById(
-                "editGrade"
-            ).value =
+            const editGrade =
+                document.getElementById(
+                    "editGrade"
+                );
+
+
+            editGrade.value =
                 data.grade || "";
 
 
-            document.getElementById(
-                "editSection"
-            ).value =
-                data.section || "";
+            buildSectionsByGrade();
+
+
+            populateEditSections(
+                data.grade || "",
+                data.section || ""
+            );
 
 
             document.getElementById(
@@ -2681,6 +2859,33 @@ document.addEventListener(
 
             document.body.style.overflow =
                 "hidden";
+
+        }
+
+
+        /* =====================================================
+           GRADE → SECTION CHANGE
+           ===================================================== */
+
+        const editGrade =
+            document.getElementById(
+                "editGrade"
+            );
+
+
+        if (editGrade) {
+
+            editGrade.addEventListener(
+                "change",
+                function () {
+
+                    populateEditSections(
+                        this.value,
+                        ""
+                    );
+
+                }
+            );
 
         }
 
@@ -2766,410 +2971,550 @@ document.addEventListener(
             }
         );
 
-/* =====================================================
-   SAVE EDIT — SAVE TO DATABASE
-   ===================================================== */
 
-if (saveEditStudent) {
+        /* =====================================================
+           SAVE EDIT — SAVE TO DATABASE
+           ===================================================== */
 
-    saveEditStudent.addEventListener(
-        "click",
-        async function () {
+        if (saveEditStudent) {
 
-            if (!currentEditingStudentRow) {
-                return;
-            }
+            saveEditStudent.addEventListener(
+                "click",
+                async function () {
 
-            const row =
-                currentEditingStudentRow;
-
-            const studentId =
-                row.dataset.studentId;
+                    if (!currentEditingStudentRow) {
+                        return;
+                    }
 
 
-            if (!studentId) {
-
-                alert(
-                    "Missing student ID."
-                );
-
-                return;
-            }
+                    const row =
+                        currentEditingStudentRow;
 
 
-            /* =========================================
-               GET VALUES
-               ========================================= */
-
-            const rfid =
-                document
-                    .getElementById("editRFID")
-                    .value
-                    .trim();
+                    const studentId =
+                        row.dataset.studentId;
 
 
-            const age =
-                document
-                    .getElementById("editAge")
-                    .value
-                    .trim();
+                    if (!studentId) {
+
+                        alert(
+                            "Missing student ID."
+                        );
+
+                        return;
+
+                    }
 
 
-            const sex =
-                document
-                    .getElementById("editSex")
-                    .value
-                    .trim();
+                    /* =========================================
+                       GET VALUES
+                       ========================================= */
+
+                    const name =
+                        document
+                            .getElementById(
+                                "editStudentName"
+                            )
+                            .value
+                            .trim();
 
 
-            const grade =
-                document
-                    .getElementById("editGrade")
-                    .value
-                    .trim();
+                    const lrn =
+                        document
+                            .getElementById(
+                                "editLRN"
+                            )
+                            .value
+                            .trim();
 
 
-            const section =
-                document
-                    .getElementById("editSection")
-                    .value
-                    .trim();
+                    const rfid =
+                        document
+                            .getElementById(
+                                "editRFID"
+                            )
+                            .value
+                            .trim();
 
 
-            const guardian =
-                document
-                    .getElementById("editGuardian")
-                    .value
-                    .trim();
+                    const age =
+                        document
+                            .getElementById(
+                                "editAge"
+                            )
+                            .value
+                            .trim();
 
 
-            const guardianContact =
-                document
-                    .getElementById("editGuardianContact")
-                    .value
-                    .trim();
+                    const sex =
+                        document
+                            .getElementById(
+                                "editSex"
+                            )
+                            .value
+                            .trim();
 
 
-            const status =
-                document
-                    .getElementById("editStatus")
-                    .value
-                    .trim();
+                    const grade =
+                        document
+                            .getElementById(
+                                "editGrade"
+                            )
+                            .value
+                            .trim();
 
 
-            /* =========================================
-               DISABLE BUTTON WHILE SAVING
-               ========================================= */
-
-            saveEditStudent.disabled = true;
-
-            saveEditStudent.innerHTML = `
-                <i class="fa-solid fa-spinner fa-spin"></i>
-                Saving...
-            `;
+                    const section =
+                        document
+                            .getElementById(
+                                "editSection"
+                            )
+                            .value
+                            .trim();
 
 
-            try {
+                    const guardian =
+                        document
+                            .getElementById(
+                                "editGuardian"
+                            )
+                            .value
+                            .trim();
 
-                /* =========================================
-                   SEND DATA TO DJANGO
-                   ========================================= */
 
-                const response =
-                    await fetch(
+                    const guardianContact =
+                        document
+                            .getElementById(
+                                "editGuardianContact"
+                            )
+                            .value
+                            .trim();
 
-                        "{% url 'edit_student' 0 %}"
-                            .replace(
-                                "0",
-                                studentId
-                            ),
 
-                        {
+                    const status =
+                        document
+                            .getElementById(
+                                "editStatus"
+                            )
+                            .value
+                            .trim();
 
-                            method: "POST",
 
-                            headers: {
+                    /* =========================================
+                       BASIC VALIDATION
+                       ========================================= */
 
-                                "Content-Type":
-                                    "application/json",
+                    if (!name) {
 
-                                "X-CSRFToken":
-                                    getCSRFToken()
+                        alert(
+                            "Student name is required."
+                        );
 
-                            },
+                        return;
 
-                            body: JSON.stringify({
+                    }
 
-                                rfid:
-                                    rfid,
 
-                                age:
-                                    age,
+                    if (!lrn) {
 
-                                sex:
-                                    sex,
+                        alert(
+                            "LRN is required."
+                        );
 
-                                grade:
-                                    grade,
+                        return;
 
-                                section:
-                                    section,
+                    }
 
-                                parent_name:
-                                    guardian,
 
-                                parent_contact:
-                                    guardianContact,
+                    if (!grade) {
 
-                                status:
-                                    status
+                        alert(
+                            "Please select a grade."
+                        );
 
-                            })
+                        return;
+
+                    }
+
+
+                    if (!section) {
+
+                        alert(
+                            "Please select a section."
+                        );
+
+                        return;
+
+                    }
+
+
+                    /* =========================================
+                       DISABLE BUTTON WHILE SAVING
+                       ========================================= */
+
+                    saveEditStudent.disabled = true;
+
+                    saveEditStudent.innerHTML = `
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        Saving...
+                    `;
+
+
+                    try {
+
+                        /* =========================================
+                           SEND DATA TO DJANGO
+                           ========================================= */
+
+                        const response =
+                            await fetch(
+
+                                "{% url 'edit_student' 0 %}"
+                                    .replace(
+                                        "0",
+                                        studentId
+                                    ),
+
+                                {
+
+                                    method: "POST",
+
+                                    headers: {
+
+                                        "Content-Type":
+                                            "application/json",
+
+                                        "X-CSRFToken":
+                                            getCSRFToken()
+
+                                    },
+
+                                    body: JSON.stringify({
+
+                                        name:
+                                            name,
+
+                                        lrn:
+                                            lrn,
+
+                                        rfid:
+                                            rfid,
+
+                                        age:
+                                            age,
+
+                                        sex:
+                                            sex,
+
+                                        grade:
+                                            grade,
+
+                                        section:
+                                            section,
+
+                                        parent_name:
+                                            guardian,
+
+                                        parent_contact:
+                                            guardianContact,
+
+                                        status:
+                                            status
+
+                                    })
+
+                                }
+
+                            );
+
+
+                        /* =========================================
+                           READ SERVER RESPONSE
+                           ========================================= */
+
+                        const result =
+                            await response.json();
+
+
+                        if (
+                            !response.ok ||
+                            !result.success
+                        ) {
+
+                            throw new Error(
+                                result.error ||
+                                "Failed to save student."
+                            );
 
                         }
 
-                    );
+
+                        /* =========================================
+                           UPDATE ROW DATA
+                           ========================================= */
+
+                        row.dataset.name =
+                            name;
+
+                        row.dataset.lrn =
+                            lrn;
+
+                        row.dataset.rfid =
+                            rfid;
+
+                        row.dataset.age =
+                            age;
+
+                        row.dataset.sex =
+                            sex;
+
+                        row.dataset.grade =
+                            grade;
+
+                        row.dataset.section =
+                            section;
+
+                        row.dataset.guardian =
+                            guardian;
+
+                        row.dataset.guardianContact =
+                            guardianContact;
+
+                        row.dataset.status =
+                            status;
 
 
-                /* =========================================
-                   READ SERVER RESPONSE
-                   ========================================= */
+                        /* =========================================
+                           UPDATE TABLE CELLS
+                           ========================================= */
 
-                const result =
-                    await response.json();
-
-
-                if (
-                    !response.ok ||
-                    !result.success
-                ) {
-
-                    throw new Error(
-                        result.error ||
-                        "Failed to save student."
-                    );
-
-                }
+                        const cells =
+                            row.querySelectorAll(
+                                "td"
+                            );
 
 
-                /* =========================================
-                   UPDATE ROW DATA
-                   ========================================= */
+                        /* STUDENT NAME */
 
-                row.dataset.rfid =
-                    rfid;
+                        if (cells[0]) {
 
-                row.dataset.age =
-                    age;
-
-                row.dataset.sex =
-                    sex;
-
-                row.dataset.grade =
-                    grade;
-
-                row.dataset.section =
-                    section;
-
-                row.dataset.guardian =
-                    guardian;
-
-                row.dataset.guardianContact =
-                    guardianContact;
-
-                row.dataset.status =
-                    status;
+                            const studentNameElement =
+                                cells[0].querySelector(
+                                    ".student-details strong"
+                                );
 
 
-                /* =========================================
-                   UPDATE TABLE CELLS
-                   ========================================= */
+                            if (
+                                studentNameElement
+                            ) {
 
-                const cells =
-                    row.querySelectorAll(
-                        "td"
-                    );
+                                studentNameElement.textContent =
+                                    name || "—";
+
+                            }
+
+                        }
 
 
-                /* RFID */
+                        /* LRN */
 
-                if (cells[2]) {
+                        if (cells[1]) {
 
-                    cells[2].innerHTML =
-                        rfid
-                            ? `
-                                <span class="rfid-badge">
-
-                                    <i class="fa-solid fa-fingerprint"></i>
-
-                                    ${rfid}
-
-                                </span>
-                            `
-                            : `
+                            cells[1].innerHTML = `
                                 <span class="table-text">
-                                    —
+                                    ${lrn || "—"}
                                 </span>
                             `;
 
+                        }
+
+
+                        /* RFID */
+
+                        if (cells[2]) {
+
+                            cells[2].innerHTML =
+                                rfid
+                                    ? `
+                                        <span class="rfid-badge">
+
+                                            <i class="fa-solid fa-fingerprint"></i>
+
+                                            ${rfid}
+
+                                        </span>
+                                    `
+                                    : `
+                                        <span class="table-text">
+                                            —
+                                        </span>
+                                    `;
+
+                        }
+
+
+                        /* AGE */
+
+                        if (cells[3]) {
+
+                            cells[3].innerHTML = `
+                                <span class="table-text">
+                                    ${age || "—"}
+                                </span>
+                            `;
+
+                        }
+
+
+                        /* SEX */
+
+                        if (cells[4]) {
+
+                            cells[4].innerHTML = `
+                                <span class="table-text">
+                                    ${sex || "—"}
+                                </span>
+                            `;
+
+                        }
+
+
+                        /* CLASS */
+
+                        if (cells[5]) {
+
+                            cells[5].innerHTML = `
+                                <div class="class-info">
+
+                                    <strong>
+                                        ${grade || "—"}
+                                    </strong>
+
+                                    <span>
+                                        ${section || "—"}
+                                    </span>
+
+                                </div>
+                            `;
+
+                        }
+
+
+                        /* GUARDIAN */
+
+                        if (cells[6]) {
+
+                            cells[6].innerHTML = `
+                                <div class="guardian-info">
+
+                                    <strong>
+                                        ${guardian || "—"}
+                                    </strong>
+
+                                    <span>
+                                        ${row.dataset.relationship || "—"}
+                                    </span>
+
+                                </div>
+                            `;
+
+                        }
+
+
+                        /* GUARDIAN CONTACT */
+
+                        if (cells[7]) {
+
+                            cells[7].innerHTML = `
+                                <span class="table-text">
+                                    ${guardianContact || "—"}
+                                </span>
+                            `;
+
+                        }
+
+
+                        /* STATUS */
+
+                        if (cells[8]) {
+
+                            const isActive =
+                                status === "Active";
+
+
+                            cells[8].innerHTML = `
+                                <span class="status-badge ${
+                                    isActive
+                                        ? "active-status"
+                                        : "inactive-status"
+                                }">
+
+                                    <span class="status-dot"></span>
+
+                                    ${status}
+
+                                </span>
+                            `;
+
+                        }
+
+
+                        /* =========================================
+                           REBUILD SECTION OPTIONS
+                           ========================================= */
+
+                        buildSectionsByGrade();
+
+
+                        /* =========================================
+                           CLOSE MODAL
+                           ========================================= */
+
+                        closeEditStudentModal();
+
+
+                        /* =========================================
+                           UPDATE SUMMARY + FILTER
+                           ========================================= */
+
+                        updateSummary();
+
+                        filterStudents();
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "Edit student error:",
+                            error
+                        );
+
+
+                        alert(
+                            error.message ||
+                            "Failed to save student."
+                        );
+
+                    } finally {
+
+                        /* =========================================
+                           RESTORE BUTTON
+                           ========================================= */
+
+                        saveEditStudent.disabled =
+                            false;
+
+                        saveEditStudent.innerHTML = `
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            Save Changes
+                        `;
+
+                    }
+
                 }
-
-
-                /* AGE */
-
-                if (cells[3]) {
-
-                    cells[3].innerHTML = `
-                        <span class="table-text">
-                            ${age || "—"}
-                        </span>
-                    `;
-
-                }
-
-
-                /* SEX */
-
-                if (cells[4]) {
-
-                    cells[4].innerHTML = `
-                        <span class="table-text">
-                            ${sex || "—"}
-                        </span>
-                    `;
-
-                }
-
-
-                /* CLASS */
-
-                if (cells[5]) {
-
-                    cells[5].innerHTML = `
-                        <div class="class-info">
-
-                            <strong>
-                                ${grade || "—"}
-                            </strong>
-
-                            <span>
-                                ${section || "—"}
-                            </span>
-
-                        </div>
-                    `;
-
-                }
-
-
-                /* GUARDIAN */
-
-                if (cells[6]) {
-
-                    cells[6].innerHTML = `
-                        <div class="guardian-info">
-
-                            <strong>
-                                ${guardian || "—"}
-                            </strong>
-
-                            <span>
-                                ${row.dataset.relationship || "—"}
-                            </span>
-
-                        </div>
-                    `;
-
-                }
-
-
-                /* GUARDIAN CONTACT */
-
-                if (cells[7]) {
-
-                    cells[7].innerHTML = `
-                        <span class="table-text">
-                            ${guardianContact || "—"}
-                        </span>
-                    `;
-
-                }
-
-
-                /* STATUS */
-
-                if (cells[8]) {
-
-                    const isActive =
-                        status === "Active";
-
-
-                    cells[8].innerHTML = `
-                        <span class="status-badge ${
-                            isActive
-                                ? "active-status"
-                                : "inactive-status"
-                        }">
-
-                            <span class="status-dot"></span>
-
-                            ${status}
-
-                        </span>
-                    `;
-
-                }
-
-
-                /* =========================================
-                   CLOSE MODAL
-                   ========================================= */
-
-                closeEditStudentModal();
-
-
-                /* =========================================
-                   UPDATE SUMMARY + FILTER
-                   ========================================= */
-
-                updateSummary();
-
-                filterStudents();
-
-
-            } catch (error) {
-
-                console.error(
-                    "Edit student error:",
-                    error
-                );
-
-
-                alert(
-                    error.message ||
-                    "Failed to save student."
-                );
-
-            } finally {
-
-                /* =========================================
-                   RESTORE BUTTON
-                   ========================================= */
-
-                saveEditStudent.disabled =
-                    false;
-
-                saveEditStudent.innerHTML = `
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Save Changes
-                `;
-
-            }
+            );
 
         }
-    );
-
-}
 
 
         /* =====================================================
@@ -3354,6 +3699,8 @@ if (saveEditStudent) {
 
                                 updateSummary();
 
+                                buildSectionsByGrade();
+
                             } else {
 
                                 alert(
@@ -3418,6 +3765,8 @@ if (saveEditStudent) {
         /* =====================================================
            INITIALIZE
            ===================================================== */
+
+        buildSectionsByGrade();
 
         populateGradeFilter();
 

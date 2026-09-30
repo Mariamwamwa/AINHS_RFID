@@ -386,52 +386,61 @@ document.addEventListener("DOMContentLoaded", function () {
     const personalAvatar = document.getElementById("personalAvatar");
 
 
-    // =====================================================
-    // READ-ONLY FIELDS (hindi pwedeng i-edit)
-    // =====================================================
 
-    const READONLY_IDS = ["personalId", "personalGrade", "personalSection"];
-
-
-    // =====================================================
-    // ORIGINAL VALUES
-    // =====================================================
-
-    let personalOriginalValues = {};
+// =====================================================
+// READ-ONLY FIELDS (hindi pwedeng i-edit)
+// =====================================================
+const READONLY_IDS = [
+    "personalId",
+    "personalDepartment",
+    "personalGrade",
+    "personalSection"
+];
 
 
-    // =====================================================
-    // ENABLE / DISABLE EDITING
-    // =====================================================
-
-    function setPersonalEditing(editing) {
-
-        personalItems.forEach(function (item) {
-            item.classList.toggle("editing", editing);
-        });
+// =====================================================
+// ORIGINAL VALUES
+// =====================================================
+let personalOriginalValues = {};
 
 
-        personalInputs.forEach(function (input) {
-            // Read-only fields remain disabled.
-            input.disabled = !editing || READONLY_IDS.includes(input.id);
-        });
+// =====================================================
+// ENABLE / DISABLE EDITING
+// =====================================================
+function setPersonalEditing(editing) {
 
+    personalItems.forEach(function (item) {
+        item.classList.toggle("editing", editing);
+    });
 
-        if (updatePersonalBtn) {
-            updatePersonalBtn.style.display = editing ? "none" : "inline-flex";
-        }
+    personalInputs.forEach(function (input) {
 
+        // Department, Grade, Section and Teacher ID
+        // remain disabled even during edit mode.
+        input.disabled = !editing || READONLY_IDS.includes(input.id);
 
-        if (personalActions) {
-            personalActions.classList.toggle("show", editing);
-        }
+    });
 
-
-        if (personalNote) {
-            personalNote.classList.toggle("show", editing);
-        }
-
+    if (updatePersonalBtn) {
+        updatePersonalBtn.style.display =
+            editing ? "none" : "inline-flex";
     }
+
+    if (personalActions) {
+        personalActions.classList.toggle(
+            "show",
+            editing
+        );
+    }
+
+    if (personalNote) {
+        personalNote.classList.toggle(
+            "show",
+            editing
+        );
+    }
+}
+
 
 
     // =====================================================

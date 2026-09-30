@@ -317,7 +317,7 @@ Teacher's Information - RFID Attendance Management System
 
                     <div class="teacher-modal-item">
                         <label for="editDepartment">Department</label>
-                        <select id="editDepartment">
+                        <select id="editDepartment" disabled>
                             <option value="">—</option>
                             <option value="JHS">JHS</option>
                             <option value="SHS">SHS</option>
@@ -326,7 +326,7 @@ Teacher's Information - RFID Attendance Management System
 
                     <div class="teacher-modal-item">
                         <label for="editGrade">Grade</label>
-                        <select id="editGrade">
+                        <select id="editGrade" disabled>
                             <option value="">—</option>
                             <option value="Grade 7" data-dept="JHS">Grade 7</option>
                             <option value="Grade 8" data-dept="JHS">Grade 8</option>
@@ -339,7 +339,10 @@ Teacher's Information - RFID Attendance Management System
 
                     <div class="teacher-modal-item">
                         <label for="editSection">Section</label>
-                        <input type="text" id="editSection" placeholder="e.g. Einstein">
+                        <input type="text" id="editSection"
+                               placeholder="e.g. Einstein"
+                               readonly
+                               disabled>
                     </div>
 
                 </div>
@@ -441,10 +444,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    if (editDepartment) {
-        editDepartment.addEventListener("change", filterGradesByDepartment);
-    }
-
 
     /* =====================================================
        TEACHER EDIT MODAL
@@ -468,12 +467,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("editBirthday").value     = d.birthday || "";
         document.getElementById("editEmail").value        = d.email || "";
         document.getElementById("editContact").value      = d.contact || "";
+
         document.getElementById("editDepartment").value   = d.department || "";
-
         document.getElementById("editGrade").value        = d.grade || "";
-
-        filterGradesByDepartment();
-
         document.getElementById("editSection").value      = d.section || "";
 
         if (teacherEditOverlay) {
