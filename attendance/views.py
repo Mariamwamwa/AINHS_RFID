@@ -4408,6 +4408,8 @@ def teacher_dashboard(request):
 
             section=teacher.section,
 
+            adviser=teacher,
+
         )
 
     total_students = (
@@ -4584,6 +4586,8 @@ def teacher_class_attendance(request):
 
             section=teacher.section,
 
+            adviser=teacher,
+
         )
 
     student_ids = list(
@@ -4728,6 +4732,7 @@ def teacher_class_record(request):
                 is_active=True,
                 grade=grade,
                 section=section,
+                adviser=teacher,
             )
             .order_by(
                 'last_name',
