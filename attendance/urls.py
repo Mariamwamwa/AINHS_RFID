@@ -82,5 +82,24 @@ path(
     views.unassign_class,
     name='unassign_class'
 ),
+
+path(
+'teacher/attendance/export/daily/',
+views.export_attendance_daily,
+name='export_attendance_daily'
+),
+
+path(
+'teacher/attendance/export/weekly/',
+views.export_attendance_weekly,
+name='export_attendance_weekly'
+),
+
+path(
+'teacher/attendance/export/monthly/',
+views.export_attendance_monthly,
+name='export_attendance_monthly'
+),
+
     
 ]

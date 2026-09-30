@@ -605,3 +605,154 @@
     }
 
 }
+
+/* ==========================================
+EXPORT TO EXCEL
+========================================== */
+
+.attendance-export {
+position: relative;
+display: inline-block;
+margin-bottom: 20px;
+}
+
+/* ==========================================
+EXPORT BUTTON
+========================================== */
+
+.export-excel-btn {
+display: inline-flex;
+align-items: center;
+gap: 9px;
+
+padding: 11px 17px;
+
+border: none;
+border-radius: 9px;
+
+background: #16a34a;
+color: #ffffff;
+
+font-size: 14px;
+font-weight: 600;
+
+cursor: pointer;
+
+transition: all 0.2s ease;
+
+}
+
+.export-excel-btn:hover {
+background: #15803d;
+transform: translateY(-1px);
+}
+
+.export-excel-btn:active {
+transform: translateY(0);
+}
+
+.export-excel-btn .fa-file-excel {
+font-size: 16px;
+}
+
+.export-arrow {
+font-size: 10px;
+margin-left: 3px;
+
+transition: transform 0.2s ease;
+
+}
+
+/* ==========================================
+DROPDOWN MENU
+========================================== */
+
+.export-menu {
+display: none;
+
+position: absolute;
+
+top: calc(100% + 6px);
+left: 0;
+
+min-width: 200px;
+
+padding: 6px;
+
+background: #ffffff;
+
+border: 1px solid #e5e7eb;
+border-radius: 10px;
+
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+
+z-index: 1000;
+
+}
+
+.export-menu.show {
+display: block;
+}
+
+/* ==========================================
+DROPDOWN ITEMS
+========================================== */
+
+.export-menu a {
+display: flex;
+align-items: center;
+gap: 10px;
+
+width: 100%;
+box-sizing: border-box;
+
+padding: 10px 12px;
+
+color: #334155;
+
+text-decoration: none;
+
+font-size: 14px;
+font-weight: 500;
+
+border-radius: 7px;
+
+transition: all 0.2s ease;
+
+}
+
+.export-menu a:hover {
+background: #f1f5f9;
+color: #16a34a;
+}
+
+.export-menu a i {
+width: 18px;
+
+text-align: center;
+
+font-size: 14px;
+
+}
+
+/* ==========================================
+MOBILE
+========================================== */
+
+@media (max-width: 600px) {
+
+.attendance-export {
+    width: 100%;
+}
+
+.export-excel-btn {
+    width: 100%;
+    justify-content: center;
+}
+
+.export-menu {
+    width: 100%;
+    min-width: 0;
+}
+
+}

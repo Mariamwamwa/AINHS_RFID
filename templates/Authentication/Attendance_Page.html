@@ -27,13 +27,12 @@ Attendance | AINHS Attendance System
 
 <main>
 
-
 <section class="attendance-section">
 
-
-    <!-- =================================================
-         WAITING / RFID INPUT
-         ================================================= -->
+```
+<!-- =================================================
+     WAITING / RFID INPUT
+     ================================================= -->
 
 <div
     id="waitingState"
@@ -72,53 +71,6 @@ Attendance | AINHS Attendance System
             <span class="waiting-subtext">
                 Tap your RFID card to record attendance
             </span>
-
-        </div>
-
-
-        <!-- =================================================
-             ATTENDANCE TYPE
-             No function yet
-             ================================================= -->
-
-        <div class="attendance-type-section">
-
-            <span class="attendance-type-label">
-                Attendance Type
-            </span>
-
-            <div class="attendance-type-buttons">
-
-                <button
-                    type="button"
-                    class="attendance-type-btn time-in-btn"
-                    id="timeInBtn"
-                >
-
-                    <span class="material-icons">
-                        login
-                    </span>
-
-                    IN
-
-                </button>
-
-
-                <button
-                    type="button"
-                    class="attendance-type-btn time-out-btn"
-                    id="timeOutBtn"
-                >
-
-                    <span class="material-icons">
-                        logout
-                    </span>
-
-                    OUT
-
-                </button>
-
-            </div>
 
         </div>
 
@@ -203,259 +155,230 @@ Attendance | AINHS Attendance System
 </div>
 
 
+<!-- =================================================
+     STUDENT DETAILS
+     Hidden until RFID is detected.
+     ================================================= -->
+
+<div
+    id="studentCard"
+    class="student-card"
+    style="display: none;"
+>
+
     <!-- =================================================
-         STUDENT DETAILS
-         Hidden until RFID is detected.
+         STUDENT CARD HEADER
          ================================================= -->
 
-    <div
-        id="studentCard"
-        class="student-card"
-        style="display: none;"
-    >
+    <div class="student-card-header">
 
+        <div class="student-card-title">
 
-        <!-- =================================================
-             STUDENT CARD HEADER
-             ================================================= -->
+            <span class="material-icons">
+                person
+            </span>
 
-        <div class="student-card-header">
+            <div>
 
+                <h2>
+                    Student Details
+                </h2>
 
-            <div class="student-card-title">
-
-
-                <span class="material-icons">
-                    person
-                </span>
-
-
-                <div>
-
-                    <h2>
-                        Student Details
-                    </h2>
-
-                    <p>
-                        Attendance successfully recorded
-                    </p>
-
-                </div>
-
+                <p>
+                    Attendance successfully recorded
+                </p>
 
             </div>
-
-
-
-            <!-- =================================================
-                 ATTENDANCE STATUS
-                 ================================================= -->
-
-            <div
-                id="attendanceBadge"
-                class="attendance-badge recorded"
-            >
-
-                <span class="material-icons">
-                    check_circle
-                </span>
-
-                Attendance Recorded
-
-            </div>
-
 
         </div>
 
 
-
         <!-- =================================================
-             STUDENT CONTENT
+             ATTENDANCE STATUS
              ================================================= -->
 
-        <div class="student-content">
-
-
-            <!-- =================================================
-                 STUDENT PICTURE
-                 ================================================= -->
-
-            <div class="student-picture-container">
-
-
-                <div class="student-picture">
-
-                    <img
-                        id="studentPicture"
-                        src="{% static 'images/default-student.png' %}"
-                        alt="Student Picture"
-                    >
-
-                </div>
-
-
-
-                <!-- =================================================
-                     RECORDED DATE / TIME
-                     ================================================= -->
-
-                <div class="recorded-datetime">
-
-
-                    <div id="recordedDate">
-                        —
-                    </div>
-
-
-                    <div id="recordedTime">
-                        —
-                    </div>
-
-
-                </div>
-
-
-            </div>
-
-
-
-            <!-- =================================================
-                 STUDENT INFORMATION
-                 ================================================= -->
-
-            <div class="student-information">
-
-
-                <!-- LRN -->
-
-                <div class="student-info-group">
-
-                    <label>
-                        LRN
-                    </label>
-
-
-                    <div
-                        id="studentLRN"
-                        class="student-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-
-                <!-- STUDENT NAME -->
-
-                <div class="student-info-group">
-
-                    <label>
-                        Student Name
-                    </label>
-
-
-                    <div
-                        id="studentName"
-                        class="student-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-
-                <!-- DEPARTMENT -->
-
-                <div class="student-info-group">
-
-                    <label>
-                        Department
-                    </label>
-
-
-                    <div
-                        id="studentDepartment"
-                        class="student-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-
-                <!-- ADVISER -->
-
-                <div class="student-info-group">
-
-                    <label>
-                        Adviser
-                    </label>
-
-
-                    <div
-                        id="studentAdviser"
-                        class="student-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-
-                <!-- GRADE -->
-
-                <div class="student-info-group">
-
-                    <label>
-                        Grade
-                    </label>
-
-
-                    <div
-                        id="studentGrade"
-                        class="student-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-
-                <!-- SECTION -->
-
-                <div class="student-info-group">
-
-                    <label>
-                        Section
-                    </label>
-
-
-                    <div
-                        id="studentSection"
-                        class="student-value"
-                    >
-                        —
-                    </div>
-
-                </div>
-
-
-            </div>
-
+        <div
+            id="attendanceBadge"
+            class="attendance-badge recorded"
+        >
+
+            <span class="material-icons">
+                check_circle
+            </span>
+
+            Attendance Recorded
 
         </div>
-
 
     </div>
 
 
-</section>
+    <!-- =================================================
+         STUDENT CONTENT
+         ================================================= -->
 
+    <div class="student-content">
+
+        <!-- =================================================
+             STUDENT PICTURE
+             ================================================= -->
+
+        <div class="student-picture-container">
+
+            <div class="student-picture">
+
+                <img
+                    id="studentPicture"
+                    src="{% static 'images/default-student.png' %}"
+                    alt="Student Picture"
+                >
+
+            </div>
+
+
+            <!-- =================================================
+                 RECORDED DATE / TIME
+                 ================================================= -->
+
+            <div class="recorded-datetime">
+                   </div>
+
+    <div id="attendanceLabel" class="attendance-label">
+        —
+    </div>
+
+    <div id="recordedDate">
+        —
+    </div>
+
+    <div id="recordedTime">
+        —
+    </div>
+
+</div>
+
+
+        <!-- =================================================
+             STUDENT INFORMATION
+             ================================================= -->
+
+        <div class="student-information">
+
+            <!-- LRN -->
+
+            <div class="student-info-group">
+
+                <label>
+                    LRN
+                </label>
+
+                <div
+                    id="studentLRN"
+                    class="student-value"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <!-- STUDENT NAME -->
+
+            <div class="student-info-group">
+
+                <label>
+                    Student Name
+                </label>
+
+                <div
+                    id="studentName"
+                    class="student-value"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <!-- DEPARTMENT -->
+
+            <div class="student-info-group">
+
+                <label>
+                    Department
+                </label>
+
+                <div
+                    id="studentDepartment"
+                    class="student-value"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <!-- ADVISER -->
+
+            <div class="student-info-group">
+
+                <label>
+                    Adviser
+                </label>
+
+                <div
+                    id="studentAdviser"
+                    class="student-value"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <!-- GRADE -->
+
+            <div class="student-info-group">
+
+                <label>
+                    Grade
+                </label>
+
+                <div
+                    id="studentGrade"
+                    class="student-value"
+                >
+                    —
+                </div>
+
+            </div>
+
+
+            <!-- SECTION -->
+
+            <div class="student-info-group">
+
+                <label>
+                    Section
+                </label>
+
+                <div
+                    id="studentSection"
+                    class="student-value"
+                >
+                    —
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</section>
 
 </main>
 
@@ -465,7 +388,6 @@ Attendance | AINHS Attendance System
 
 <script>
 
-
 // ============================================================
 // ELEMENTS
 // ============================================================
@@ -473,29 +395,22 @@ Attendance | AINHS Attendance System
 const manualRfidContainer =
     document.getElementById("manualRfidContainer");
 
-
 const rfidInput =
     document.getElementById("rfidInput");
-
 
 const studentCard =
     document.getElementById("studentCard");
 
-
 const waitingState =
     document.getElementById("waitingState");
-
 
 const rfidEnterBtn =
     document.getElementById("rfidEnterBtn");
 
-
 const attendanceBadge =
     document.getElementById("attendanceBadge");
 
-
 let resetTimer = null;
-
 
 
 // ============================================================
@@ -509,7 +424,6 @@ rfidEnterBtn.addEventListener(
         const rfid =
             rfidInput.value.trim();
 
-
         if (rfid === "") {
 
             rfidInput.focus();
@@ -518,12 +432,10 @@ rfidEnterBtn.addEventListener(
 
         }
 
-
         processRFID(rfid);
 
     }
 );
-
 
 
 // ============================================================
@@ -537,15 +449,12 @@ rfidInput.addEventListener(
     "keydown",
     function(event) {
 
-
         if (event.key === "Enter") {
 
             event.preventDefault();
 
-
             const rfid =
                 rfidInput.value.trim();
-
 
             if (rfid !== "") {
 
@@ -559,14 +468,12 @@ rfidInput.addEventListener(
 );
 
 
-
 // ============================================================
 // PROCESS RFID
 // Sends RFID to Django backend.
 // ============================================================
 
 function processRFID(rfid) {
-
 
     fetch(
         "{% url 'record_rfid_attendance' %}",
@@ -583,7 +490,6 @@ function processRFID(rfid) {
         }
     )
 
-
     .then(
         function(response) {
 
@@ -592,10 +498,8 @@ function processRFID(rfid) {
         }
     )
 
-
     .then(
         function(data) {
-
 
             console.log(
                 "RFID RESPONSE:",
@@ -609,14 +513,11 @@ function processRFID(rfid) {
 
             if (!data.success) {
 
-
                 studentCard.style.display =
                     "none";
 
-
                 waitingState.style.display =
                     "flex";
-
 
                 waitingState
                     .querySelector("p")
@@ -624,24 +525,19 @@ function processRFID(rfid) {
                     data.error ||
                     "RFID card not registered";
 
-
                 waitingState
                     .querySelector(".waiting-subtext")
                     .textContent =
                     "Please check the RFID and try again";
 
-
                 rfidInput.value =
                     "";
 
-
                 rfidInput.focus();
-
 
                 return;
 
             }
-
 
 
             // ====================================================
@@ -657,44 +553,35 @@ function processRFID(rfid) {
             // Clear input.
             rfidInput.value = "";
 
-
         }
     )
 
-
     .catch(
         function(error) {
-
 
             console.error(
                 "RFID ERROR:",
                 error
             );
 
-
             studentCard.style.display =
                 "none";
 
-
             waitingState.style.display =
                 "flex";
-
 
             waitingState
                 .querySelector("p")
                 .textContent =
                 "Unable to connect to attendance server";
 
-
             waitingState
                 .querySelector(".waiting-subtext")
                 .textContent =
                 "Please try again";
 
-
             rfidInput.value =
                 "";
-
 
             rfidInput.focus();
 
@@ -702,7 +589,6 @@ function processRFID(rfid) {
     );
 
 }
-
 
 
 // ============================================================
@@ -714,7 +600,6 @@ function displayStudent(
     attendance
 ) {
 
-
     clearTimeout(
         resetTimer
     );
@@ -722,13 +607,10 @@ function displayStudent(
 
     // ========================================================
     // HIDE WAITING STATE
-    // This also hides the RFID input.
-    // This matches your original design.
     // ========================================================
 
     waitingState.style.display =
         "none";
-
 
     manualRfidContainer.style.display =
         "none";
@@ -742,7 +624,6 @@ function displayStudent(
         "block";
 
 
-
     // ========================================================
     // STUDENT PICTURE
     // ========================================================
@@ -751,7 +632,6 @@ function displayStudent(
         document.getElementById(
             "studentPicture"
         );
-
 
     studentPicture.src =
         student.picture ||
@@ -768,12 +648,10 @@ function displayStudent(
             this.onerror =
                 null;
 
-
             this.src =
                 "{% static 'images/default-student.png' %}";
 
         };
-
 
 
     // ========================================================
@@ -787,7 +665,6 @@ function displayStudent(
         "—";
 
 
-
     // ========================================================
     // STUDENT NAME
     // ========================================================
@@ -797,7 +674,6 @@ function displayStudent(
         .textContent =
         student.name ||
         "—";
-
 
 
     // ========================================================
@@ -811,7 +687,6 @@ function displayStudent(
         "—";
 
 
-
     // ========================================================
     // ADVISER
     // ========================================================
@@ -821,7 +696,6 @@ function displayStudent(
         .textContent =
         student.adviser ||
         "—";
-
 
 
     // ========================================================
@@ -835,7 +709,6 @@ function displayStudent(
         "—";
 
 
-
     // ========================================================
     // SECTION
     // ========================================================
@@ -845,7 +718,6 @@ function displayStudent(
         .textContent =
         student.section ||
         "—";
-
 
 
     // ========================================================
@@ -861,7 +733,6 @@ function displayStudent(
         "—";
 
 
-
     // ========================================================
     // RECORDED TIME
     //
@@ -874,6 +745,11 @@ function displayStudent(
         attendance.time ||
         "—";
 
+    document
+    .getElementById("attendanceLabel")
+    .textContent =
+    attendance.label ||
+    "—";
 
 
     // ========================================================
@@ -884,10 +760,8 @@ function displayStudent(
         attendance.status === "late"
     ) {
 
-
         attendanceBadge.className =
             "attendance-badge late";
-
 
         attendanceBadge.innerHTML = `
 
@@ -903,10 +777,8 @@ function displayStudent(
 
     else {
 
-
         attendanceBadge.className =
             "attendance-badge recorded";
-
 
         attendanceBadge.innerHTML = `
 
@@ -919,7 +791,6 @@ function displayStudent(
         `;
 
     }
-
 
 
     // ========================================================
@@ -939,13 +810,11 @@ function displayStudent(
 }
 
 
-
 // ============================================================
 // RESET ATTENDANCE SCREEN
 // ============================================================
 
 function resetAttendanceScreen() {
-
 
     clearTimeout(
         resetTimer
@@ -962,16 +831,13 @@ function resetAttendanceScreen() {
 
     // ========================================================
     // SHOW WAITING STATE
-    // This also brings back RFID input.
     // ========================================================
 
     waitingState.style.display =
         "flex";
 
-
     manualRfidContainer.style.display =
         "block";
-
 
 
     // ========================================================
@@ -983,12 +849,10 @@ function resetAttendanceScreen() {
         .textContent =
         "Waiting for RFID card...";
 
-
     waitingState
         .querySelector(".waiting-subtext")
         .textContent =
         "Tap your RFID card to record attendance";
-
 
 
     // ========================================================
@@ -998,11 +862,9 @@ function resetAttendanceScreen() {
     rfidInput.value =
         "";
 
-
     rfidInput.focus();
 
 }
-
 
 
 // ============================================================
@@ -1025,7 +887,6 @@ document.addEventListener(
 );
 
 
-
 // ============================================================
 // INITIAL FOCUS
 // ============================================================
@@ -1038,7 +899,6 @@ window.addEventListener(
 
     }
 );
-
 
 </script>
 

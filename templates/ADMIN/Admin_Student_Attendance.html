@@ -4,77 +4,190 @@
 {% block title %}Student Attendance | AINHS Attendance System{% endblock %}
 
 {% block page_heading %}
+
 <h2>Student Attendance</h2>
 {% endblock %}
 
 {% block page_subheading %}
+
 <p>View and manage daily student attendance records.</p>
 {% endblock %}
 
 {% block extra_css %}
+
 <link rel="stylesheet" href="{% static 'css/ADMIN/Admin_Student_Attendance.css' %}">
 {% endblock %}
 
 {% block content %}
+
 <div class="student-attendance-page">
 
-    <!-- PAGE HEADER -->
-    <div class="attendance-page-header">
+```
+<!-- PAGE HEADER -->
+<div class="attendance-page-header">
+    <h3>
+        <i class="fas fa-clipboard-check"></i>
+        Student Attendance
+    </h3>
+
+    <div class="attendance-header-actions">
+        <button type="button" class="attendance-btn attendance-btn-primary"
+                id="addStudentBtn">
+            <i class="fas fa-user-plus"></i> Add Student
+        </button>
+
+        <button type="button" class="attendance-btn attendance-btn-outline"
+                id="resetBtn">
+            <i class="fas fa-undo"></i> Reset All
+        </button>
+    </div>
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="attendance-stats">
+    <div class="attendance-stat-card">
+        <div class="number" id="totalStudents">0</div>
+        <div class="label">Total Students</div>
+    </div>
+
+    <div class="attendance-stat-card">
+        <div class="number green" id="presentToday">0</div>
+        <div class="label">Present</div>
+    </div>
+
+    <div class="attendance-stat-card">
+        <div class="number red" id="absentToday">0</div>
+        <div class="label">Absent</div>
+    </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="attendance-filter-bar">
+    <div class="attendance-filter-group">
+        <label for="filterDept">
+            <i class="fas fa-building"></i> Dept
+        </label>
+        <select id="filterDept">
+            <option value="all">All</option>
+            <option value="JHS">JHS</option>
+            <option value="SHS">SHS</option>
+        </select>
+    </div>
+
+    <div class="attendance-filter-group">
+        <label for="filterGrade">
+            <i class="fas fa-layer-group"></i> Grade
+        </label>
+        <select id="filterGrade">
+            <option value="all">All</option>
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+        </select>
+    </div>
+
+    <div class="attendance-filter-group">
+        <label for="attDate">
+            <i class="fas fa-calendar-day"></i> Date
+        </label>
+        <input type="date" id="attDate">
+    </div>
+
+    <div class="attendance-search-group">
+        <div class="attendance-search-wrapper">
+            <i class="fas fa-search"></i>
+            <input type="search" id="searchInput"
+                   placeholder="Search student..."
+                   aria-label="Search student or section">
+        </div>
+    </div>
+</div>
+
+<!-- BULK ACTIONS -->
+<div class="attendance-bulk-actions">
+    <span class="bulk-label">
+        <i class="fas fa-tasks"></i> Bulk Actions:
+    </span>
+
+    <button type="button"
+            class="attendance-btn attendance-btn-success attendance-btn-sm"
+            id="allPresentBtn">
+        <i class="fas fa-check"></i> All Present
+    </button>
+
+    <button type="button"
+            class="attendance-btn attendance-btn-danger attendance-btn-sm"
+            id="allAbsentBtn">
+        <i class="fas fa-times"></i> All Absent
+    </button>
+
+    <button type="button"
+            class="attendance-btn attendance-btn-outline attendance-btn-sm"
+            id="clearTimesBtn">
+        <i class="fas fa-eraser"></i> Clear Times
+    </button>
+</div>
+
+<!-- ATTENDANCE TABLE -->
+<div class="attendance-container">
+    <div class="attendance-table-header">
         <h3>
-            <i class="fas fa-clipboard-check"></i>
-            Student Attendance
+            <i class="fas fa-users"></i>
+            Attendance Log
         </h3>
 
-        <div class="attendance-header-actions">
-            <button type="button" class="attendance-btn attendance-btn-primary"
-                    id="addStudentBtn">
-                <i class="fas fa-user-plus"></i> Add Student
-            </button>
-
-            <button type="button" class="attendance-btn attendance-btn-outline"
-                    id="resetBtn">
-                <i class="fas fa-undo"></i> Reset All
-            </button>
-        </div>
+        <span class="attendance-result-count" id="resultCount">
+            0 students
+        </span>
     </div>
 
-    <!-- SUMMARY CARDS -->
-    <div class="attendance-stats">
-        <div class="attendance-stat-card">
-            <div class="number" id="totalStudents">0</div>
-            <div class="label">Total Students</div>
-        </div>
+    <div class="attendance-table-wrapper">
+        <table class="attendance-table" id="attendanceTable">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Grade &amp; Section</th>
+                    <th>Time In (AM)</th>
+                    <th>Time Out (AM)</th>
+                    <th>Time In (PM)</th>
+                    <th>Time Out (PM)</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
 
-        <div class="attendance-stat-card">
-            <div class="number green" id="presentToday">0</div>
-            <div class="label">Present</div>
-        </div>
-
-        <div class="attendance-stat-card">
-            <div class="number red" id="absentToday">0</div>
-            <div class="label">Absent</div>
-        </div>
+            <tbody id="attendanceBody">
+                <tr>
+                    <td colspan="7" class="attendance-empty-cell">
+                        No students found.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
+</div>
 
-    <!-- FILTER BAR -->
-    <div class="attendance-filter-bar">
-        <div class="attendance-filter-group">
-            <label for="filterDept">
-                <i class="fas fa-building"></i> Dept
-            </label>
-            <select id="filterDept">
-                <option value="all">All</option>
-                <option value="JHS">JHS</option>
-                <option value="SHS">SHS</option>
-            </select>
-        </div>
+<!-- ADD STUDENT MODAL -->
+<div class="attendance-modal-overlay" id="modalOverlay"
+     aria-hidden="true">
+    <div class="attendance-modal" role="dialog" aria-modal="true"
+         aria-labelledby="addStudentModalTitle">
 
-        <div class="attendance-filter-group">
-            <label for="filterGrade">
-                <i class="fas fa-layer-group"></i> Grade
-            </label>
-            <select id="filterGrade">
-                <option value="all">All</option>
+        <h2 id="addStudentModalTitle">
+            <i class="fas fa-user-plus"></i> Add Student
+        </h2>
+
+        <p class="modal-subtitle">Fill in the student details.</p>
+
+        <form id="addStudentForm">
+            <label for="formName">Student Name</label>
+            <input type="text" id="formName"
+                   placeholder="Full name" required>
+
+            <label for="formGrade">Grade Level</label>
+            <select id="formGrade" required>
                 <option value="7">Grade 7</option>
                 <option value="8">Grade 8</option>
                 <option value="9">Grade 9</option>
@@ -82,141 +195,34 @@
                 <option value="11">Grade 11</option>
                 <option value="12">Grade 12</option>
             </select>
-        </div>
 
-        <div class="attendance-filter-group">
-            <label for="attDate">
-                <i class="fas fa-calendar-day"></i> Date
-            </label>
-            <input type="date" id="attDate">
-        </div>
+            <label for="formSection">Section</label>
+            <input type="text" id="formSection"
+                   placeholder="e.g. Einstein, STEM A" required>
 
-        <div class="attendance-search-group">
-            <div class="attendance-search-wrapper">
-                <i class="fas fa-search"></i>
-                <input type="search" id="searchInput"
-                       placeholder="Search student..."
-                       aria-label="Search student or section">
+            <div class="attendance-modal-actions">
+                <button type="button"
+                        class="attendance-btn attendance-btn-outline"
+                        id="cancelModalBtn">
+                    Cancel
+                </button>
+
+                <button type="submit"
+                        class="attendance-btn attendance-btn-primary">
+                    <i class="fas fa-save"></i> Add Student
+                </button>
             </div>
-        </div>
+        </form>
     </div>
+</div>
 
-    <!-- BULK ACTIONS -->
-    <div class="attendance-bulk-actions">
-        <span class="bulk-label">
-            <i class="fas fa-tasks"></i> Bulk Actions:
-        </span>
-
-        <button type="button"
-                class="attendance-btn attendance-btn-success attendance-btn-sm"
-                id="allPresentBtn">
-            <i class="fas fa-check"></i> All Present
-        </button>
-
-        <button type="button"
-                class="attendance-btn attendance-btn-danger attendance-btn-sm"
-                id="allAbsentBtn">
-            <i class="fas fa-times"></i> All Absent
-        </button>
-
-        <button type="button"
-                class="attendance-btn attendance-btn-outline attendance-btn-sm"
-                id="clearTimesBtn">
-            <i class="fas fa-eraser"></i> Clear Times
-        </button>
-    </div>
-
-    <!-- ATTENDANCE TABLE -->
-    <div class="attendance-container">
-        <div class="attendance-table-header">
-            <h3>
-                <i class="fas fa-users"></i>
-                Attendance Log
-            </h3>
-
-            <span class="attendance-result-count" id="resultCount">
-                0 students
-            </span>
-        </div>
-
-        <div class="attendance-table-wrapper">
-            <table class="attendance-table" id="attendanceTable">
-                <thead>
-                    <tr>
-                        <th>Student Name</th>
-                        <th>Grade &amp; Section</th>
-                        <th>Time In (AM)</th>
-                        <th>Time Out (AM)</th>
-                        <th>Time In (PM)</th>
-                        <th>Time Out (PM)</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-
-                <tbody id="attendanceBody">
-                    <tr>
-                        <td colspan="7" class="attendance-empty-cell">
-                            No students found.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- ADD STUDENT MODAL -->
-    <div class="attendance-modal-overlay" id="modalOverlay"
-         aria-hidden="true">
-        <div class="attendance-modal" role="dialog" aria-modal="true"
-             aria-labelledby="addStudentModalTitle">
-
-            <h2 id="addStudentModalTitle">
-                <i class="fas fa-user-plus"></i> Add Student
-            </h2>
-
-            <p class="modal-subtitle">Fill in the student details.</p>
-
-            <form id="addStudentForm">
-                <label for="formName">Student Name</label>
-                <input type="text" id="formName"
-                       placeholder="Full name" required>
-
-                <label for="formGrade">Grade Level</label>
-                <select id="formGrade" required>
-                    <option value="7">Grade 7</option>
-                    <option value="8">Grade 8</option>
-                    <option value="9">Grade 9</option>
-                    <option value="10">Grade 10</option>
-                    <option value="11">Grade 11</option>
-                    <option value="12">Grade 12</option>
-                </select>
-
-                <label for="formSection">Section</label>
-                <input type="text" id="formSection"
-                       placeholder="e.g. Einstein, STEM A" required>
-
-                <div class="attendance-modal-actions">
-                    <button type="button"
-                            class="attendance-btn attendance-btn-outline"
-                            id="cancelModalBtn">
-                        Cancel
-                    </button>
-
-                    <button type="submit"
-                            class="attendance-btn attendance-btn-primary">
-                        <i class="fas fa-save"></i> Add Student
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- TOAST NOTIFICATION -->
-    <div class="attendance-toast" id="attendanceToast"
-         role="status" aria-live="polite">
-        <i class="fas fa-check-circle"></i>
-        <span id="toastMessage">Action completed!</span>
-    </div>
+<!-- TOAST NOTIFICATION -->
+<div class="attendance-toast" id="attendanceToast"
+     role="status" aria-live="polite">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMessage">Action completed!</span>
+</div>
+```
 
 </div>
 
@@ -226,16 +232,14 @@
 {% endblock %}
 
 {% block extra_js %}
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     "use strict";
 
     // =========================================================
-    // DATA — GALING SA DJANGO (dynamic)
+    // DATA — GALING SA DJANGO
     // =========================================================
-
-    const STUDENTS_KEY = "ainhs_attendance_demo_students";
-    const RECORDS_KEY = "ainhs_attendance_demo_records";
 
     const serverStudents = (function () {
         try {
@@ -247,48 +251,32 @@ document.addEventListener("DOMContentLoaded", function () {
     })();
 
     const CSRF_TOKEN = (function () {
-        const input = document.querySelector("input[name=csrfmiddlewaretoken]");
+        const input = document.querySelector(
+            "input[name=csrfmiddlewaretoken]"
+        );
         return input ? input.value : "";
     })();
 
     const $ = id => document.getElementById(id);
 
-    function loadStored(key, fallback) {
-        try {
-            const stored = localStorage.getItem(key);
-            if (stored === null) return fallback;
-            const parsed = JSON.parse(stored);
+    // =========================================================
+    // DJANGO URL
+    // =========================================================
 
-            if (Array.isArray(fallback)) {
-                return Array.isArray(parsed) ? parsed : fallback;
-            }
+    const SAVE_ATTENDANCE_URL = "{% url 'save_attendance' %}";
+    const BULK_ATTENDANCE_URL = "{% url 'bulk_attendance' %}";
+    const RESET_ATTENDANCE_URL = "{% url 'reset_attendance' %}";
 
-            return parsed && typeof parsed === "object" &&
-                   !Array.isArray(parsed) ? parsed : fallback;
-        } catch (error) {
-            return fallback;
-        }
-    }
+    // =========================================================
+    // DATA
+    // =========================================================
 
-    let students = serverStudents.length
-        ? serverStudents
-        : loadStored(STUDENTS_KEY, []);
-
-    let attendance = loadStored(RECORDS_KEY, {});
-
-    function persist() {
-        try {
-            localStorage.setItem(STUDENTS_KEY, JSON.stringify(students));
-            localStorage.setItem(RECORDS_KEY, JSON.stringify(attendance));
-            return true;
-        } catch (error) {
-            showToast("Changes could not be saved in this browser.", "error");
-            return false;
-        }
-    }
+    let students = serverStudents;
+    let attendance = {};
 
     function localDate() {
         const now = new Date();
+
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, "0");
         const day = String(now.getDate()).padStart(2, "0");
@@ -310,7 +298,8 @@ document.addEventListener("DOMContentLoaded", function () {
             timeInAM: "",
             timeOutAM: "",
             timeInPM: "",
-            timeOutPM: ""
+            timeOutPM: "",
+            status: ""
         };
     }
 
@@ -323,6 +312,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function getStatus(record) {
+
+        if (record.status) {
+            return record.status;
+        }
+
         return timeFields.some(field => Boolean(record[field]))
             ? "present"
             : "absent";
@@ -339,36 +333,124 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =========================================================
+    // LOAD ATTENDANCE FROM DJANGO DATABASE
+    // =========================================================
+
+    async function loadAttendanceFromDatabase(showError = true) {
+
+        const date = $("attDate").value || localDate();
+
+        try {
+
+            const response = await fetch(
+                `${SAVE_ATTENDANCE_URL}?date=${encodeURIComponent(date)}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+                throw new Error(
+                    data.error || "Failed to load attendance."
+                );
+            }
+
+            attendance = {};
+
+            (data.records || []).forEach(record => {
+
+                const key = recordKey(
+                    record.student_id,
+                    date
+                );
+
+                attendance[key] = {
+                    timeInAM: record.timeInAM || "",
+                    timeOutAM: record.timeOutAM || "",
+                    timeInPM: record.timeInPM || "",
+                    timeOutPM: record.timeOutPM || "",
+                    status: record.status || ""
+                };
+            });
+
+            renderAttendance();
+
+        } catch (error) {
+
+            console.error(
+                "Attendance database load error:",
+                error
+            );
+
+            if (showError) {
+                showToast(
+                    "Could not load attendance from database.",
+                    "error"
+                );
+            }
+        }
+    }
+
+    // =========================================================
     // FILTERING AND TABLE
     // =========================================================
 
     function getFilteredStudents() {
+
         const dept = $("filterDept").value;
         const grade = $("filterGrade").value;
-        const search = $("searchInput").value.trim().toLowerCase();
+        const search = $("searchInput")
+            .value
+            .trim()
+            .toLowerCase();
 
-        return students.filter(student => {
-            const studentDept = Number(student.grade) <= 10 ? "JHS" : "SHS";
+        return students
+            .filter(student => {
 
-            return (dept === "all" || dept === studentDept) &&
-                   (grade === "all" || grade === String(student.grade)) &&
-                   (
-                       !search ||
-                       student.name.toLowerCase().includes(search) ||
-                       String(student.section).toLowerCase().includes(search)
-                   );
-        }).sort((a, b) =>
-            Number(a.grade) - Number(b.grade) ||
-            a.name.localeCompare(b.name)
-        );
+                const studentDept =
+                    Number(student.grade) <= 10
+                        ? "JHS"
+                        : "SHS";
+
+                return (
+                    (dept === "all" || dept === studentDept) &&
+                    (grade === "all" ||
+                     grade === String(student.grade)) &&
+                    (
+                        !search ||
+                        String(student.name)
+                            .toLowerCase()
+                            .includes(search) ||
+                        String(student.section)
+                            .toLowerCase()
+                            .includes(search)
+                    )
+                );
+            })
+            .sort((a, b) =>
+                Number(a.grade) - Number(b.grade) ||
+                String(a.name).localeCompare(String(b.name))
+            );
     }
 
     function updateStats(filtered, date) {
+
         let present = 0;
         let absent = 0;
 
         filtered.forEach(student => {
-            if (getStatus(getRecord(student.id, date)) === "present") {
+
+            const record = getRecord(
+                student.id,
+                date
+            );
+
+            if (getStatus(record) === "present") {
                 present++;
             } else {
                 absent++;
@@ -381,261 +463,609 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function renderAttendance() {
+
         const filtered = getFilteredStudents();
         const date = $("attDate").value || localDate();
 
         $("resultCount").textContent =
-            `${filtered.length} student${filtered.length === 1 ? "" : "s"}`;
+            `${filtered.length} student${
+                filtered.length === 1 ? "" : "s"
+            }`;
 
         updateStats(filtered, date);
 
         if (!filtered.length) {
+
             $("attendanceBody").innerHTML = `
                 <tr>
                     <td colspan="7" class="attendance-empty-cell">
                         <i class="fas fa-users"></i>
-                        <span>No students found matching the filters.</span>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        $("attendanceBody").innerHTML = filtered.map(student => {
-            const record = getRecord(student.id, date);
-            const status = getStatus(record);
-
-            const timeCells = timeFields.map(field => `
-                <td>
-                    <input
-                        type="time"
-                        class="attendance-time-input"
-                        data-student-id="${student.id}"
-                        data-field="${field}"
-                        value="${escapeHTML(record[field] || "")}"
-                        aria-label="${field} for ${escapeHTML(student.name)}"
-                    >
-                </td>
-            `).join("");
-
-            return `
-                <tr>
-                    <td class="attendance-student-name">
-                        ${escapeHTML(student.name)}
-                    </td>
-                    <td class="attendance-grade-section">
-                        Grade ${escapeHTML(student.grade)} -
-                        ${escapeHTML(student.section)}
-                    </td>
-                    ${timeCells}
-                    <td>
-                        <span class="attendance-status-badge ${status}">
-                            ${status === "present" ? "Present" : "Absent"}
+                        <span>
+                            No students found matching the filters.
                         </span>
                     </td>
                 </tr>
             `;
-        }).join("");
+
+            return;
+        }
+
+        $("attendanceBody").innerHTML =
+            filtered.map(student => {
+
+                const record = getRecord(
+                    student.id,
+                    date
+                );
+
+                const status = getStatus(record);
+
+                const timeCells =
+                    timeFields.map(field => `
+                        <td>
+                            <input
+                                type="time"
+                                class="attendance-time-input"
+                                data-student-id="${student.id}"
+                                data-field="${field}"
+                                value="${escapeHTML(
+                                    record[field] || ""
+                                )}"
+                                aria-label="${escapeHTML(
+                                    field
+                                )} for ${escapeHTML(
+                                    student.name
+                                )}"
+                            >
+                        </td>
+                    `).join("");
+
+                return `
+                    <tr>
+                        <td class="attendance-student-name">
+                            ${escapeHTML(student.name)}
+                        </td>
+
+                        <td class="attendance-grade-section">
+                            Grade ${escapeHTML(student.grade)} -
+                            ${escapeHTML(student.section)}
+                        </td>
+
+                        ${timeCells}
+
+                        <td>
+                            <span class="attendance-status-badge ${status}">
+                                ${
+                                    status === "present"
+                                        ? "Present"
+                                        : "Absent"
+                                }
+                            </span>
+                        </td>
+                    </tr>
+                `;
+
+            }).join("");
     }
 
     // =========================================================
-    // SAVE — localStorage + AJAX
+    // MANUAL TIME SAVE — DJANGO DATABASE
     // =========================================================
 
-    $("attendanceBody").addEventListener("change", function (event) {
-        const input = event.target.closest(".attendance-time-input");
-        if (!input) return;
+    $("attendanceBody").addEventListener(
+        "change",
+        async function (event) {
 
-        const studentId = input.dataset.studentId;
-        const field = input.dataset.field;
-        const date = $("attDate").value || localDate();
+            const input =
+                event.target.closest(
+                    ".attendance-time-input"
+                );
 
-        if (!timeFields.includes(field)) return;
+            if (!input) return;
 
-        const key = recordKey(studentId, date);
-        attendance[key] = {
-            ...emptyRecord(),
-            ...(attendance[key] || {}),
-            [field]: input.value
-        };
+            const studentId =
+                input.dataset.studentId;
 
-        if (persist()) {
-            showToast("Attendance updated!", "success");
+            const field =
+                input.dataset.field;
+
+            const date =
+                $("attDate").value || localDate();
+
+            const value =
+                input.value;
+
+            if (!timeFields.includes(field)) {
+                return;
+            }
+
+            try {
+
+                const response = await fetch(
+                    SAVE_ATTENDANCE_URL,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+
+                            "X-CSRFToken":
+                                CSRF_TOKEN,
+
+                            "X-Requested-With":
+                                "XMLHttpRequest"
+                        },
+
+                        body: JSON.stringify({
+                            student_id: studentId,
+                            field: field,
+                            value: value,
+                            date: date
+                        })
+                    }
+                );
+
+                const data =
+                    await response.json();
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+                    throw new Error(
+                        data.error ||
+                        "Failed to save attendance."
+                    );
+                }
+
+                showToast(
+                    "Attendance saved to database!",
+                    "success"
+                );
+
+                await loadAttendanceFromDatabase(
+                    false
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Attendance save error:",
+                    error
+                );
+
+                showToast(
+                    error.message ||
+                    "Failed to save attendance.",
+                    "error"
+                );
+
+                await loadAttendanceFromDatabase(
+                    false
+                );
+            }
         }
+    );
 
-        if (window.SAVE_ATTENDANCE_URL) {
-            fetch(window.SAVE_ATTENDANCE_URL, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": CSRF_TOKEN,
-                },
-                body: JSON.stringify({
-                    student_id: studentId,
-                    field: field,
-                    value: input.value,
-                    date: date,
-                }),
-            }).catch(() => {});
-        }
+    // =========================================================
+    // FILTER EVENTS
+    // =========================================================
 
-        renderAttendance();
+    ["filterDept", "filterGrade"].forEach(id => {
+
+        $(id).addEventListener(
+            "change",
+            renderAttendance
+        );
     });
 
-    ["filterDept", "filterGrade", "attDate"].forEach(id => {
-        $(id).addEventListener("change", renderAttendance);
-    });
+    $("attDate").addEventListener(
+        "change",
+        function () {
 
-    $("searchInput").addEventListener("input", renderAttendance);
+            loadAttendanceFromDatabase();
+        }
+    );
+
+    $("searchInput").addEventListener(
+        "input",
+        renderAttendance
+    );
 
     // =========================================================
-    // BULK ACTIONS
+    // BULK ACTIONS — DJANGO DATABASE
     // =========================================================
 
-    function bulkUpdate(action) {
-        const filtered = getFilteredStudents();
-        const date = $("attDate").value || localDate();
+    async function bulkUpdate(action) {
+
+        const filtered =
+            getFilteredStudents();
+
+        const date =
+            $("attDate").value || localDate();
 
         if (!filtered.length) {
-            showToast("No students match the current filters.", "error");
+
+            showToast(
+                "No students match the current filters.",
+                "error"
+            );
+
             return;
         }
 
         const actionLabels = {
-            present: "mark all filtered students present",
-            absent: "mark all filtered students absent",
-            clear: "clear attendance times for all filtered students"
+            present:
+                "mark all filtered students present",
+
+            absent:
+                "mark all filtered students absent",
+
+            clear:
+                "clear attendance times for all filtered students"
         };
 
         if (!confirm(
-            `Are you sure you want to ${actionLabels[action]} on ${date}?`
-        )) return;
-
-        filtered.forEach(student => {
-            const key = recordKey(student.id, date);
-
-            if (action === "present") {
-                attendance[key] = {
-                    timeInAM: "07:30",
-                    timeOutAM: "11:30",
-                    timeInPM: "12:30",
-                    timeOutPM: "16:30"
-                };
-            } else {
-                attendance[key] = emptyRecord();
-            }
-        });
-
-        if (persist()) {
-            showToast(`${filtered.length} student records updated.`, "success");
+            `Are you sure you want to ${
+                actionLabels[action]
+            } on ${date}?`
+        )) {
+            return;
         }
 
-        renderAttendance();
+        try {
+
+            const response = await fetch(
+                BULK_ATTENDANCE_URL,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "X-CSRFToken":
+                            CSRF_TOKEN,
+
+                        "X-Requested-With":
+                            "XMLHttpRequest"
+                    },
+
+                    body: JSON.stringify({
+                        action: action,
+                        date: date,
+
+                        student_ids:
+                            filtered.map(
+                                student => student.id
+                            )
+                    })
+                }
+            );
+
+            const data =
+                await response.json();
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+                throw new Error(
+                    data.error ||
+                    "Bulk attendance failed."
+                );
+            }
+
+            showToast(
+                `${filtered.length} student records updated.`,
+                "success"
+            );
+
+            await loadAttendanceFromDatabase(
+                false
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Bulk attendance error:",
+                error
+            );
+
+            showToast(
+                error.message ||
+                "Failed to update attendance.",
+                "error"
+            );
+        }
     }
 
-    $("allPresentBtn").addEventListener("click", () => bulkUpdate("present"));
-    $("allAbsentBtn").addEventListener("click", () => bulkUpdate("absent"));
-    $("clearTimesBtn").addEventListener("click", () => bulkUpdate("clear"));
+    $("allPresentBtn").addEventListener(
+        "click",
+        () => bulkUpdate("present")
+    );
 
-    $("resetBtn").addEventListener("click", function () {
-        if (!confirm(
-            "Reset ALL attendance records for ALL dates? This cannot be undone."
-        )) return;
+    $("allAbsentBtn").addEventListener(
+        "click",
+        () => bulkUpdate("absent")
+    );
 
-        attendance = {};
+    $("clearTimesBtn").addEventListener(
+        "click",
+        () => bulkUpdate("clear")
+    );
 
-        if (persist()) {
-            showToast("All attendance records have been reset.", "success");
+    // =========================================================
+    // RESET ALL — DJANGO DATABASE
+    // =========================================================
+
+    $("resetBtn").addEventListener(
+        "click",
+        async function () {
+
+            if (!confirm(
+                "Reset ALL attendance records for ALL dates? This cannot be undone."
+            )) {
+                return;
+            }
+
+            try {
+
+                const response = await fetch(
+                    RESET_ATTENDANCE_URL,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+
+                            "X-CSRFToken":
+                                CSRF_TOKEN,
+
+                            "X-Requested-With":
+                                "XMLHttpRequest"
+                        },
+
+                        body: JSON.stringify({})
+                    }
+                );
+
+                const data =
+                    await response.json();
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+                    throw new Error(
+                        data.error ||
+                        "Failed to reset attendance."
+                    );
+                }
+
+                attendance = {};
+
+                showToast(
+                    "All attendance records have been reset.",
+                    "success"
+                );
+
+                renderAttendance();
+
+            } catch (error) {
+
+                console.error(
+                    "Reset attendance error:",
+                    error
+                );
+
+                showToast(
+                    error.message ||
+                    "Failed to reset attendance.",
+                    "error"
+                );
+            }
         }
-
-        renderAttendance();
-    });
+    );
 
     // =========================================================
     // ADD STUDENT MODAL
     // =========================================================
 
     function openModal() {
+
         $("addStudentForm").reset();
-        $("modalOverlay").classList.add("active");
-        $("modalOverlay").setAttribute("aria-hidden", "false");
+
+        $("modalOverlay").classList.add(
+            "active"
+        );
+
+        $("modalOverlay").setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
         $("formName").focus();
     }
 
     function closeModal() {
-        $("modalOverlay").classList.remove("active");
-        $("modalOverlay").setAttribute("aria-hidden", "true");
-    }
 
-    $("addStudentBtn").addEventListener("click", openModal);
-    $("cancelModalBtn").addEventListener("click", closeModal);
-
-    $("modalOverlay").addEventListener("click", function (event) {
-        if (event.target === this) closeModal();
-    });
-
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") closeModal();
-    });
-
-    $("addStudentForm").addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        if (!this.reportValidity()) return;
-
-        const name = $("formName").value.trim();
-        const grade = $("formGrade").value;
-        const section = $("formSection").value.trim();
-
-        if (!name || !section) {
-            showToast("Please enter the student's name and section.", "error");
-            return;
-        }
-
-        const duplicate = students.some(student =>
-            student.name.trim().toLowerCase() === name.toLowerCase() &&
-            String(student.grade) === grade &&
-            student.section.trim().toLowerCase() === section.toLowerCase()
+        $("modalOverlay").classList.remove(
+            "active"
         );
 
-        if (duplicate) {
-            showToast("Student already exists in this section.", "error");
-            return;
+        $("modalOverlay").setAttribute(
+            "aria-hidden",
+            "true"
+        );
+    }
+
+    $("addStudentBtn").addEventListener(
+        "click",
+        openModal
+    );
+
+    $("cancelModalBtn").addEventListener(
+        "click",
+        closeModal
+    );
+
+    $("modalOverlay").addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === this) {
+                closeModal();
+            }
         }
+    );
 
-        students.push({
-            id: Date.now() + Math.floor(Math.random() * 1000),
-            name,
-            grade,
-            section
-        });
+    document.addEventListener(
+        "keydown",
+        function (event) {
 
-        if (persist()) {
-            showToast(`Student "${name}" added to the demo list.`, "success");
+            if (event.key === "Escape") {
+                closeModal();
+            }
         }
+    );
 
-        renderAttendance();
-        closeModal();
-    });
+    $("addStudentForm").addEventListener(
+        "submit",
+        function (event) {
+
+            event.preventDefault();
+
+            if (!this.reportValidity()) {
+                return;
+            }
+
+            const name =
+                $("formName").value.trim();
+
+            const grade =
+                $("formGrade").value;
+
+            const section =
+                $("formSection").value.trim();
+
+            if (!name || !section) {
+
+                showToast(
+                    "Please enter the student's name and section.",
+                    "error"
+                );
+
+                return;
+            }
+
+            const duplicate =
+                students.some(student =>
+                    String(student.name)
+                        .trim()
+                        .toLowerCase() ===
+                    name.toLowerCase() &&
+
+                    String(student.grade) ===
+                    grade &&
+
+                    String(student.section)
+                        .trim()
+                        .toLowerCase() ===
+                    section.toLowerCase()
+                );
+
+            if (duplicate) {
+
+                showToast(
+                    "Student already exists in this section.",
+                    "error"
+                );
+
+                return;
+            }
+
+            students.push({
+                id:
+                    Date.now() +
+                    Math.floor(
+                        Math.random() * 1000
+                    ),
+
+                name,
+                grade,
+                section
+            });
+
+            showToast(
+                `Student "${name}" added to the demo list.`,
+                "success"
+            );
+
+            renderAttendance();
+            closeModal();
+        }
+    );
 
     // =========================================================
     // TOAST
     // =========================================================
 
-    function showToast(message, type = "success") {
-        const toast = $("attendanceToast");
+    function showToast(
+        message,
+        type = "success"
+    ) {
 
-        $("toastMessage").textContent = message;
-        toast.className = `attendance-toast show ${type}`;
+        const toast =
+            $("attendanceToast");
 
-        clearTimeout(toast.hideTimer);
+        $("toastMessage").textContent =
+            message;
 
-        toast.hideTimer = setTimeout(function () {
-            toast.classList.remove("show");
-        }, 2500);
+        toast.className =
+            `attendance-toast show ${type}`;
+
+        clearTimeout(
+            toast.hideTimer
+        );
+
+        toast.hideTimer =
+            setTimeout(function () {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            }, 2500);
     }
 
+    // =========================================================
+    // INITIAL LOAD
+    // =========================================================
+
     renderAttendance();
+
+    loadAttendanceFromDatabase(false);
+
+    // =========================================================
+    // AUTO REFRESH
+    // Para makita ang RFID scans sa admin page
+    // =========================================================
+
+    setInterval(function () {
+
+        if (
+            document.visibilityState ===
+            "visible"
+        ) {
+            loadAttendanceFromDatabase(false);
+        }
+
+    }, 3000);
+
 });
 </script>
+
 {% endblock %}

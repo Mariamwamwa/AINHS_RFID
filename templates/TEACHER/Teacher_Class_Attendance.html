@@ -8,6 +8,7 @@
 {% block page_subheading %}<p>Student Attendance Records</p>{% endblock %}
 
 {% block extra_css %}
+
 <link rel="stylesheet" href="{% static 'css/TEACHER/Teacher_Class_Attendance.css' %}">
 {% endblock %}
 
@@ -15,142 +16,485 @@
 
 <section class="teacher-attendance-page">
 
-    <div class="section-header">
-        <div class="section-heading">
-            <h2>Class Attendance</h2>
-            <p>View daily attendance records of your students.</p>
-        </div>
+<div class="section-header">
+    <div class="section-heading">
+        <h2>Class Attendance</h2>
+        <p>View daily attendance records of your students.</p>
+    </div>
 
-        <div class="date-selector">
-            <label for="attendanceDate">Date</label>
-            <input
-                type="date"
-                id="attendanceDate"
-                value="{{ selected_date|date:'Y-m-d' }}"
+    <div class="date-selector">
+
+        <label for="attendanceDate">Date</label>
+
+        <input
+            type="date"
+            id="attendanceDate"
+            value="{{ selected_date|date:'Y-m-d' }}"
+        >
+
+        <!-- =====================================================
+             EXPORT TO EXCEL — IDINAGDAG LANG
+        ====================================================== -->
+
+        <div
+            id="excelExportContainer"
+            style="position: relative; display: inline-block;"
+        >
+
+            <button
+                type="button"
+                id="excelExportButton"
+                style="
+                    height: 38px;
+                    padding: 0 14px;
+                    border: 1px solid #16a34a;
+                    border-radius: 8px;
+                    background: #16a34a;
+                    color: white;
+                    font-size: 12px;
+                    font-weight: 600;
+                    cursor: pointer;
+                "
             >
+                <i class="fa-solid fa-file-excel"></i>
+                Export to Excel
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+
+            <div
+                id="excelExportMenu"
+                style="
+                    display: none;
+                    position: absolute;
+                    top: 43px;
+                    right: 0;
+                    width: 180px;
+                    background: white;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+                    z-index: 9999;
+                    overflow: hidden;
+                "
+            >
+
+                <a
+                    href="#"
+                    id="dailyExcelExport"
+                    style="
+                        display: block;
+                        padding: 11px 13px;
+                        color: #333;
+                        text-decoration: none;
+                        font-size: 12px;
+                    "
+                >
+                    <i class="fa-solid fa-calendar-day"></i>
+                    &nbsp; Daily Report
+                </a>
+
+                <a
+                    href="#"
+                    id="weeklyExcelExport"
+                    style="
+                        display: block;
+                        padding: 11px 13px;
+                        color: #333;
+                        text-decoration: none;
+                        font-size: 12px;
+                    "
+                >
+                    <i class="fa-solid fa-calendar-week"></i>
+                    &nbsp; Weekly Report
+                </a>
+
+                <a
+                    href="#"
+                    id="monthlyExcelExport"
+                    style="
+                        display: block;
+                        padding: 11px 13px;
+                        color: #333;
+                        text-decoration: none;
+                        font-size: 12px;
+                    "
+                >
+                    <i class="fa-solid fa-calendar"></i>
+                    &nbsp; Monthly Report
+                </a>
+
+            </div>
+
         </div>
+
+    </div>
+</div>
+
+
+<!-- SUMMARY — DYNAMIC NA -->
+<div class="attendance-summary" id="attendanceSummary">
+
+    <div class="summary-card">
+
+        <div class="summary-icon purple">
+            <i class="fa-solid fa-users"></i>
+        </div>
+
+        <div class="summary-info">
+
+            <span>Total Students</span>
+
+            <strong>{{ total_students }}</strong>
+
+        </div>
+
     </div>
 
 
-    <!-- SUMMARY — DYNAMIC NA -->
-    <div class="attendance-summary" id="attendanceSummary">
-        <div class="summary-card">
-            <div class="summary-icon purple">
-                <i class="fa-solid fa-users"></i>
-            </div>
-            <div class="summary-info">
-                <span>Total Students</span>
-                <strong>{{ total_students }}</strong>
-            </div>
+    <div class="summary-card">
+
+        <div class="summary-icon blue">
+            <i class="fa-solid fa-user-check"></i>
         </div>
 
-        <div class="summary-card">
-            <div class="summary-icon blue">
-                <i class="fa-solid fa-user-check"></i>
-            </div>
-            <div class="summary-info">
-                <span>Total Present</span>
-                <strong>{{ total_present }}</strong>
-            </div>
+        <div class="summary-info">
+
+            <span>Total Present</span>
+
+            <strong>{{ total_present }}</strong>
+
         </div>
 
-        <div class="summary-card">
-            <div class="summary-icon red">
-                <i class="fa-solid fa-user-xmark"></i>
-            </div>
-            <div class="summary-info">
-                <span>Total Absent</span>
-                <strong>{{ total_absent }}</strong>
-            </div>
-        </div>
     </div>
 
 
-    <!-- TABLE — DYNAMIC NA -->
-    <div class="content-card attendance-record-card" id="attendanceRecordCard">
-        <div class="card-header">
-            <div>
-                <h3>Attendance Record</h3>
-                <p>{{ section_name }}</p>
-            </div>
+    <div class="summary-card">
+
+        <div class="summary-icon red">
+            <i class="fa-solid fa-user-xmark"></i>
         </div>
 
-        <div class="table-container large-table">
-            <table class="attendance-table">
-                <thead>
-                    <tr>
-                        <th>LRN</th>
-                        <th>Student Name</th>
-                        <th>Time In (AM)</th>
-                        <th>Time Out (AM)</th>
-                        <th>Time In (PM)</th>
-                        <th>Time Out (PM)</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for record in records %}
-                    <tr>
-                        <td>{{ record.student.lrn }}</td>
-                        <td>{{ record.student.full_name }}</td>
-                        <td>{{ record.time_in_am|time:"g:i A"|default:"—" }}</td>
-                        <td>{{ record.time_out_am|time:"g:i A"|default:"—" }}</td>
-                        <td>{{ record.time_in_pm|time:"g:i A"|default:"—" }}</td>
-                        <td>{{ record.time_out_pm|time:"g:i A"|default:"—" }}</td>
-                        <td>
-                            <span class="status {{ record.status|lower }}">
-                                {{ record.status }}
-                            </span>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="7" style="text-align:center; padding: 30px;">
-                            No attendance records found for this date.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="summary-info">
+
+            <span>Total Absent</span>
+
+            <strong>{{ total_absent }}</strong>
+
         </div>
+
+    </div>
+
+</div>
+
+
+<!-- TABLE — DYNAMIC NA -->
+<div
+    class="content-card attendance-record-card"
+    id="attendanceRecordCard"
+>
+
+    <div class="card-header">
+
+        <div>
+
+            <h3>Attendance Record</h3>
+
+            <p>{{ section_name }}</p>
+
+        </div>
+
     </div>
 
 
-    <!-- NO RECORDS — DYNAMIC NA -->
-    {% if not records %}
-    <div class="attendance-no-records show" id="attendanceNoRecords">
-        <i class="fa-regular fa-calendar-xmark"></i>
-        <strong>No records found</strong>
-        <span>No attendance record is available for the selected date.</span>
+    <div class="table-container large-table">
+
+        <table class="attendance-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>LRN</th>
+
+                    <th>Student Name</th>
+
+                    <th>Time In (AM)</th>
+
+                    <th>Time Out (AM)</th>
+
+                    <th>Time In (PM)</th>
+
+                    <th>Time Out (PM)</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for record in records %}
+
+                <tr>
+
+                    <td>
+                        {{ record.student.lrn }}
+                    </td>
+
+                    <td>
+                        {{ record.student.full_name }}
+                    </td>
+
+                    <td>
+                        {{ record.time_in_am|time:"g:i A"|default:"—" }}
+                    </td>
+
+                    <td>
+                        {{ record.time_out_am|time:"g:i A"|default:"—" }}
+                    </td>
+
+                    <td>
+                        {{ record.time_in_pm|time:"g:i A"|default:"—" }}
+                    </td>
+
+                    <td>
+                        {{ record.time_out_pm|time:"g:i A"|default:"—" }}
+                    </td>
+
+                    <td>
+
+                        <span class="status {{ record.status|lower }}">
+
+                            {{ record.status }}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        style="text-align:center; padding: 30px;"
+                    >
+                        No attendance records found for this date.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
     </div>
-    {% endif %}
+
+</div>
+
+
+<!-- NO RECORDS — DYNAMIC NA -->
+
+{% if not records %}
+
+<div
+    class="attendance-no-records show"
+    id="attendanceNoRecords"
+>
+
+    <i class="fa-regular fa-calendar-xmark"></i>
+
+    <strong>No records found</strong>
+
+    <span>
+        No attendance record is available for the selected date.
+    </span>
+
+</div>
+
+{% endif %}
 
 </section>
 
 {% endblock %}
 
-
 {% block extra_js %}
+
 <script>
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    const attendanceDate = document.getElementById("attendanceDate");
+    const attendanceDate =
+        document.getElementById("attendanceDate");
+
 
     // DYNAMIC — Galing sa Django
+
     const attendanceDatesWithRecords = new Set(
         {{ dates_with_records|safe }}
     );
-    
-    // ...
-    
+
+
+    // =========================================================
+    // EXISTING DATE CHANGE
+    // =========================================================
+
     if (attendanceDate) {
+
         attendanceDate.addEventListener("change", function () {
-            // I-reload ang page with the new date
-            const selectedDate = attendanceDate.value;
-            window.location.href = `?date=${selectedDate}`;
+
+            const selectedDate =
+                attendanceDate.value;
+
+            window.location.href =
+                `?date=${selectedDate}`;
+
         });
+
+    }
+
+
+    // =========================================================
+    // EXPORT TO EXCEL
+    // IDINAGDAG LANG
+    // =========================================================
+
+    const excelExportButton =
+        document.getElementById("excelExportButton");
+
+    const excelExportMenu =
+        document.getElementById("excelExportMenu");
+
+
+    if (excelExportButton && excelExportMenu) {
+
+        excelExportButton.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+                if (
+                    excelExportMenu.style.display === "block"
+                ) {
+
+                    excelExportMenu.style.display = "none";
+
+                } else {
+
+                    excelExportMenu.style.display = "block";
+
+                }
+
+            }
+        );
+
+
+        // Isara kapag nag-click sa labas
+
+        document.addEventListener(
+            "click",
+            function () {
+
+                excelExportMenu.style.display = "none";
+
+            }
+        );
+
+    }
+
+
+    // =========================================================
+    // DAILY
+    // =========================================================
+
+    const dailyExcelExport =
+        document.getElementById("dailyExcelExport");
+
+
+    if (dailyExcelExport) {
+
+        dailyExcelExport.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                const selectedDate =
+                    attendanceDate.value;
+
+                window.location.href =
+                    `/teacher/attendance/export/daily/?date=${selectedDate}`;
+
+            }
+        );
+
+    }
+
+
+    // =========================================================
+    // WEEKLY
+    // =========================================================
+
+    const weeklyExcelExport =
+        document.getElementById("weeklyExcelExport");
+
+
+    if (weeklyExcelExport) {
+
+        weeklyExcelExport.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                const selectedDate =
+                    attendanceDate.value;
+
+                window.location.href =
+                    `/teacher/attendance/export/weekly/?date=${selectedDate}`;
+
+            }
+        );
+
+    }
+
+
+    // =========================================================
+    // MONTHLY
+    // =========================================================
+
+    const monthlyExcelExport =
+        document.getElementById("monthlyExcelExport");
+
+
+    if (monthlyExcelExport) {
+
+        monthlyExcelExport.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                const selectedDate =
+                    attendanceDate.value;
+
+                window.location.href =
+                    `/teacher/attendance/export/monthly/?date=${selectedDate}`;
+
+            }
+        );
+
     }
 
 });
+
 </script>
+
 {% endblock %}
