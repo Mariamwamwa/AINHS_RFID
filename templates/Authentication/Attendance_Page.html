@@ -27,7 +27,7 @@ Attendance | AINHS Attendance System
 
 <main>
 
-```
+
 <section class="attendance-section">
 
 
@@ -35,24 +35,92 @@ Attendance | AINHS Attendance System
          WAITING / RFID INPUT
          ================================================= -->
 
-    <div
-        id="waitingState"
-        class="waiting-state"
-    >
+<div
+    id="waitingState"
+    class="waiting-state"
+>
 
-        <span class="material-icons">
-            contactless
-        </span>
+    <div class="scanner-card">
+
+        <!-- =================================================
+             SCANNER ICON
+             ================================================= -->
+
+        <div class="scanner-icon">
+
+            <span class="material-icons">
+                contactless
+            </span>
+
+        </div>
 
 
-        <p>
-            Waiting for RFID card...
-        </p>
+        <!-- =================================================
+             SCANNER TITLE
+             ================================================= -->
+
+        <div class="scanner-heading">
+
+            <h1>
+                RFID Attendance Scanner
+            </h1>
+
+            <p>
+                Waiting for RFID card...
+            </p>
+
+            <span class="waiting-subtext">
+                Tap your RFID card to record attendance
+            </span>
+
+        </div>
 
 
-        <span class="waiting-subtext">
-            Tap your RFID card to record attendance
-        </span>
+        <!-- =================================================
+             ATTENDANCE TYPE
+             No function yet
+             ================================================= -->
+
+        <div class="attendance-type-section">
+
+            <span class="attendance-type-label">
+                Attendance Type
+            </span>
+
+            <div class="attendance-type-buttons">
+
+                <button
+                    type="button"
+                    class="attendance-type-btn time-in-btn"
+                    id="timeInBtn"
+                >
+
+                    <span class="material-icons">
+                        login
+                    </span>
+
+                    IN
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="attendance-type-btn time-out-btn"
+                    id="timeOutBtn"
+                >
+
+                    <span class="material-icons">
+                        logout
+                    </span>
+
+                    OUT
+
+                </button>
+
+            </div>
+
+        </div>
 
 
         <!-- =================================================
@@ -64,6 +132,11 @@ Attendance | AINHS Attendance System
             class="manual-rfid-container"
         >
 
+            <div class="manual-rfid-divider">
+                RFID CARD
+            </div>
+
+
             <label for="rfidInput">
                 Enter RFID ID
             </label>
@@ -71,15 +144,23 @@ Attendance | AINHS Attendance System
 
             <div class="manual-rfid-input-group">
 
-                <input
-                    type="text"
-                    id="rfidInput"
-                    class="manual-rfid-input"
-                    placeholder="Enter RFID card ID"
-                    autocomplete="off"
-                    inputmode="numeric"
-                    autofocus
-                >
+                <div class="manual-rfid-field">
+
+                    <span class="material-icons">
+                        badge
+                    </span>
+
+                    <input
+                        type="text"
+                        id="rfidInput"
+                        class="manual-rfid-input"
+                        placeholder="Enter RFID card ID"
+                        autocomplete="off"
+                        inputmode="numeric"
+                        autofocus
+                    >
+
+                </div>
 
 
                 <button
@@ -100,8 +181,26 @@ Attendance | AINHS Attendance System
 
         </div>
 
+
+        <!-- =================================================
+             SCANNER FOOTER / HINT
+             ================================================= -->
+
+        <div class="scanner-hint">
+
+            <span class="material-icons">
+                info
+            </span>
+
+            <span>
+                Place the RFID card near the reader or enter the card ID manually.
+            </span>
+
+        </div>
+
     </div>
 
+</div>
 
 
     <!-- =================================================
@@ -356,7 +455,7 @@ Attendance | AINHS Attendance System
 
 
 </section>
-```
+
 
 </main>
 

@@ -780,22 +780,27 @@ def edit_student(request, student_id):
             student.department
         )
 
+# ============================================
+# AUTOMATIC ADVISER
+# BASED ON GRADE + SECTION
+# ============================================
 
-    # ============================================
-    # AUTOMATIC ADVISER
-    # BASED ON GRADE + SECTION
-    # ============================================
+    student.adviser = None
 
     if student.grade and student.section:
 
         class_obj = Class.objects.filter(
             grade=student.grade,
             section__iexact=student.section,
-        ).select_related('teacher').first()
+        ).select_related(
+            'teacher'
+        ).first()
 
         if class_obj and class_obj.teacher:
-            student.adviser = class_obj.teacher
 
+            student.adviser = (
+                class_obj.teacher
+            )
 
     # ============================================
     # SAVE TO DATABASE
@@ -841,65 +846,1167 @@ def delete_student(request, student_id):
 # ADMIN — CLASSES
 # =====================================================
 
+# =====================================================
+# ADMIN — CLASSES
+# =====================================================
+
 @login_required
 def admin_classes(request):
+
     admin_dept = get_admin_department(request)
 
-    classes = Class.objects.select_related('teacher').all()
-    teachers = Teacher.objects.all().order_by('last_name', 'first_name')
+    classes = (
+        Class.objects
+        .select_related('teacher')
+        .all()
+        .order_by('grade', 'section')
+    )
+
+    teachers = (
+        Teacher.objects
+        .all()
+        .order_by('last_name', 'first_name')
+    )
 
     if admin_dept:
-        classes = classes.filter(department=admin_dept)
-        teachers = teachers.filter(department=admin_dept)
+
+        classes = classes.filter(
+            department=admin_dept
+        )
+
+        teachers = teachers.filter(
+            department=admin_dept
+        )
 
     total_sections = classes.count()
 
-    total_students = Student.objects.filter(is_active=True)
+    total_students_qs = Student.objects.filter(
+        is_active=True
+    )
+
     if admin_dept:
-        total_students = total_students.filter(department=admin_dept)
-    total_students = total_students.count()
 
-    total_teachers = classes.exclude(teacher__isnull=True).values('teacher').distinct().count()
-    total_jhs = classes.filter(department='JHS').count()
-    total_shs = classes.filter(department='SHS').count()
+        total_students_qs = total_students_qs.filter(
+            department=admin_dept
+        )
 
-    classes_data = [
-        {
-            'id': c.id,
-            'grade': c.grade.replace('Grade ', '').strip(),
-            'section': c.section,
-            'teacher': (
-                f"{c.teacher.first_name} {c.teacher.last_name}".strip()
-                if c.teacher else ''
-            ),
-            'teacherId': c.teacher.id if c.teacher else '',
-            'students': Student.objects.filter(
-                grade=c.grade, section=c.section, department=c.department
-            ).count(),
-            'department': c.department,
-        }
-        for c in classes
-    ]
+    total_students = total_students_qs.count()
 
-    teachers_data = [
-        {'id': t.id, 'name': f"{t.last_name}, {t.first_name}"}
-        for t in teachers
-    ]
+    total_teachers = (
+        classes
+        .exclude(teacher__isnull=True)
+        .values('teacher')
+        .distinct()
+        .count()
+    )
+
+    total_jhs = classes.filter(
+        department='JHS'
+    ).count()
+
+    total_shs = classes.filter(
+        department='SHS'
+    ).count()
+
+    # =================================================
+    # CLASS DATA
+    # =================================================
+
+    classes_data = []
+
+    for class_obj in classes:
+
+        student_count = Student.objects.filter(
+            grade=class_obj.grade,
+            section=class_obj.section,
+            department=class_obj.department,
+            is_active=True,
+        ).count()
+
+        classes_data.append({
+
+            'id':
+                class_obj.id,
+
+            'grade':
+                class_obj.grade.replace(
+                    'Grade ',
+                    ''
+                ).strip(),
+
+            'section':
+                class_obj.section,
+
+            'teacher':
+                (
+                    f"{class_obj.teacher.first_name} "
+                    f"{class_obj.teacher.last_name}"
+                ).strip()
+                if class_obj.teacher
+                else '',
+
+            'teacherId':
+                class_obj.teacher.id
+                if class_obj.teacher
+                else '',
+
+            'students':
+                student_count,
+
+            'department':
+                class_obj.department,
+
+            'assigned':
+                class_obj.teacher is not None,
+
+        })
+
+    # =================================================
+    # TEACHER DATA
+    # =================================================
+
+    teachers_data = []
+
+    for teacher in teachers:
+
+        existing_class = (
+            Class.objects
+            .filter(teacher=teacher)
+            .first()
+        )
+
+        teachers_data.append({
+
+            'id':
+                teacher.id,
+
+            'name':
+                f"{teacher.last_name}, "
+                f"{teacher.first_name}",
+
+            'department':
+                teacher.department,
+
+            'assigned':
+                existing_class is not None,
+
+            'classId':
+                existing_class.id
+                if existing_class
+                else None,
+
+        })
 
     context = {
-        'classes_json': classes_data,
-        'teachers_json': teachers_data,
-        'total_sections': total_sections,
-        'total_students': total_students,
-        'total_teachers': total_teachers,
-        'total_jhs': total_jhs,
-        'total_shs': total_shs,
-        'teachers': teachers,
-        'admin_dept': admin_dept,
+
+        'classes_json':
+            classes_data,
+
+        'teachers_json':
+            teachers_data,
+
+        'total_sections':
+            total_sections,
+
+        'total_students':
+            total_students,
+
+        'total_teachers':
+            total_teachers,
+
+        'total_jhs':
+            total_jhs,
+
+        'total_shs':
+            total_shs,
+
+        'teachers':
+            teachers,
+
+        'admin_dept':
+            admin_dept,
+
     }
-    return render(request, 'ADMIN/Admin_Classes.html', context)
+
+    return render(
+        request,
+        'ADMIN/Admin_Classes.html',
+        context
+    )
 
 
+# =====================================================
+# ADMIN — ADD SECTION
+# =====================================================
+
+@login_required
+@csrf_protect
+@require_http_methods(["POST"])
+def add_class(request):
+
+    try:
+
+        payload = json.loads(
+            request.body
+        )
+
+    except json.JSONDecodeError:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error': 'Invalid JSON.'
+            },
+            status=400
+        )
+
+    admin_dept = get_admin_department(
+        request
+    )
+
+    grade = (
+        payload
+        .get('grade', '')
+        .strip()
+    )
+
+    section = (
+        payload
+        .get('section', '')
+        .strip()
+    )
+
+    # =================================================
+    # REQUIRED FIELDS
+    # =================================================
+
+    if not grade or not section:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Grade and Section Name are required.'
+            },
+            status=400
+        )
+
+    # =================================================
+    # VALIDATE GRADE
+    # =================================================
+
+    try:
+
+        grade_num = int(
+            grade
+            .replace('Grade ', '')
+            .strip()
+        )
+
+    except ValueError:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error': 'Invalid grade.'
+            },
+            status=400
+        )
+
+    if grade_num not in (
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+    ):
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Grade must be from Grade 7 to Grade 12.'
+            },
+            status=400
+        )
+
+    # =================================================
+    # AUTOMATIC DEPARTMENT
+    # =================================================
+
+    if grade_num in (
+        7,
+        8,
+        9,
+        10
+    ):
+
+        department = 'JHS'
+
+    else:
+
+        department = 'SHS'
+
+    # =================================================
+    # ADMIN DEPARTMENT SECURITY
+    # =================================================
+
+    if (
+        admin_dept
+        and
+        department != admin_dept
+    ):
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    f'You can only manage '
+                    f'{admin_dept} sections.'
+            },
+            status=403
+        )
+
+    # =================================================
+    # DUPLICATE SECTION CHECK
+    # =================================================
+
+    duplicate = Class.objects.filter(
+        grade=grade,
+        section__iexact=section
+    ).exists()
+
+    if duplicate:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    f'Section "{section}" '
+                    f'already exists in {grade}.'
+            },
+            status=400
+        )
+
+    # =================================================
+    # CREATE UNASSIGNED SECTION
+    # =================================================
+
+    class_obj = Class.objects.create(
+
+        department=department,
+
+        grade=grade,
+
+        section=section,
+
+        teacher=None,
+
+    )
+
+    return JsonResponse({
+
+        'success':
+            True,
+
+        'message':
+            'Section added successfully.',
+
+        'class': {
+
+            'id':
+                class_obj.id,
+
+            'grade':
+                str(grade_num),
+
+            'section':
+                class_obj.section,
+
+            'teacher':
+                '',
+
+            'teacherId':
+                '',
+
+            'students':
+                0,
+
+            'department':
+                class_obj.department,
+
+            'assigned':
+                False,
+
+        }
+
+    })
+
+
+# =====================================================
+# ADMIN — ASSIGN CLASS
+# =====================================================
+
+@login_required
+@csrf_protect
+@require_http_methods(["POST"])
+def assign_class(
+    request,
+    class_id
+):
+
+    try:
+
+        class_obj = (
+            Class.objects
+            .select_related('teacher')
+            .get(id=class_id)
+        )
+
+    except Class.DoesNotExist:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Section not found.'
+            },
+            status=404
+        )
+
+    admin_dept = get_admin_department(
+        request
+    )
+
+    # =================================================
+    # ADMIN SECURITY
+    # =================================================
+
+    if (
+        admin_dept
+        and
+        class_obj.department != admin_dept
+    ):
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Not authorized for this department.'
+            },
+            status=403
+        )
+
+    # =================================================
+    # SECTION MUST BE UNASSIGNED
+    # =================================================
+
+    if class_obj.teacher:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'This section already has an adviser.'
+            },
+            status=400
+        )
+
+    try:
+
+        payload = json.loads(
+            request.body
+        )
+
+    except json.JSONDecodeError:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Invalid JSON.'
+            },
+            status=400
+        )
+
+    teacher_id = payload.get(
+        'teacherId'
+    )
+
+    if not teacher_id:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Please select a teacher.'
+            },
+            status=400
+        )
+
+    # =================================================
+    # GET TEACHER
+    # =================================================
+
+    try:
+
+        teacher = Teacher.objects.get(
+            id=teacher_id
+        )
+
+    except Teacher.DoesNotExist:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Teacher not found.'
+            },
+            status=404
+        )
+
+    # =================================================
+    # GRADE → REQUIRED DEPARTMENT
+    # =================================================
+
+    try:
+
+        grade_num = int(
+            class_obj.grade
+            .replace('Grade ', '')
+            .strip()
+        )
+
+    except ValueError:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Invalid section grade.'
+            },
+            status=400
+        )
+
+    required_department = (
+        'JHS'
+        if grade_num in (
+            7,
+            8,
+            9,
+            10
+        )
+        else
+        'SHS'
+    )
+
+    # =================================================
+    # TEACHER DEPARTMENT VALIDATION
+    # =================================================
+
+    if (
+        teacher.department
+        !=
+        required_department
+    ):
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    (
+                        f'{class_obj.grade} requires '
+                        f'a {required_department} teacher.'
+                    )
+            },
+            status=400
+        )
+
+    if (
+        admin_dept
+        and
+        teacher.department != admin_dept
+    ):
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'You can only assign teachers '
+                    'from your department.'
+            },
+            status=403
+        )
+
+    # =================================================
+    # ONE CLASS PER TEACHER
+    # =================================================
+
+    existing_class = (
+        Class.objects
+        .filter(teacher=teacher)
+        .first()
+    )
+
+    if existing_class:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    (
+                        f'Teacher '
+                        f'{teacher.first_name} '
+                        f'{teacher.last_name} '
+                        f'is already assigned to '
+                        f'{existing_class.grade} - '
+                        f'{existing_class.section}.'
+                    )
+            },
+            status=400
+        )
+
+    # =================================================
+    # ASSIGN TEACHER
+    # =================================================
+
+    class_obj.teacher = teacher
+
+    class_obj.save(
+        update_fields=[
+            'teacher',
+            'updated_at'
+        ]
+    )
+
+    # =================================================
+    # UPDATE TEACHER PROFILE
+    # =================================================
+
+    teacher.grade = (
+        class_obj.grade
+    )
+
+    teacher.section = (
+        class_obj.section
+    )
+
+    teacher.department = (
+        class_obj.department
+    )
+
+    teacher.save()
+
+    # =================================================
+    # UPDATE STUDENTS IN THIS SECTION
+    # =================================================
+
+    Student.objects.filter(
+
+        grade=class_obj.grade,
+
+        section__iexact=class_obj.section,
+
+        department=class_obj.department,
+
+    ).update(
+        adviser=teacher
+    )
+
+    return JsonResponse({
+
+        'success':
+            True,
+
+        'message':
+            'Class assigned successfully.',
+
+        'class': {
+
+            'id':
+                class_obj.id,
+
+            'teacher':
+                (
+                    f"{teacher.first_name} "
+                    f"{teacher.last_name}"
+                ).strip(),
+
+            'teacherId':
+                teacher.id,
+
+            'assigned':
+                True,
+
+        }
+
+    })
+
+
+# =====================================================
+# ADMIN — EDIT SECTION NAME
+# =====================================================
+
+@login_required
+@csrf_protect
+@require_http_methods(["POST"])
+def edit_class(
+    request,
+    class_id
+):
+
+    try:
+
+        class_obj = (
+            Class.objects
+            .select_related('teacher')
+            .get(id=class_id)
+        )
+
+    except Class.DoesNotExist:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Section not found.'
+            },
+            status=404
+        )
+
+    admin_dept = get_admin_department(
+        request
+    )
+
+    if (
+        admin_dept
+        and
+        class_obj.department != admin_dept
+    ):
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Not authorized for this department.'
+            },
+            status=403
+        )
+
+    try:
+
+        payload = json.loads(
+            request.body
+        )
+
+    except json.JSONDecodeError:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Invalid JSON.'
+            },
+            status=400
+        )
+
+    new_section = (
+        payload
+        .get('section', '')
+        .strip()
+    )
+
+    if not new_section:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Section Name is required.'
+            },
+            status=400
+        )
+
+    # =================================================
+    # DUPLICATE PROTECTION
+    # =================================================
+
+    duplicate = (
+        Class.objects
+        .filter(
+            grade=class_obj.grade,
+            section__iexact=new_section
+        )
+        .exclude(
+            id=class_obj.id
+        )
+        .exists()
+    )
+
+    if duplicate:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    (
+                        f'Section "{new_section}" '
+                        f'already exists in '
+                        f'{class_obj.grade}.'
+                    )
+            },
+            status=400
+        )
+
+    old_section = (
+        class_obj.section
+    )
+
+    # Nothing changed.
+    if (
+        old_section.strip().lower()
+        ==
+        new_section.strip().lower()
+    ):
+
+        return JsonResponse({
+
+            'success':
+                True,
+
+            'message':
+                'No changes were made.',
+
+            'class': {
+
+                'id':
+                    class_obj.id,
+
+                'section':
+                    class_obj.section,
+
+            }
+
+        })
+
+    # =================================================
+    # UPDATE STUDENT SECTION NAMES
+    # =================================================
+
+    Student.objects.filter(
+
+        grade=class_obj.grade,
+
+        section__iexact=old_section,
+
+        department=class_obj.department,
+
+    ).update(
+        section=new_section
+    )
+
+    # =================================================
+    # UPDATE CLASS
+    # =================================================
+
+    class_obj.section = (
+        new_section
+    )
+
+    class_obj.save()
+
+    # =================================================
+    # UPDATE ASSIGNED TEACHER PROFILE
+    # =================================================
+
+    if class_obj.teacher:
+
+        class_obj.teacher.section = (
+            new_section
+        )
+
+        class_obj.teacher.save(
+            update_fields=[
+                'section',
+                'updated_at'
+            ]
+        )
+
+    return JsonResponse({
+
+        'success':
+            True,
+
+        'message':
+            'Section name updated successfully.',
+
+        'class': {
+
+            'id':
+                class_obj.id,
+
+            'section':
+                class_obj.section,
+
+        }
+
+    })
+
+
+# =====================================================
+# ADMIN — UNASSIGN CLASS
+# =====================================================
+
+@login_required
+@csrf_protect
+@require_http_methods(["POST"])
+def unassign_class(
+    request,
+    class_id
+):
+
+    try:
+
+        class_obj = (
+            Class.objects
+            .select_related('teacher')
+            .get(id=class_id)
+        )
+
+    except Class.DoesNotExist:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Section not found.'
+            },
+            status=404
+        )
+
+    admin_dept = get_admin_department(
+        request
+    )
+
+    if (
+        admin_dept
+        and
+        class_obj.department != admin_dept
+    ):
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Not authorized for this department.'
+            },
+            status=403
+        )
+
+    if not class_obj.teacher:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'This section has no assigned adviser.'
+            },
+            status=400
+        )
+
+    teacher = (
+        class_obj.teacher
+    )
+
+    # =================================================
+    # REMOVE ADVISER FROM STUDENTS
+    # =================================================
+
+    Student.objects.filter(
+
+        grade=class_obj.grade,
+
+        section__iexact=class_obj.section,
+
+        department=class_obj.department,
+
+        adviser=teacher,
+
+    ).update(
+        adviser=None
+    )
+
+    # =================================================
+    # REMOVE CLASS FROM TEACHER
+    # =================================================
+
+    teacher.grade = None
+    teacher.section = None
+
+    teacher.save(
+        update_fields=[
+            'grade',
+            'section',
+            'updated_at'
+        ]
+    )
+
+    # =================================================
+    # KEEP SECTION — REMOVE ONLY TEACHER
+    # =================================================
+
+    class_obj.teacher = None
+
+    class_obj.save(
+        update_fields=[
+            'teacher',
+            'updated_at'
+        ]
+    )
+
+    return JsonResponse({
+
+        'success':
+            True,
+
+        'message':
+            'Teacher unassigned successfully.',
+
+        'class': {
+
+            'id':
+                class_obj.id,
+
+            'teacher':
+                '',
+
+            'teacherId':
+                '',
+
+            'assigned':
+                False,
+
+        }
+
+    })
+
+
+# =====================================================
+# ADMIN — DELETE SECTION
+# =====================================================
+
+@login_required
+@csrf_protect
+@require_http_methods(["POST"])
+def delete_class(
+    request,
+    class_id
+):
+
+    try:
+
+        class_obj = (
+            Class.objects
+            .select_related('teacher')
+            .get(id=class_id)
+        )
+
+    except Class.DoesNotExist:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Section not found.'
+            },
+            status=404
+        )
+
+    admin_dept = get_admin_department(
+        request
+    )
+
+    if (
+        admin_dept
+        and
+        class_obj.department != admin_dept
+    ):
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    'Not authorized for this department.'
+            },
+            status=403
+        )
+
+    # =================================================
+    # DO NOT DELETE SECTION WITH STUDENTS
+    # =================================================
+
+    student_count = Student.objects.filter(
+
+        grade=class_obj.grade,
+
+        section__iexact=class_obj.section,
+
+        department=class_obj.department,
+
+    ).count()
+
+    if student_count > 0:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error':
+                    (
+                        f'Cannot delete this section because '
+                        f'it still contains {student_count} '
+                        f'student(s).'
+                    )
+            },
+            status=400
+        )
+
+    # =================================================
+    # CLEAR TEACHER ASSIGNMENT
+    # =================================================
+
+    if class_obj.teacher:
+
+        teacher = (
+            class_obj.teacher
+        )
+
+        teacher.grade = None
+        teacher.section = None
+
+        teacher.save(
+            update_fields=[
+                'grade',
+                'section',
+                'updated_at'
+            ]
+        )
+
+    # =================================================
+    # DELETE SECTION
+    # =================================================
+
+    class_obj.delete()
+
+    return JsonResponse({
+
+        'success':
+            True,
+
+        'message':
+            'Section deleted successfully.'
+
+    })
 # =====================================================
 # ADMIN — ADD CLASS
 # =====================================================

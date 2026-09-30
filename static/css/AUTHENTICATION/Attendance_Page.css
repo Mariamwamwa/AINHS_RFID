@@ -1897,3 +1897,828 @@ footer span {
     }
 
 }
+
+/* =========================================================
+   RFID SCANNER CARD
+   ========================================================= */
+
+.scanner-card {
+
+    width: 100%;
+    max-width: 620px;
+
+    padding: 34px 42px;
+
+    background: rgba(255, 255, 255, 0.97);
+
+    border:
+        1px solid
+        rgba(111, 66, 193, 0.10);
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 20px 50px
+        rgba(0, 0, 0, 0.10);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+
+/* =========================================================
+   SCANNER ICON
+   ========================================================= */
+
+.scanner-icon {
+
+    width: 74px;
+    height: 74px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 16px;
+
+    border-radius: 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(111, 66, 193, 0.12),
+            rgba(0, 123, 255, 0.10)
+        );
+
+    border:
+        1px solid
+        rgba(111, 66, 193, 0.10);
+
+}
+
+
+.scanner-icon .material-icons {
+
+    margin: 0;
+
+    font-size: 42px;
+
+    color:
+        var(--primary-purple);
+
+    opacity: 1;
+
+}
+
+
+/* =========================================================
+   SCANNER HEADING
+   ========================================================= */
+
+.scanner-heading {
+
+    width: 100%;
+
+    text-align: center;
+
+}
+
+
+.scanner-heading h1 {
+
+    margin: 0 0 7px;
+
+    color:
+        var(--dark);
+
+    font-size: 25px;
+    font-weight: 700;
+
+}
+
+
+.scanner-heading p {
+
+    margin: 0 0 4px;
+
+    color:
+        var(--primary-blue);
+
+    font-size: 15px;
+    font-weight: 700;
+
+}
+
+
+.scanner-heading .waiting-subtext {
+
+    display: block;
+
+    color:
+        var(--gray);
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================================
+   ATTENDANCE TYPE
+   ========================================================= */
+
+.attendance-type-section {
+
+    width: 100%;
+
+    margin-top: 25px;
+
+}
+
+
+.attendance-type-label {
+
+    display: block;
+
+    margin-bottom: 9px;
+
+    color:
+        var(--dark);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    text-align: left;
+
+}
+
+
+.attendance-type-buttons {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+}
+
+
+/* =========================================================
+   IN / OUT BUTTONS
+   ========================================================= */
+
+.attendance-type-btn {
+
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border:
+        1px solid
+        #dce3eb;
+
+    border-radius: 11px;
+
+    background:
+        #ffffff;
+
+    color:
+        var(--dark);
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.attendance-type-btn .material-icons {
+
+    margin: 0;
+
+    font-size: 20px;
+
+    opacity: 1;
+
+}
+
+
+/* =========================================================
+   TIME IN
+   ========================================================= */
+
+.time-in-btn {
+
+    color: #198754;
+
+    border-color:
+        rgba(25, 135, 84, 0.25);
+
+    background:
+        rgba(25, 135, 84, 0.05);
+
+}
+
+
+.time-in-btn .material-icons {
+
+    color: #198754;
+
+}
+
+
+.time-in-btn:hover {
+
+    background:
+        rgba(25, 135, 84, 0.10);
+
+    border-color:
+        #198754;
+
+    box-shadow:
+        0 5px 15px
+        rgba(25, 135, 84, 0.12);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+/* =========================================================
+   TIME OUT
+   ========================================================= */
+
+.time-out-btn {
+
+    color: #dc3545;
+
+    border-color:
+        rgba(220, 53, 69, 0.25);
+
+    background:
+        rgba(220, 53, 69, 0.05);
+
+}
+
+
+.time-out-btn .material-icons {
+
+    color: #dc3545;
+
+}
+
+
+.time-out-btn:hover {
+
+    background:
+        rgba(220, 53, 69, 0.10);
+
+    border-color:
+        #dc3545;
+
+    box-shadow:
+        0 5px 15px
+        rgba(220, 53, 69, 0.12);
+
+    transform:
+        translateY(-1px);
+
+}
+
+
+/* =========================================================
+   MANUAL RFID INSIDE SCANNER CARD
+   ========================================================= */
+
+.scanner-card .manual-rfid-container {
+
+    width: 100%;
+    max-width: none;
+
+    margin:
+        25px 0 0;
+
+}
+
+
+.scanner-card .manual-rfid-container label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color:
+        var(--dark);
+
+    font-size: 13px;
+    font-weight: 700;
+
+}
+
+
+/* =========================================================
+   RFID DIVIDER
+   ========================================================= */
+
+.scanner-card .manual-rfid-divider {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    margin-bottom: 17px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: 1.3px;
+
+}
+
+
+.scanner-card .manual-rfid-divider::before,
+.scanner-card .manual-rfid-divider::after {
+
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background:
+        rgba(148, 163, 184, 0.30);
+
+}
+
+
+/* =========================================================
+   RFID INPUT GROUP
+   ========================================================= */
+
+.scanner-card .manual-rfid-input-group {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+
+/* =========================================================
+   RFID FIELD
+   ========================================================= */
+
+.scanner-card .manual-rfid-field {
+
+    flex: 1;
+
+    min-width: 0;
+
+    height: 50px;
+
+    display: flex;
+    align-items: center;
+
+    padding:
+        0 14px;
+
+    border:
+        1px solid
+        #d6dbe1;
+
+    border-radius: 10px;
+
+    background:
+        #ffffff;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.scanner-card .manual-rfid-field:focus-within {
+
+    border-color:
+        var(--primary-blue);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(0, 123, 255, 0.10);
+
+}
+
+
+.scanner-card .manual-rfid-field > .material-icons {
+
+    margin: 0 10px 0 0;
+
+    color: #64748b;
+
+    font-size: 21px;
+
+    opacity: 1;
+
+}
+
+
+/* =========================================================
+   RFID INPUT
+   ========================================================= */
+
+.scanner-card .manual-rfid-input {
+
+    width: 100%;
+    height: 100%;
+
+    padding: 0;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color:
+        var(--dark);
+
+    font-size: 15px;
+    font-weight: 500;
+
+}
+
+
+.scanner-card .manual-rfid-input:focus {
+
+    border: none;
+
+    box-shadow: none;
+
+}
+
+
+.scanner-card .manual-rfid-input::placeholder {
+
+    color: #94a3b8;
+
+}
+
+
+/* =========================================================
+   ENTER BUTTON
+   ========================================================= */
+
+.scanner-card .rfid-enter-btn {
+
+    height: 50px;
+
+    padding:
+        0 22px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background:
+        var(--primary-blue);
+
+    color:
+        #ffffff;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.scanner-card .rfid-enter-btn:hover {
+
+    background: #0069d9;
+
+    box-shadow:
+        0 6px 18px
+        rgba(0, 123, 255, 0.25);
+
+}
+
+
+.scanner-card .rfid-enter-btn:active {
+
+    transform:
+        scale(0.97);
+
+}
+
+
+.scanner-card .rfid-enter-btn .material-icons {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 19px;
+
+    opacity: 1;
+
+}
+
+
+/* =========================================================
+   SCANNER HINT
+   ========================================================= */
+
+.scanner-hint {
+
+    width: 100%;
+
+    margin-top: 18px;
+
+    padding-top: 15px;
+
+    border-top:
+        1px solid
+        #edf0f3;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    color:
+        var(--gray);
+
+    font-size: 10px;
+
+    line-height: 1.4;
+
+}
+
+
+.scanner-hint .material-icons {
+
+    margin: 0;
+
+    color:
+        var(--primary-blue);
+
+    font-size: 15px;
+
+    opacity: 0.75;
+
+}
+
+
+/* =========================================================
+   MOBILE SCANNER
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .scanner-card {
+
+        max-width: 520px;
+
+        padding:
+            24px 20px;
+
+        border-radius: 18px;
+
+    }
+
+
+    .scanner-icon {
+
+        width: 58px;
+        height: 58px;
+
+        margin-bottom: 12px;
+
+        border-radius: 15px;
+
+    }
+
+
+    .scanner-icon .material-icons {
+
+        font-size: 32px;
+
+    }
+
+
+    .scanner-heading h1 {
+
+        font-size: 21px;
+
+    }
+
+
+    .scanner-heading p {
+
+        font-size: 13px;
+
+    }
+
+
+    .scanner-heading .waiting-subtext {
+
+        font-size: 10px;
+
+    }
+
+
+    .attendance-type-section {
+
+        margin-top: 20px;
+
+    }
+
+
+    .attendance-type-btn {
+
+        height: 44px;
+
+        font-size: 12px;
+
+    }
+
+
+    .scanner-card .manual-rfid-container {
+
+        margin-top: 20px;
+
+    }
+
+
+    .scanner-hint {
+
+        font-size: 9px;
+
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 520px) {
+
+    .scanner-card {
+
+        padding:
+            20px 16px;
+
+    }
+
+
+    .attendance-type-buttons {
+
+        gap: 8px;
+
+    }
+
+
+    .scanner-card .manual-rfid-input-group {
+
+        flex-direction: column;
+
+    }
+
+
+    .scanner-card .manual-rfid-field,
+    .scanner-card .rfid-enter-btn {
+
+        width: 100%;
+
+    }
+
+}
+
+
+/* =========================================================
+   SHORT SCREEN
+   ========================================================= */
+
+@media (max-height: 700px) {
+
+    .scanner-card {
+
+        padding:
+            20px 30px;
+
+    }
+
+
+    .scanner-icon {
+
+        width: 52px;
+        height: 52px;
+
+        margin-bottom: 8px;
+
+        border-radius: 13px;
+
+    }
+
+
+    .scanner-icon .material-icons {
+
+        font-size: 29px;
+
+    }
+
+
+    .scanner-heading h1 {
+
+        font-size: 20px;
+
+    }
+
+
+    .attendance-type-section {
+
+        margin-top: 15px;
+
+    }
+
+
+    .attendance-type-btn {
+
+        height: 42px;
+
+    }
+
+
+    .scanner-card .manual-rfid-container {
+
+        margin-top: 15px;
+
+    }
+
+
+    .scanner-card .manual-rfid-divider {
+
+        margin-bottom: 10px;
+
+    }
+
+
+    .scanner-hint {
+
+        margin-top: 12px;
+
+        padding-top: 10px;
+
+    }
+
+}

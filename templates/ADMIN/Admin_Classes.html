@@ -1,7 +1,10 @@
+
 {% extends 'IN_BASE/Admin_Base.html' %}
 {% load static %}
 
-{% block title %}Classes - RFID Attendance Management System{% endblock %}
+{% block title %}
+Classes - RFID Attendance Management System
+{% endblock %}
 
 {% block page_heading %}
 <h2>Classes</h2>
@@ -12,659 +15,3390 @@
 {% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/ADMIN/Admin_Classes.css' %}">
 
-<style>
-    .classes-form-error {
-        display: none;
-        background: #fef2f2;
-        border: 1px solid #fecaca;
-        color: #b91c1c;
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 0.85rem;
-        margin-bottom: 14px;
-        align-items: center;
-        gap: 8px;
-        animation: slideDown 0.2s ease;
-    }
+<link
+    rel="stylesheet"
+    href="{% static 'css/ADMIN/Admin_Classes.css' %}"
+>
 
-    .classes-form-error.show {display: flex; }
-    .classes-form-error i {   font-size: 1rem;  color: #dc2626;}
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-6px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-</style>
 {% endblock %}
 
+
 {% block content %}
+
 <div class="classes-page">
 
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
     <div class="classes-header">
-        <h3><i class="fas fa-graduation-cap"></i> Class Manager</h3>
+
+        <h3>
+            <i class="fas fa-graduation-cap"></i>
+            Class Manager
+        </h3>
+
 
         <div class="classes-header-actions">
-            <button type="button" class="classes-btn classes-btn-primary" id="addSectionBtn">
-                <i class="fas fa-plus"></i> Add Section
+
+
+            <!-- =============================================
+                 ADD SECTION
+                 ============================================= -->
+
+            <button
+                type="button"
+                class="classes-btn classes-btn-outline"
+                id="addSectionBtn"
+            >
+
+                <i class="fas fa-plus"></i>
+
+                Add Section
+
             </button>
+
+
+            <!-- =============================================
+                 ASSIGN CLASS
+                 ============================================= -->
+
+            <button
+                type="button"
+                class="classes-btn classes-btn-primary"
+                id="assignClassBtn"
+            >
+
+                <i class="fas fa-user-plus"></i>
+
+                Assign Class
+
+            </button>
+
+
         </div>
+
     </div>
+
+
+    <!-- =====================================================
+         STATISTICS
+         ===================================================== -->
 
     <div class="classes-stats">
+
+
         <div class="classes-stat-card">
-            <div class="number" id="totalSections">{{ total_sections|default:"0" }}</div>
-            <div class="label">Total Sections</div>
+
+            <div
+                class="number"
+                id="totalSections"
+            >
+                {{ total_sections|default:"0" }}
+            </div>
+
+            <div class="label">
+                Total Sections
+            </div>
+
         </div>
+
+
         <div class="classes-stat-card">
-            <div class="number" id="totalStudents">{{ total_students|default:"0" }}</div>
-            <div class="label">Total Students</div>
+
+            <div
+                class="number"
+                id="totalStudents"
+            >
+                {{ total_students|default:"0" }}
+            </div>
+
+            <div class="label">
+                Total Students
+            </div>
+
         </div>
+
+
         <div class="classes-stat-card">
-            <div class="number" id="totalTeachers">{{ total_teachers|default:"0" }}</div>
-            <div class="label">Teachers</div>
+
+            <div
+                class="number"
+                id="totalTeachers"
+            >
+                {{ total_teachers|default:"0" }}
+            </div>
+
+            <div class="label">
+                Assigned Teachers
+            </div>
+
         </div>
+
+
         <div class="classes-stat-card">
-            <div class="number" id="totalJHS">{{ total_jhs|default:"0" }}</div>
-            <div class="label">JHS Sections</div>
+
+            <div
+                class="number"
+                id="totalJHS"
+            >
+                {{ total_jhs|default:"0" }}
+            </div>
+
+            <div class="label">
+                JHS Sections
+            </div>
+
         </div>
+
+
         <div class="classes-stat-card">
-            <div class="number" id="totalSHS">{{ total_shs|default:"0" }}</div>
-            <div class="label">SHS Sections</div>
+
+            <div
+                class="number"
+                id="totalSHS"
+            >
+                {{ total_shs|default:"0" }}
+            </div>
+
+            <div class="label">
+                SHS Sections
+            </div>
+
         </div>
+
+
     </div>
+
+
+    <!-- =====================================================
+         FILTER BAR
+         ===================================================== -->
 
     <div class="classes-filter-bar">
-        <div class="classes-filter-group" id="deptFilterGroup">
-            <label for="filterDept"><i class="fas fa-building"></i> Dept</label>
+
+
+        <div
+            class="classes-filter-group"
+            id="deptFilterGroup"
+        >
+
+            <label for="filterDept">
+
+                <i class="fas fa-building"></i>
+
+                Dept
+
+            </label>
+
+
             <select id="filterDept">
-                <option value="all">All</option>
-                <option value="JHS">JHS</option>
-                <option value="SHS">SHS</option>
+
+                <option value="all">
+                    All
+                </option>
+
+                <option value="JHS">
+                    JHS
+                </option>
+
+                <option value="SHS">
+                    SHS
+                </option>
+
             </select>
+
         </div>
+
 
         <div class="classes-filter-group">
-            <label for="filterGrade"><i class="fas fa-layer-group"></i> Grade</label>
+
+            <label for="filterGrade">
+
+                <i class="fas fa-layer-group"></i>
+
+                Grade
+
+            </label>
+
+
             <select id="filterGrade">
-                <option value="all">All</option>
+
+                <option value="all">
+                    All
+                </option>
+
             </select>
+
         </div>
 
+
         <div class="classes-search-group">
+
             <div class="classes-search-wrapper">
+
                 <i class="fas fa-search"></i>
-                <input type="search" id="searchInput"
-                       placeholder="Search section or adviser...">
+
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search section or adviser..."
+                >
+
             </div>
+
         </div>
+
+
     </div>
+
+
+    <!-- =====================================================
+         SECTION LIST
+         ===================================================== -->
 
     <div id="sectionContainer"></div>
 
-    <div class="classes-modal-overlay" id="modalOverlay" aria-hidden="true">
-        <div class="classes-modal" role="dialog" aria-modal="true"
-             aria-labelledby="modalTitle">
 
-            <h2 id="modalTitle">
-                <i class="fas fa-plus-circle"></i> Add Section
+    <!-- =====================================================
+         ADD SECTION MODAL
+         ===================================================== -->
+
+    <div
+        class="classes-modal-overlay"
+        id="addSectionModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="classes-modal"
+            role="dialog"
+            aria-modal="true"
+        >
+
+
+            <h2>
+
+                <i class="fas fa-plus-circle"></i>
+
+                Add Section
+
             </h2>
-            <p class="sub" id="modalSub">
-                Fill in the details for the new class section.
+
+
+            <p class="sub">
+                Create a new section. Adviser can be assigned later.
             </p>
 
-            <div class="classes-form-error" id="formError">
+
+            <div
+                class="classes-form-error"
+                id="addSectionError"
+            >
+
                 <i class="fas fa-circle-exclamation"></i>
-                <span id="formErrorText">Error message here</span>
+
+                <span id="addSectionErrorText"></span>
+
             </div>
 
-            <form id="sectionForm">
-                <input type="hidden" id="editId">
 
-                <label for="formGrade">Grade Level</label>
-                <select id="formGrade" required>
+            <form id="addSectionForm">
+
+
+                <!-- GRADE -->
+
+                <label for="addGrade">
+                    Grade Level
+                </label>
+
+
+                <select
+                    id="addGrade"
+                    required
+                >
+
+                    <option value="">
+                        -- Select Grade --
+                    </option>
+
                 </select>
 
-                <label for="formSection">Section Name</label>
-                <input type="text" id="formSection"
-                       placeholder="e.g. Einstein, STEM A, Mabini" required>
 
-                <label for="formTeacher">Adviser / Teacher</label>
-                <select id="formTeacher" required>
-                    <option value="" disabled selected>-- Select Teacher --</option>
+                <!-- SECTION NAME -->
 
-                    {% for teacher in teachers %}
-                        <option value="{{ teacher.id }}">
-                            {{ teacher.last_name }}, {{ teacher.first_name }}
-                            {% if teacher.middle_name %} {{ teacher.middle_name|slice:":1" }}.{% endif %}
-                        </option>
-                    {% endfor %}
+                <label for="addSectionName">
+                    Section Name
+                </label>
 
-                    {% if not teachers %}
-                        <option value="" disabled>No teachers available</option>
-                    {% endif %}
-                </select>
+
+                <input
+                    type="text"
+                    id="addSectionName"
+                    placeholder="e.g. Einstein, Mabini, STEM A"
+                    autocomplete="off"
+                    required
+                >
+
+
+                <!-- ACTIONS -->
 
                 <div class="classes-modal-actions">
-                    <button type="button" class="classes-btn classes-btn-outline"
-                            id="cancelModalBtn">
+
+
+                    <button
+                        type="button"
+                        class="classes-btn classes-btn-outline"
+                        id="cancelAddSectionBtn"
+                    >
                         Cancel
                     </button>
-                    <button type="submit" class="classes-btn classes-btn-primary"
-                            id="modalSaveBtn">
-                        <i class="fas fa-save"></i> Save
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
-{{ classes_json|json_script:"classesData" }}
-{{ admin_dept|json_script:"adminDept" }}
-{% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="classes-btn classes-btn-primary"
+                        id="saveAddSectionBtn"
+                    >
+
+                        <i class="fas fa-plus"></i>
+
+                        Add Section
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ASSIGN CLASS MODAL
+         ===================================================== -->
+
+    <div
+        class="classes-modal-overlay"
+        id="assignClassModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="classes-modal"
+            role="dialog"
+            aria-modal="true"
+        >
+
+
+            <h2>
+
+                <i class="fas fa-user-plus"></i>
+
+                Assign Class
+
+            </h2>
+
+
+            <p class="sub">
+                Assign an available section to an available teacher.
+            </p>
+
+
+            <div
+                class="classes-form-error"
+                id="assignClassError"
+            >
+
+                <i class="fas fa-circle-exclamation"></i>
+
+                <span id="assignClassErrorText"></span>
+
+            </div>
+
+
+            <form id="assignClassForm">
+
+
+                <!-- GRADE -->
+
+                <label for="assignGrade">
+                    Grade Level
+                </label>
+
+
+                <select
+                    id="assignGrade"
+                    required
+                >
+
+                    <option value="">
+                        -- Select Grade --
+                    </option>
+
+                </select>
+
+
+                <!-- SECTION -->
+
+                <label for="assignSection">
+                    Section
+                </label>
+
+
+                <select
+                    id="assignSection"
+                    required
+                    disabled
+                >
+
+                    <option value="">
+                        -- Select Grade First --
+                    </option>
+
+                </select>
+
+
+                <!-- TEACHER -->
+
+                <label for="assignTeacher">
+                    Adviser / Teacher
+                </label>
+
+
+                <select
+                    id="assignTeacher"
+                    required
+                    disabled
+                >
+
+                    <option value="">
+                        -- Select Grade First --
+                    </option>
+
+                </select>
+
+
+                <!-- ACTIONS -->
+
+                <div class="classes-modal-actions">
+
+
+                    <button
+                        type="button"
+                        class="classes-btn classes-btn-outline"
+                        id="cancelAssignClassBtn"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="classes-btn classes-btn-primary"
+                        id="saveAssignClassBtn"
+                    >
+
+                        <i class="fas fa-user-check"></i>
+
+                        Assign Class
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         EDIT SECTION MODAL
+         ===================================================== -->
+
+    <div
+        class="classes-modal-overlay"
+        id="editSectionModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="classes-modal"
+            role="dialog"
+            aria-modal="true"
+        >
+
+
+            <h2>
+
+                <i class="fas fa-pen"></i>
+
+                Edit Section Name
+
+            </h2>
+
+
+            <p class="sub">
+                Change the name of this section.
+            </p>
+
+
+            <div
+                class="classes-form-error"
+                id="editSectionError"
+            >
+
+                <i class="fas fa-circle-exclamation"></i>
+
+                <span id="editSectionErrorText"></span>
+
+            </div>
+
+
+            <form id="editSectionForm">
+
+
+                <input
+                    type="hidden"
+                    id="editClassId"
+                >
+
+
+                <label>
+                    Grade Level
+                </label>
+
+
+                <input
+                    type="text"
+                    id="editGradeDisplay"
+                    readonly
+                >
+
+
+                <label for="editSectionName">
+                    Section Name
+                </label>
+
+
+                <input
+                    type="text"
+                    id="editSectionName"
+                    autocomplete="off"
+                    required
+                >
+
+
+                <div class="classes-modal-actions">
+
+
+                    <button
+                        type="button"
+                        class="classes-btn classes-btn-outline"
+                        id="cancelEditSectionBtn"
+                    >
+                        Cancel
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="classes-btn classes-btn-primary"
+                        id="saveEditSectionBtn"
+                    >
+
+                        <i class="fas fa-save"></i>
+
+                        Save Changes
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DJANGO DATA
+         ===================================================== -->
+
+    {{ classes_json|json_script:"classesData" }}
+
+    {{ teachers_json|json_script:"teachersData" }}
+
+    {{ admin_dept|json_script:"adminDept" }}
+
+
+    {% csrf_token %}
+
+
+</div>
 
 {% endblock %}
 
 
+
 {% block extra_js %}
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    "use strict";
 
-    const $ = id => document.getElementById(id);
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    let ADMIN_DEPT = null;
-    try {
-        ADMIN_DEPT = JSON.parse(
-            document.getElementById("adminDept").textContent || "null"
-        );
-    } catch (err) {
-        ADMIN_DEPT = null;
-    }
-    // "JHS" | "SHS" | null (superuser)
+        "use strict";
 
-    // =====================================================
-    // GRADE OPTIONS BY DEPARTMENT
-    // =====================================================
-    const GRADE_OPTIONS = {
-        JHS: ["7", "8", "9", "10"],
-        SHS: ["11", "12"],
-        all: ["7", "8", "9", "10", "11", "12"]
-    };
-    const classesDataEl = document.getElementById("classesData");
 
-    let sections = [];
-    try {
-        sections = JSON.parse(classesDataEl.textContent || "[]");
-    } catch (err) {
-        console.error("Invalid classes data:", err);
-        sections = [];
-    }
+        // =====================================================
+        // SHORTCUT
+        // =====================================================
 
-    function getCSRFToken() {
-        const input = document.querySelector("input[name=csrfmiddlewaretoken]");
-        return input ? input.value : "";
-    }
+        const $ = id =>
+            document.getElementById(id);
 
-    // Effective dept — kung JHS/SHS admin, yun na agad
-    // Kung superuser, base sa filterDept dropdown
-    function getEffectiveDept() {
-        if (ADMIN_DEPT) return ADMIN_DEPT;
-        return $("filterDept").value;
-    }
 
-    function populateFilterGrades() {
-        const dept = getEffectiveDept();
-        const gradeSelect = $("filterGrade");
-        const currentValue = gradeSelect.value;
+        // =====================================================
+        // GRADES
+        // =====================================================
 
-        gradeSelect.innerHTML = '<option value="all">All</option>';
+        const GRADE_OPTIONS = {
 
-        GRADE_OPTIONS[dept].forEach(grade => {
-            const opt = document.createElement("option");
-            opt.value = grade;
-            opt.textContent = "Grade " + grade;
-            gradeSelect.appendChild(opt);
-        });
+            JHS: [
+                "7",
+                "8",
+                "9",
+                "10"
+            ],
 
-        // I-restore kung valid pa, kung hindi ay "all"
-        if (GRADE_OPTIONS[dept].includes(currentValue)) {
-            gradeSelect.value = currentValue;
-        } else {
-            gradeSelect.value = "all";
-        }
-    }
+            SHS: [
+                "11",
+                "12"
+            ],
 
-    function populateModalGrades() {
-        const dept = getEffectiveDept();
-        const gradeSelect = $("formGrade");
-        gradeSelect.innerHTML = "";
+            all: [
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12"
+            ]
 
-        GRADE_OPTIONS[dept].forEach(grade => {
-            const opt = document.createElement("option");
-            opt.value = grade;
-            opt.textContent = "Grade " + grade;
-            gradeSelect.appendChild(opt);
-        });
-    }
+        };
 
-    function showError(message) {
-        const errorBox = $("formError");
-        const errorText = $("formErrorText");
 
-        if (errorBox && errorText) {
-            errorText.textContent = message;
-            errorBox.classList.add("show");
+        // =====================================================
+        // ADMIN DEPARTMENT
+        // =====================================================
 
-            clearTimeout(errorBox._hideTimer);
-            errorBox._hideTimer = setTimeout(function () {
-                errorBox.classList.remove("show");
-            }, 5000);
-        }
-    }
+        let ADMIN_DEPT = null;
 
-    function hideError() {
-        const errorBox = $("formError");
-        if (errorBox) errorBox.classList.remove("show");
-    }
-
-    function showSuccessToast(message) {
-        const toast = document.createElement("div");
-        toast.className = "classes-success-toast";
-        toast.innerHTML = '<i class="fas fa-circle-check"></i> ' + escapeHTML(message);
-
-        toast.style.cssText = `
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            background: #10b981;
-            color: white;
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-        `;
-
-        document.body.appendChild(toast);
-
-        requestAnimationFrame(function () {
-            toast.style.opacity = "1";
-            toast.style.transform = "translateY(0)";
-        });
-
-        setTimeout(function () {
-            toast.style.opacity = "0";
-            toast.style.transform = "translateY(-10px)";
-            setTimeout(function () {
-                toast.remove();
-            }, 300);
-        }, 2500);
-    }
-
-    function escapeHTML(value) {
-        return String(value).replace(/[&<>"']/g, character => ({
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;"
-        })[character]);
-    }
-
-    function highlighted(value, query) {
-        const text = String(value);
-        if (!query) return escapeHTML(text);
-
-        const lowerText = text.toLowerCase();
-        const lowerQuery = query.toLowerCase();
-        let result = "";
-        let start = 0;
-        let match;
-
-        while ((match = lowerText.indexOf(lowerQuery, start)) !== -1) {
-            result += escapeHTML(text.slice(start, match));
-            result += '<span class="classes-highlight">' +
-                      escapeHTML(text.slice(match, match + query.length)) +
-                      "</span>";
-            start = match + query.length;
-        }
-
-        return result + escapeHTML(text.slice(start));
-    }
-
-    function updateStats() {
-        $("totalSections").textContent = sections.length;
-        $("totalStudents").textContent = sections.reduce(
-            (total, section) => total + Number(section.students || 0), 0
-        );
-
-        const teachers = new Set(
-            sections
-                .map(section => String(section.teacher).trim().toLowerCase())
-                .filter(Boolean)
-        );
-
-        $("totalTeachers").textContent = teachers.size;
-        $("totalJHS").textContent = sections.filter(
-            section => Number(section.grade) <= 10
-        ).length;
-        $("totalSHS").textContent = sections.filter(
-            section => Number(section.grade) >= 11
-        ).length;
-    }
-
-    function renderSections() {
-        const department = getEffectiveDept();   // ← base sa admin dept
-        const gradeFilter = $("filterGrade").value;
-        const query = $("searchInput").value.trim().toLowerCase();
-        const container = $("sectionContainer");
-
-        const filtered = sections.filter(section => {
-            const grade = String(section.grade);
-            const sectionDepartment = Number(grade) <= 10 ? "JHS" : "SHS";
-
-            return (department === "all" || department === sectionDepartment) &&
-                   (gradeFilter === "all" || gradeFilter === grade) &&
-                   (
-                       !query ||
-                       String(section.section).toLowerCase().includes(query) ||
-                       String(section.teacher).toLowerCase().includes(query)
-                   );
-        }).sort((a, b) =>
-            Number(a.grade) - Number(b.grade) ||
-            String(a.section).localeCompare(String(b.section))
-        );
-
-        if (!filtered.length) {
-            container.innerHTML = `
-                <div class="classes-empty-state">
-                    <i class="fas fa-users-slash"></i>
-                    <h3>No sections found</h3>
-                    <p>Try adjusting the filters or search for a different keyword.</p>
-                </div>
-            `;
-            return;
-        }
-
-        // I-display lang ang grades na available sa effective dept
-        const availableGrades = GRADE_OPTIONS[getEffectiveDept()];
-
-        container.innerHTML = availableGrades
-            .map(grade => {
-                const gradeSections = filtered.filter(
-                    section => String(section.grade) === grade
-                );
-                if (!gradeSections.length) return "";
-
-                const dept = Number(grade) <= 10 ? "JHS" : "SHS";
-
-                const rows = gradeSections.map(section => `
-                    <tr>
-                        <td class="section-name">
-                            ${highlighted(section.section, query)}
-                        </td>
-                        <td>
-                            <span class="teacher-name">
-                                <i class="fas fa-chalkboard-teacher"></i>
-                                ${highlighted(section.teacher || '—', query)}
-                            </span>
-                        </td>
-                        <td>
-                            <span class="students-badge">
-                                ${Number(section.students)}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="classes-row-actions">
-                                <button type="button" data-action="delete"
-                                        data-id="${section.id}" class="delete-btn"
-                                        title="Delete" aria-label="Delete section">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `).join("");
-
-                return `
-                    <section class="classes-grade-container">
-                        <button type="button" class="classes-grade-header"
-                                aria-expanded="true">
-                            <span class="classes-grade-left">
-                                <span class="classes-grade-title">Grade ${grade}</span>
-                                <span class="classes-dept-badge ${dept.toLowerCase()}">
-                                    ${dept}
-                                </span>
-                                <span class="classes-grade-count">
-                                    ${gradeSections.length}
-                                    section${gradeSections.length === 1 ? "" : "s"}
-                                </span>
-                            </span>
-                            <i class="fas fa-chevron-down toggle-icon open"></i>
-                        </button>
-
-                        <div class="classes-grade-body">
-                            <div class="classes-table-scroll">
-                                <table class="classes-section-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Section</th>
-                                            <th>Adviser</th>
-                                            <th>Students</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>${rows}</tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </section>
-                `;
-            }).join("");
-    }
-
-    function refresh() {
-        renderSections();
-        updateStats();
-    }
-
-    function openModal() {
-        $("sectionForm").reset();
-        $("editId").value = "";
-        hideError();
-
-        // I-populate ang grade options base sa dept
-        populateModalGrades();
-
-        $("modalOverlay").classList.add("active");
-        $("modalOverlay").setAttribute("aria-hidden", "false");
-        $("formSection").focus();
-    }
-
-    function closeModal() {
-        $("modalOverlay").classList.remove("active");
-        $("modalOverlay").setAttribute("aria-hidden", "true");
-        hideError();
-    }
-
-    $("sectionForm").addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        if (!this.reportValidity()) return;
-
-        hideError();
-
-        const dept = getEffectiveDept();
-        const grade = $("formGrade").value;
-        const sectionName = $("formSection").value.trim();
-        const teacherId = $("formTeacher").value;
-
-        if (!grade) {
-            showError("Please select a grade level.");
-            return;
-        }
-
-        if (!GRADE_OPTIONS[dept].includes(grade)) {
-            showError(`Grade ${grade} is not valid for ${dept}.`);
-            return;
-        }
-
-        if (!sectionName || !teacherId) {
-            showError("Enter a section name and select a teacher.");
-            return;
-        }
 
         try {
-            const response = await fetch("{% url 'add_class' %}", {
+
+            ADMIN_DEPT =
+                JSON.parse(
+                    $("adminDept").textContent ||
+                    "null"
+                );
+
+        } catch (error) {
+
+            ADMIN_DEPT = null;
+
+        }
+
+
+        // =====================================================
+        // SECTIONS DATA
+        // =====================================================
+
+        let sections = [];
+
+
+        try {
+
+            sections =
+                JSON.parse(
+                    $("classesData").textContent ||
+                    "[]"
+                );
+
+        } catch (error) {
+
+            console.error(
+                "Invalid class data:",
+                error
+            );
+
+            sections = [];
+
+        }
+
+
+        // =====================================================
+        // TEACHERS DATA
+        // =====================================================
+
+        let teachers = [];
+
+
+        try {
+
+            teachers =
+                JSON.parse(
+                    $("teachersData").textContent ||
+                    "[]"
+                );
+
+        } catch (error) {
+
+            console.error(
+                "Invalid teacher data:",
+                error
+            );
+
+            teachers = [];
+
+        }
+
+
+        // =====================================================
+        // CSRF
+        // =====================================================
+
+        function getCSRFToken() {
+
+            const token =
+                document.querySelector(
+                    "input[name=csrfmiddlewaretoken]"
+                );
+
+
+            return token
+                ? token.value
+                : "";
+
+        }
+
+
+        // =====================================================
+        // DEPARTMENT FROM GRADE
+        // =====================================================
+
+        function getDepartmentFromGrade(
+            grade
+        ) {
+
+            const number =
+                Number(grade);
+
+
+            if (
+                number >= 7 &&
+                number <= 10
+            ) {
+
+                return "JHS";
+
+            }
+
+
+            return "SHS";
+
+        }
+
+
+        // =====================================================
+        // CURRENT ADMIN DEPARTMENT
+        // =====================================================
+
+        function getEffectiveDept() {
+
+            if (ADMIN_DEPT) {
+
+                return ADMIN_DEPT;
+
+            }
+
+
+            return $("filterDept").value;
+
+        }
+
+
+        // =====================================================
+        // ESCAPE HTML
+        // =====================================================
+
+        function escapeHTML(
+            value
+        ) {
+
+            return String(
+                value ?? ""
+            ).replace(
+                /[&<>"']/g,
+                character => ({
+
+                    "&": "&amp;",
+
+                    "<": "&lt;",
+
+                    ">": "&gt;",
+
+                    '"': "&quot;",
+
+                    "'": "&#39;"
+
+                })[character]
+            );
+
+        }
+
+
+        // =====================================================
+        // HIGHLIGHT SEARCH
+        // =====================================================
+
+        function highlighted(
+            value,
+            query
+        ) {
+
+            const text =
+                String(
+                    value ?? ""
+                );
+
+
+            if (!query) {
+
+                return escapeHTML(
+                    text
+                );
+
+            }
+
+
+            const lowerText =
+                text.toLowerCase();
+
+
+            const lowerQuery =
+                query.toLowerCase();
+
+
+            let result = "";
+
+            let start = 0;
+
+            let match;
+
+
+            while (
+                (
+                    match =
+                    lowerText.indexOf(
+                        lowerQuery,
+                        start
+                    )
+                ) !== -1
+            ) {
+
+                result +=
+                    escapeHTML(
+                        text.slice(
+                            start,
+                            match
+                        )
+                    );
+
+
+                result +=
+                    '<span class="classes-highlight">' +
+
+                    escapeHTML(
+                        text.slice(
+                            match,
+                            match +
+                            query.length
+                        )
+                    ) +
+
+                    "</span>";
+
+
+                start =
+                    match +
+                    query.length;
+
+            }
+
+
+            result +=
+                escapeHTML(
+                    text.slice(
+                        start
+                    )
+                );
+
+
+            return result;
+
+        }
+
+
+        // =====================================================
+        // MODAL ERROR
+        // =====================================================
+
+        function showError(
+            boxId,
+            textId,
+            message
+        ) {
+
+            const box =
+                $(boxId);
+
+
+            const text =
+                $(textId);
+
+
+            text.textContent =
+                message;
+
+
+            box.classList.add(
+                "show"
+            );
+
+        }
+
+
+        function hideError(
+            boxId
+        ) {
+
+            $(boxId)
+                .classList
+                .remove(
+                    "show"
+                );
+
+        }
+
+
+        // =====================================================
+        // SUCCESS MESSAGE
+        // =====================================================
+
+        function showSuccess(
+            message
+        ) {
+
+            alert(
+                message
+            );
+
+        }
+
+
+        // =====================================================
+        // POST JSON
+        // =====================================================
+
+        async function postJSON(
+            url,
+            payload = null
+        ) {
+
+            const options = {
+
                 method: "POST",
+
                 headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": getCSRFToken(),
-                },
-                body: JSON.stringify({
-                    grade: "Grade " + grade,
-                    section: sectionName,
-                    teacherId: teacherId,
-                }),
-            });
+
+                    "X-CSRFToken":
+                        getCSRFToken()
+
+                }
+
+            };
+
+
+            if (
+                payload !== null
+            ) {
+
+                options.headers[
+                    "Content-Type"
+                ] =
+                    "application/json";
+
+
+                options.body =
+                    JSON.stringify(
+                        payload
+                    );
+
+            }
+
+
+            const response =
+                await fetch(
+                    url,
+                    options
+                );
+
 
             let result;
+
+
             try {
-                result = await response.json();
-            } catch (parseErr) {
-                const text = await response.text();
-                console.error("Non-JSON response:", text);
-                showError("Server error: " + response.status);
-                return;
+
+                result =
+                    await response.json();
+
+            } catch (error) {
+
+                throw new Error(
+                    "Invalid server response."
+                );
+
             }
 
-            if (result.success) {
-                sections.push(result.class);
-                refresh();
-                closeModal();
-                showSuccessToast("Class added successfully!");
+
+            if (
+                !response.ok ||
+                !result.success
+            ) {
+
+                throw new Error(
+                    result.error ||
+                    "Something went wrong."
+                );
+
+            }
+
+
+            return result;
+
+        }
+
+
+        // =====================================================
+        // OPEN / CLOSE MODAL
+        // =====================================================
+
+        function openModal(
+            id
+        ) {
+
+            $(id)
+                .classList
+                .add(
+                    "active"
+                );
+
+
+            $(id)
+                .setAttribute(
+                    "aria-hidden",
+                    "false"
+                );
+
+        }
+
+
+        function closeModal(
+            id
+        ) {
+
+            $(id)
+                .classList
+                .remove(
+                    "active"
+                );
+
+
+            $(id)
+                .setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+        }
+
+
+        function closeAllModals() {
+
+            closeModal(
+                "addSectionModal"
+            );
+
+
+            closeModal(
+                "assignClassModal"
+            );
+
+
+            closeModal(
+                "editSectionModal"
+            );
+
+        }
+
+
+        // =====================================================
+        // POPULATE GRADE SELECT
+        // =====================================================
+
+        function populateGradeSelect(
+            select,
+            includePlaceholder = true
+        ) {
+
+            const department =
+                ADMIN_DEPT ||
+                "all";
+
+
+            select.innerHTML =
+                "";
+
+
+            if (
+                includePlaceholder
+            ) {
+
+                const placeholder =
+                    document.createElement(
+                        "option"
+                    );
+
+
+                placeholder.value =
+                    "";
+
+
+                placeholder.textContent =
+                    "-- Select Grade --";
+
+
+                select.appendChild(
+                    placeholder
+                );
+
+            }
+
+
+            GRADE_OPTIONS[
+                department
+            ].forEach(
+                grade => {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        grade;
+
+
+                    option.textContent =
+                        "Grade " +
+                        grade;
+
+
+                    select.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+        }
+
+
+        // =====================================================
+        // FILTER GRADES
+        // =====================================================
+
+        function populateFilterGrades() {
+
+            const department =
+                getEffectiveDept();
+
+
+            const select =
+                $("filterGrade");
+
+
+            const current =
+                select.value;
+
+
+            select.innerHTML =
+                '<option value="all">All</option>';
+
+
+            GRADE_OPTIONS[
+                department
+            ].forEach(
+                grade => {
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        grade;
+
+
+                    option.textContent =
+                        "Grade " +
+                        grade;
+
+
+                    select.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+
+            if (
+                GRADE_OPTIONS[
+                    department
+                ].includes(
+                    current
+                )
+            ) {
+
+                select.value =
+                    current;
+
             } else {
-                showError(result.error || "Something went wrong.");
+
+                select.value =
+                    "all";
+
             }
-        } catch (err) {
-            console.error(err);
-            showError("Failed to save: " + err.message);
-        }
-    });
 
-    $("sectionContainer").addEventListener("click", async function (event) {
-        const header = event.target.closest(".classes-grade-header");
-
-        if (header) {
-            const body = header.nextElementSibling;
-            const isOpen = header.getAttribute("aria-expanded") === "true";
-
-            header.setAttribute("aria-expanded", String(!isOpen));
-            body.hidden = isOpen;
-            header.querySelector(".toggle-icon").classList.toggle("open", !isOpen);
-            return;
         }
 
-        const actionButton = event.target.closest("button[data-action]");
-        if (!actionButton) return;
 
-        const classId = actionButton.dataset.id;
-        if (!classId) return;
+        // =====================================================
+        // STATISTICS
+        // =====================================================
 
-        if (actionButton.dataset.action === "delete") {
-            if (!confirm("Delete this section permanently?")) return;
+        function updateStats() {
 
-            try {
-                const response = await fetch(
-                    "{% url 'delete_class' 0 %}".replace('0', classId),
-                    {
-                        method: "POST",
-                        headers: { "X-CSRFToken": getCSRFToken() },
+            $("totalSections")
+                .textContent =
+                sections.length;
+
+
+            $("totalStudents")
+                .textContent =
+                sections.reduce(
+                    (
+                        total,
+                        section
+                    ) =>
+
+                        total +
+
+                        Number(
+                            section.students ||
+                            0
+                        ),
+
+                    0
+                );
+
+
+            const assignedTeachers =
+                new Set(
+                    sections
+
+                        .filter(
+                            section =>
+                                section.teacherId
+                        )
+
+                        .map(
+                            section =>
+                                String(
+                                    section.teacherId
+                                )
+                        )
+                );
+
+
+            $("totalTeachers")
+                .textContent =
+                assignedTeachers.size;
+
+
+            $("totalJHS")
+                .textContent =
+                sections.filter(
+                    section =>
+                        Number(
+                            section.grade
+                        ) <= 10
+                ).length;
+
+
+            $("totalSHS")
+                .textContent =
+                sections.filter(
+                    section =>
+                        Number(
+                            section.grade
+                        ) >= 11
+                ).length;
+
+        }
+
+
+        // =====================================================
+        // RENDER SECTION LIST
+        // =====================================================
+
+        function renderSections() {
+
+            const department =
+                getEffectiveDept();
+
+
+            const gradeFilter =
+                $("filterGrade").value;
+
+
+            const query =
+                $("searchInput")
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+
+            const container =
+                $("sectionContainer");
+
+
+            const filtered =
+                sections.filter(
+                    section => {
+
+                        const grade =
+                            String(
+                                section.grade
+                            );
+
+
+                        const sectionDepartment =
+                            section.department ||
+
+                            getDepartmentFromGrade(
+                                grade
+                            );
+
+
+                        const matchesDepartment =
+
+                            department ===
+                                "all"
+
+                            ||
+
+                            department ===
+                                sectionDepartment;
+
+
+                        const matchesGrade =
+
+                            gradeFilter ===
+                                "all"
+
+                            ||
+
+                            gradeFilter ===
+                                grade;
+
+
+                        const matchesSearch =
+
+                            !query
+
+                            ||
+
+                            String(
+                                section.section
+                            )
+                                .toLowerCase()
+                                .includes(
+                                    query
+                                )
+
+                            ||
+
+                            String(
+                                section.teacher ||
+                                ""
+                            )
+                                .toLowerCase()
+                                .includes(
+                                    query
+                                );
+
+
+                        return (
+
+                            matchesDepartment &&
+
+                            matchesGrade &&
+
+                            matchesSearch
+
+                        );
+
                     }
                 );
 
-                if (!response.ok) {
-                    const text = await response.text();
-                    console.error("Server error:", text);
-                    throw new Error("HTTP " + response.status);
-                }
 
-                const result = await response.json();
+            filtered.sort(
+                (
+                    a,
+                    b
+                ) =>
 
-                if (result.success) {
-                    sections = sections.filter(
-                        s => String(s.id) !== String(classId)
-                    );
-                    refresh();
-                    showSuccessToast("Section deleted.");
-                } else {
-                    alert("Error: " + (result.error || "Unknown"));
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Failed to delete: " + err.message);
+                    Number(
+                        a.grade
+                    ) -
+
+                    Number(
+                        b.grade
+                    )
+
+                    ||
+
+                    String(
+                        a.section
+                    ).localeCompare(
+                        String(
+                            b.section
+                        )
+                    )
+            );
+
+
+            if (
+                filtered.length === 0
+            ) {
+
+                container.innerHTML = `
+
+                    <div class="classes-empty-state">
+
+                        <i class="fas fa-users-slash"></i>
+
+                        <h3>
+                            No sections found
+                        </h3>
+
+                        <p>
+                            Add a section or adjust the filters.
+                        </p>
+
+                    </div>
+
+                `;
+
+
+                return;
+
             }
+
+
+            const availableGrades =
+                GRADE_OPTIONS[
+                    department
+                ];
+
+
+            container.innerHTML =
+                availableGrades
+                    .map(
+                        grade => {
+
+                            const gradeSections =
+                                filtered.filter(
+                                    section =>
+                                        String(
+                                            section.grade
+                                        ) ===
+                                        grade
+                                );
+
+
+                            if (
+                                gradeSections.length ===
+                                0
+                            ) {
+
+                                return "";
+
+                            }
+
+
+                            const dept =
+                                getDepartmentFromGrade(
+                                    grade
+                                );
+
+
+                            const rows =
+                                gradeSections
+                                    .map(
+                                        section => {
+
+                                            const adviser =
+                                                section.teacher
+                                                    ? highlighted(
+                                                        section.teacher,
+                                                        query
+                                                    )
+                                                    : "—";
+
+
+                                            return `
+
+                                                <tr>
+
+                                                    <td class="section-name">
+
+                                                        ${highlighted(
+                                                            section.section,
+                                                            query
+                                                        )}
+
+                                                    </td>
+
+
+                                                    <td>
+
+                                                        <span class="teacher-name">
+
+                                                            <i class="fas fa-chalkboard-teacher"></i>
+
+                                                            ${adviser}
+
+                                                        </span>
+
+                                                    </td>
+
+
+                                                    <td>
+
+                                                        <span class="students-badge">
+
+                                                            ${Number(
+                                                                section.students ||
+                                                                0
+                                                            )}
+
+                                                        </span>
+
+                                                    </td>
+
+
+                                                    <td>
+
+                                                        <div class="classes-row-actions">
+
+
+                                                            <!-- EDIT -->
+
+                                                            <button
+                                                                type="button"
+                                                                data-action="edit"
+                                                                data-id="${section.id}"
+                                                                class="edit-btn"
+                                                                title="Edit Section Name"
+                                                            >
+
+                                                                <i class="fas fa-pen"></i>
+
+                                                            </button>
+
+
+                                                            <!-- UNASSIGN -->
+
+                                                            ${
+                                                                section.teacherId
+                                                                    ? `
+
+                                                                        <button
+                                                                            type="button"
+                                                                            data-action="unassign"
+                                                                            data-id="${section.id}"
+                                                                            class="unassign-btn"
+                                                                            title="Unassign Teacher"
+                                                                        >
+
+                                                                            <i class="fas fa-user-minus"></i>
+
+                                                                        </button>
+
+                                                                    `
+                                                                    : ""
+                                                            }
+
+
+                                                            <!-- DELETE -->
+
+                                                            <button
+                                                                type="button"
+                                                                data-action="delete"
+                                                                data-id="${section.id}"
+                                                                class="delete-btn"
+                                                                title="Delete Section"
+                                                            >
+
+                                                                <i class="fas fa-trash"></i>
+
+                                                            </button>
+
+
+                                                        </div>
+
+                                                    </td>
+
+                                                </tr>
+
+                                            `;
+
+                                        }
+                                    )
+                                    .join("");
+
+
+                            return `
+
+                                <section class="classes-grade-container">
+
+
+                                    <button
+                                        type="button"
+                                        class="classes-grade-header"
+                                        aria-expanded="true"
+                                    >
+
+                                        <span class="classes-grade-left">
+
+                                            <span class="classes-grade-title">
+
+                                                Grade ${grade}
+
+                                            </span>
+
+
+                                            <span class="classes-dept-badge ${dept.toLowerCase()}">
+
+                                                ${dept}
+
+                                            </span>
+
+
+                                            <span class="classes-grade-count">
+
+                                                ${gradeSections.length}
+
+                                                section${gradeSections.length === 1 ? "" : "s"}
+
+                                            </span>
+
+                                        </span>
+
+
+                                        <i class="fas fa-chevron-down toggle-icon open"></i>
+
+
+                                    </button>
+
+
+                                    <div class="classes-grade-body">
+
+
+                                        <div class="classes-table-scroll">
+
+
+                                            <table class="classes-section-table">
+
+
+                                                <thead>
+
+                                                    <tr>
+
+                                                        <th>
+                                                            Section
+                                                        </th>
+
+                                                        <th>
+                                                            Adviser
+                                                        </th>
+
+                                                        <th>
+                                                            Students
+                                                        </th>
+
+                                                        <th>
+                                                            Actions
+                                                        </th>
+
+                                                    </tr>
+
+                                                </thead>
+
+
+                                                <tbody>
+
+                                                    ${rows}
+
+                                                </tbody>
+
+
+                                            </table>
+
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                </section>
+
+                            `;
+
+                        }
+                    )
+                    .join("");
+
         }
-    });
 
-    // =====================================================
-    // BUTTONS / FILTERS
-    // =====================================================
-    $("addSectionBtn").addEventListener("click", openModal);
-    $("cancelModalBtn").addEventListener("click", closeModal);
 
-    $("filterDept").addEventListener("change", function () {
-        // Kung superuser, dynamic ang grade options
+        // =====================================================
+        // REFRESH
+        // =====================================================
+
+        function refresh() {
+
+            renderSections();
+
+            updateStats();
+
+        }
+
+
+        // =====================================================
+        // OPEN ADD SECTION
+        // =====================================================
+
+        function openAddSection() {
+
+            $("addSectionForm")
+                .reset();
+
+
+            hideError(
+                "addSectionError"
+            );
+
+
+            populateGradeSelect(
+                $("addGrade")
+            );
+
+
+            openModal(
+                "addSectionModal"
+            );
+
+
+            setTimeout(
+                function () {
+
+                    $("addSectionName")
+                        .focus();
+
+                },
+                100
+            );
+
+        }
+
+
+        // =====================================================
+        // OPEN ASSIGN CLASS
+        // =====================================================
+
+        function openAssignClass() {
+
+            $("assignClassForm")
+                .reset();
+
+
+            hideError(
+                "assignClassError"
+            );
+
+
+            populateGradeSelect(
+                $("assignGrade")
+            );
+
+
+            $("assignSection")
+                .innerHTML =
+                '<option value="">-- Select Grade First --</option>';
+
+
+            $("assignSection")
+                .disabled =
+                true;
+
+
+            $("assignTeacher")
+                .innerHTML =
+                '<option value="">-- Select Grade First --</option>';
+
+
+            $("assignTeacher")
+                .disabled =
+                true;
+
+
+            openModal(
+                "assignClassModal"
+            );
+
+        }
+
+
+        // =====================================================
+        // ASSIGN GRADE CHANGED
+        // =====================================================
+
+        $("assignGrade")
+            .addEventListener(
+                "change",
+                function () {
+
+                    const grade =
+                        this.value;
+
+
+                    const sectionSelect =
+                        $("assignSection");
+
+
+                    const teacherSelect =
+                        $("assignTeacher");
+
+
+                    sectionSelect.innerHTML =
+                        "";
+
+
+                    teacherSelect.innerHTML =
+                        "";
+
+
+                    if (!grade) {
+
+                        sectionSelect.innerHTML =
+                            '<option value="">-- Select Grade First --</option>';
+
+
+                        teacherSelect.innerHTML =
+                            '<option value="">-- Select Grade First --</option>';
+
+
+                        sectionSelect.disabled =
+                            true;
+
+
+                        teacherSelect.disabled =
+                            true;
+
+
+                        return;
+
+                    }
+
+
+                    // =========================================
+                    // UNASSIGNED SECTIONS ONLY
+                    // =========================================
+
+                    const availableSections =
+                        sections.filter(
+                            section =>
+
+                                String(
+                                    section.grade
+                                ) ===
+                                    String(
+                                        grade
+                                    )
+
+                                &&
+
+                                !section.teacherId
+                        );
+
+
+                    sectionSelect.innerHTML =
+                        '<option value="">-- Select Section --</option>';
+
+
+                    availableSections.forEach(
+                        section => {
+
+                            const option =
+                                document.createElement(
+                                    "option"
+                                );
+
+
+                            option.value =
+                                section.id;
+
+
+                            option.textContent =
+                                section.section;
+
+
+                            sectionSelect.appendChild(
+                                option
+                            );
+
+                        }
+                    );
+
+
+                    if (
+                        availableSections.length ===
+                        0
+                    ) {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            "";
+
+
+                        option.disabled =
+                            true;
+
+
+                        option.textContent =
+                            "No unassigned sections available";
+
+
+                        sectionSelect.appendChild(
+                            option
+                        );
+
+                    }
+
+
+                    sectionSelect.disabled =
+                        false;
+
+
+                    // =========================================
+                    // TEACHERS BY DEPARTMENT
+                    // =========================================
+
+                    const requiredDepartment =
+                        getDepartmentFromGrade(
+                            grade
+                        );
+
+
+                    const availableTeachers =
+                        teachers.filter(
+                            teacher =>
+
+                                teacher.department ===
+                                    requiredDepartment
+
+                                &&
+
+                                !teacher.assigned
+                        );
+
+
+                    teacherSelect.innerHTML =
+                        '<option value="">-- Select Teacher --</option>';
+
+
+                    availableTeachers.forEach(
+                        teacher => {
+
+                            const option =
+                                document.createElement(
+                                    "option"
+                                );
+
+
+                            option.value =
+                                teacher.id;
+
+
+                            option.textContent =
+                                teacher.name;
+
+
+                            teacherSelect.appendChild(
+                                option
+                            );
+
+                        }
+                    );
+
+
+                    if (
+                        availableTeachers.length ===
+                        0
+                    ) {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        option.value =
+                            "";
+
+
+                        option.disabled =
+                            true;
+
+
+                        option.textContent =
+                            "No available " +
+                            requiredDepartment +
+                            " teachers";
+
+
+                        teacherSelect.appendChild(
+                            option
+                        );
+
+                    }
+
+
+                    teacherSelect.disabled =
+                        false;
+
+                }
+            );
+
+
+        // =====================================================
+        // ADD SECTION SUBMIT
+        // =====================================================
+
+        $("addSectionForm")
+            .addEventListener(
+                "submit",
+                async function (
+                    event
+                ) {
+
+                    event.preventDefault();
+
+
+                    hideError(
+                        "addSectionError"
+                    );
+
+
+                    const grade =
+                        $("addGrade")
+                            .value;
+
+
+                    const sectionName =
+                        $("addSectionName")
+                            .value
+                            .trim();
+
+
+                    if (
+                        !grade ||
+                        !sectionName
+                    ) {
+
+                        showError(
+                            "addSectionError",
+                            "addSectionErrorText",
+                            "Grade and Section Name are required."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // =========================================
+                    // FRONTEND DUPLICATE PROTECTION
+                    // Backend also checks this.
+                    // =========================================
+
+                    const duplicate =
+                        sections.some(
+                            section =>
+
+                                String(
+                                    section.grade
+                                ) ===
+                                    String(
+                                        grade
+                                    )
+
+                                &&
+
+                                String(
+                                    section.section
+                                )
+                                    .trim()
+                                    .toLowerCase() ===
+                                sectionName
+                                    .toLowerCase()
+                        );
+
+
+                    if (duplicate) {
+
+                        showError(
+                            "addSectionError",
+                            "addSectionErrorText",
+                            "This section already exists in Grade " +
+                            grade +
+                            "."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    const saveButton =
+                        $("saveAddSectionBtn");
+
+
+                    saveButton.disabled =
+                        true;
+
+
+                    try {
+
+                        const result =
+                            await postJSON(
+
+                                "{% url 'add_class' %}",
+
+                                {
+
+                                    grade:
+                                        "Grade " +
+                                        grade,
+
+                                    section:
+                                        sectionName
+
+                                }
+
+                            );
+
+
+                        sections.push(
+                            result.class
+                        );
+
+
+                        refresh();
+
+
+                        closeModal(
+                            "addSectionModal"
+                        );
+
+
+                        showSuccess(
+                            result.message ||
+                            "Section added successfully."
+                        );
+
+                    } catch (error) {
+
+                        showError(
+                            "addSectionError",
+                            "addSectionErrorText",
+                            error.message
+                        );
+
+                    } finally {
+
+                        saveButton.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+
+        // =====================================================
+        // ASSIGN CLASS SUBMIT
+        // =====================================================
+
+        $("assignClassForm")
+            .addEventListener(
+                "submit",
+                async function (
+                    event
+                ) {
+
+                    event.preventDefault();
+
+
+                    hideError(
+                        "assignClassError"
+                    );
+
+
+                    const grade =
+                        $("assignGrade")
+                            .value;
+
+
+                    const classId =
+                        $("assignSection")
+                            .value;
+
+
+                    const teacherId =
+                        $("assignTeacher")
+                            .value;
+
+
+                    if (!grade) {
+
+                        showError(
+                            "assignClassError",
+                            "assignClassErrorText",
+                            "Please select a grade."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    if (!classId) {
+
+                        showError(
+                            "assignClassError",
+                            "assignClassErrorText",
+                            "Please select an unassigned section."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    if (!teacherId) {
+
+                        showError(
+                            "assignClassError",
+                            "assignClassErrorText",
+                            "Please select a teacher."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    const selectedSection =
+                        sections.find(
+                            section =>
+                                String(
+                                    section.id
+                                ) ===
+                                String(
+                                    classId
+                                )
+                        );
+
+
+                    if (
+                        !selectedSection ||
+                        selectedSection.teacherId
+                    ) {
+
+                        showError(
+                            "assignClassError",
+                            "assignClassErrorText",
+                            "This section is no longer available."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    const selectedTeacher =
+                        teachers.find(
+                            teacher =>
+                                String(
+                                    teacher.id
+                                ) ===
+                                String(
+                                    teacherId
+                                )
+                        );
+
+
+                    const requiredDepartment =
+                        getDepartmentFromGrade(
+                            grade
+                        );
+
+
+                    if (
+                        !selectedTeacher ||
+                        selectedTeacher.department !==
+                            requiredDepartment
+                    ) {
+
+                        showError(
+                            "assignClassError",
+                            "assignClassErrorText",
+                            "Grade " +
+                            grade +
+                            " requires a " +
+                            requiredDepartment +
+                            " teacher."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    const saveButton =
+                        $("saveAssignClassBtn");
+
+
+                    saveButton.disabled =
+                        true;
+
+
+                    try {
+
+                        const url =
+                            "{% url 'assign_class' 0 %}"
+                                .replace(
+                                    "/0/",
+                                    "/" +
+                                    classId +
+                                    "/"
+                                );
+
+
+                        const result =
+                            await postJSON(
+
+                                url,
+
+                                {
+
+                                    teacherId:
+                                        teacherId
+
+                                }
+
+                            );
+
+
+                        selectedSection.teacher =
+                            result.class.teacher;
+
+
+                        selectedSection.teacherId =
+                            result.class.teacherId;
+
+
+                        selectedSection.assigned =
+                            true;
+
+
+                        selectedTeacher.assigned =
+                            true;
+
+
+                        selectedTeacher.classId =
+                            Number(
+                                classId
+                            );
+
+
+                        refresh();
+
+
+                        closeModal(
+                            "assignClassModal"
+                        );
+
+
+                        showSuccess(
+                            result.message ||
+                            "Class assigned successfully."
+                        );
+
+                    } catch (error) {
+
+                        showError(
+                            "assignClassError",
+                            "assignClassErrorText",
+                            error.message
+                        );
+
+                    } finally {
+
+                        saveButton.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+
+        // =====================================================
+        // OPEN EDIT SECTION
+        // =====================================================
+
+        function openEditSection(
+            classId
+        ) {
+
+            const section =
+                sections.find(
+                    item =>
+                        String(
+                            item.id
+                        ) ===
+                        String(
+                            classId
+                        )
+                );
+
+
+            if (!section) {
+
+                return;
+
+            }
+
+
+            hideError(
+                "editSectionError"
+            );
+
+
+            $("editClassId").value =
+                section.id;
+
+
+            $("editGradeDisplay").value =
+                "Grade " +
+                section.grade;
+
+
+            $("editSectionName").value =
+                section.section;
+
+
+            openModal(
+                "editSectionModal"
+            );
+
+
+            setTimeout(
+                function () {
+
+                    $("editSectionName")
+                        .focus();
+
+
+                    $("editSectionName")
+                        .select();
+
+                },
+                100
+            );
+
+        }
+
+
+        // =====================================================
+        // EDIT SECTION SUBMIT
+        // =====================================================
+
+        $("editSectionForm")
+            .addEventListener(
+                "submit",
+                async function (
+                    event
+                ) {
+
+                    event.preventDefault();
+
+
+                    hideError(
+                        "editSectionError"
+                    );
+
+
+                    const classId =
+                        $("editClassId")
+                            .value;
+
+
+                    const newSectionName =
+                        $("editSectionName")
+                            .value
+                            .trim();
+
+
+                    const currentSection =
+                        sections.find(
+                            section =>
+                                String(
+                                    section.id
+                                ) ===
+                                String(
+                                    classId
+                                )
+                        );
+
+
+                    if (
+                        !currentSection
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    if (
+                        !newSectionName
+                    ) {
+
+                        showError(
+                            "editSectionError",
+                            "editSectionErrorText",
+                            "Section Name is required."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // =========================================
+                    // DUPLICATE / BUFFER PROTECTION
+                    // =========================================
+
+                    const duplicate =
+                        sections.some(
+                            section =>
+
+                                String(
+                                    section.id
+                                ) !==
+                                    String(
+                                        classId
+                                    )
+
+                                &&
+
+                                String(
+                                    section.grade
+                                ) ===
+                                    String(
+                                        currentSection.grade
+                                    )
+
+                                &&
+
+                                String(
+                                    section.section
+                                )
+                                    .trim()
+                                    .toLowerCase() ===
+                                newSectionName
+                                    .toLowerCase()
+                        );
+
+
+                    if (duplicate) {
+
+                        showError(
+                            "editSectionError",
+                            "editSectionErrorText",
+                            "Section \"" +
+                            newSectionName +
+                            "\" already exists in Grade " +
+                            currentSection.grade +
+                            "."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    const saveButton =
+                        $("saveEditSectionBtn");
+
+
+                    saveButton.disabled =
+                        true;
+
+
+                    try {
+
+                        const url =
+                            "{% url 'edit_class' 0 %}"
+                                .replace(
+                                    "/0/",
+                                    "/" +
+                                    classId +
+                                    "/"
+                                );
+
+
+                        const result =
+                            await postJSON(
+
+                                url,
+
+                                {
+
+                                    section:
+                                        newSectionName
+
+                                }
+
+                            );
+
+
+                        currentSection.section =
+                            result.class.section;
+
+
+                        refresh();
+
+
+                        closeModal(
+                            "editSectionModal"
+                        );
+
+
+                        showSuccess(
+                            result.message ||
+                            "Section name updated successfully."
+                        );
+
+                    } catch (error) {
+
+                        showError(
+                            "editSectionError",
+                            "editSectionErrorText",
+                            error.message
+                        );
+
+                    } finally {
+
+                        saveButton.disabled =
+                            false;
+
+                    }
+
+                }
+            );
+
+
+        // =====================================================
+        // SECTION LIST ACTIONS
+        // =====================================================
+
+        $("sectionContainer")
+            .addEventListener(
+                "click",
+                async function (
+                    event
+                ) {
+
+
+                    // =========================================
+                    // COLLAPSE GRADE
+                    // =========================================
+
+                    const header =
+                        event.target.closest(
+                            ".classes-grade-header"
+                        );
+
+
+                    if (header) {
+
+                        const body =
+                            header.nextElementSibling;
+
+
+                        const isOpen =
+                            header.getAttribute(
+                                "aria-expanded"
+                            ) ===
+                            "true";
+
+
+                        header.setAttribute(
+                            "aria-expanded",
+                            String(
+                                !isOpen
+                            )
+                        );
+
+
+                        body.hidden =
+                            isOpen;
+
+
+                        const icon =
+                            header.querySelector(
+                                ".toggle-icon"
+                            );
+
+
+                        if (icon) {
+
+                            icon.classList.toggle(
+                                "open",
+                                !isOpen
+                            );
+
+                        }
+
+
+                        return;
+
+                    }
+
+
+                    // =========================================
+                    // ACTION BUTTON
+                    // =========================================
+
+                    const button =
+                        event.target.closest(
+                            "button[data-action]"
+                        );
+
+
+                    if (!button) {
+
+                        return;
+
+                    }
+
+
+                    const action =
+                        button.dataset.action;
+
+
+                    const classId =
+                        button.dataset.id;
+
+
+                    const section =
+                        sections.find(
+                            item =>
+                                String(
+                                    item.id
+                                ) ===
+                                String(
+                                    classId
+                                )
+                        );
+
+
+                    if (!section) {
+
+                        return;
+
+                    }
+
+
+                    // =========================================
+                    // EDIT
+                    // =========================================
+
+                    if (
+                        action ===
+                        "edit"
+                    ) {
+
+                        openEditSection(
+                            classId
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    // =========================================
+                    // UNASSIGN
+                    // =========================================
+
+                    if (
+                        action ===
+                        "unassign"
+                    ) {
+
+                        if (
+                            !section.teacherId
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        const confirmed =
+                            confirm(
+
+                                "Unassign " +
+                                section.teacher +
+                                " from Grade " +
+                                section.grade +
+                                " - " +
+                                section.section +
+                                "?\n\n" +
+
+                                "The section will remain in the system."
+
+                            );
+
+
+                        if (!confirmed) {
+
+                            return;
+
+                        }
+
+
+                        const oldTeacherId =
+                            section.teacherId;
+
+
+                        button.disabled =
+                            true;
+
+
+                        try {
+
+                            const url =
+                                "{% url 'unassign_class' 0 %}"
+                                    .replace(
+                                        "/0/",
+                                        "/" +
+                                        classId +
+                                        "/"
+                                    );
+
+
+                            const result =
+                                await postJSON(
+                                    url
+                                );
+
+
+                            section.teacher =
+                                "";
+
+
+                            section.teacherId =
+                                "";
+
+
+                            section.assigned =
+                                false;
+
+
+                            const teacher =
+                                teachers.find(
+                                    item =>
+                                        String(
+                                            item.id
+                                        ) ===
+                                        String(
+                                            oldTeacherId
+                                        )
+                                );
+
+
+                            if (teacher) {
+
+                                teacher.assigned =
+                                    false;
+
+
+                                teacher.classId =
+                                    null;
+
+                            }
+
+
+                            refresh();
+
+
+                            showSuccess(
+                                result.message ||
+                                "Teacher unassigned successfully."
+                            );
+
+                        } catch (error) {
+
+                            alert(
+                                "Error: " +
+                                error.message
+                            );
+
+
+                            button.disabled =
+                                false;
+
+                        }
+
+
+                        return;
+
+                    }
+
+
+                    // =========================================
+                    // DELETE
+                    // =========================================
+
+                    if (
+                        action ===
+                        "delete"
+                    ) {
+
+                        const studentCount =
+                            Number(
+                                section.students ||
+                                0
+                            );
+
+
+                        if (
+                            studentCount > 0
+                        ) {
+
+                            alert(
+
+                                "This section still contains " +
+                                studentCount +
+                                " student(s).\n\n" +
+
+                                "Move or remove the students before deleting the section."
+
+                            );
+
+
+                            return;
+
+                        }
+
+
+                        const confirmed =
+                            confirm(
+
+                                "Delete Grade " +
+                                section.grade +
+                                " - " +
+                                section.section +
+                                " permanently?\n\n" +
+
+                                "This action cannot be undone."
+
+                            );
+
+
+                        if (!confirmed) {
+
+                            return;
+
+                        }
+
+
+                        const oldTeacherId =
+                            section.teacherId;
+
+
+                        button.disabled =
+                            true;
+
+
+                        try {
+
+                            const url =
+                                "{% url 'delete_class' 0 %}"
+                                    .replace(
+                                        "/0/",
+                                        "/" +
+                                        classId +
+                                        "/"
+                                    );
+
+
+                            const result =
+                                await postJSON(
+                                    url
+                                );
+
+
+                            sections =
+                                sections.filter(
+                                    item =>
+                                        String(
+                                            item.id
+                                        ) !==
+                                        String(
+                                            classId
+                                        )
+                                );
+
+
+                            if (
+                                oldTeacherId
+                            ) {
+
+                                const teacher =
+                                    teachers.find(
+                                        item =>
+                                            String(
+                                                item.id
+                                            ) ===
+                                            String(
+                                                oldTeacherId
+                                            )
+                                    );
+
+
+                                if (teacher) {
+
+                                    teacher.assigned =
+                                        false;
+
+
+                                    teacher.classId =
+                                        null;
+
+                                }
+
+                            }
+
+
+                            refresh();
+
+
+                            showSuccess(
+                                result.message ||
+                                "Section deleted successfully."
+                            );
+
+                        } catch (error) {
+
+                            alert(
+                                "Error: " +
+                                error.message
+                            );
+
+
+                            button.disabled =
+                                false;
+
+                        }
+
+                    }
+
+                }
+            );
+
+
+        // =====================================================
+        // HEADER BUTTON EVENTS
+        // =====================================================
+
+        $("addSectionBtn")
+            .addEventListener(
+                "click",
+                openAddSection
+            );
+
+
+        $("assignClassBtn")
+            .addEventListener(
+                "click",
+                openAssignClass
+            );
+
+
+        // =====================================================
+        // CANCEL BUTTONS
+        // =====================================================
+
+        $("cancelAddSectionBtn")
+            .addEventListener(
+                "click",
+                function () {
+
+                    closeModal(
+                        "addSectionModal"
+                    );
+
+                }
+            );
+
+
+        $("cancelAssignClassBtn")
+            .addEventListener(
+                "click",
+                function () {
+
+                    closeModal(
+                        "assignClassModal"
+                    );
+
+                }
+            );
+
+
+        $("cancelEditSectionBtn")
+            .addEventListener(
+                "click",
+                function () {
+
+                    closeModal(
+                        "editSectionModal"
+                    );
+
+                }
+            );
+
+
+        // =====================================================
+        // CLICK OUTSIDE MODAL
+        // =====================================================
+
+        [
+            "addSectionModal",
+            "assignClassModal",
+            "editSectionModal"
+
+        ].forEach(
+            modalId => {
+
+                $(modalId)
+                    .addEventListener(
+                        "click",
+                        function (
+                            event
+                        ) {
+
+                            if (
+                                event.target ===
+                                this
+                            ) {
+
+                                closeModal(
+                                    modalId
+                                );
+
+                            }
+
+                        }
+                    );
+
+            }
+        );
+
+
+        // =====================================================
+        // ESCAPE KEY
+        // =====================================================
+
+        document.addEventListener(
+            "keydown",
+            function (
+                event
+            ) {
+
+                if (
+                    event.key ===
+                    "Escape"
+                ) {
+
+                    closeAllModals();
+
+                }
+
+            }
+        );
+
+
+        // =====================================================
+        // FILTER EVENTS
+        // =====================================================
+
+        $("filterDept")
+            .addEventListener(
+                "change",
+                function () {
+
+                    populateFilterGrades();
+
+                    renderSections();
+
+                }
+            );
+
+
+        $("filterGrade")
+            .addEventListener(
+                "change",
+                renderSections
+            );
+
+
+        $("searchInput")
+            .addEventListener(
+                "input",
+                renderSections
+            );
+
+
+        // =====================================================
+        // LOCK DEPARTMENT FOR DEPARTMENT ADMIN
+        // =====================================================
+
+        if (
+            ADMIN_DEPT
+        ) {
+
+            $("filterDept").value =
+                ADMIN_DEPT;
+
+
+            $("filterDept").disabled =
+                true;
+
+
+            if (
+                $("deptFilterGroup")
+            ) {
+
+                $("deptFilterGroup")
+                    .style
+                    .display =
+                    "none";
+
+            }
+
+        }
+
+
+        // =====================================================
+        // INITIALIZE
+        // =====================================================
+
         populateFilterGrades();
-        renderSections();
-    });
 
-    $("filterGrade").addEventListener("change", renderSections);
-    $("searchInput").addEventListener("input", renderSections);
+        refresh();
 
-    $("modalOverlay").addEventListener("click", function (event) {
-        if (event.target === this) closeModal();
-    });
 
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") closeModal();
-    });
-
-    // =====================================================
-    // INITIALIZE
-    // =====================================================
-
-    // Kung JHS/SHS admin, i-lock at i-hide ang dept filter
-    if (ADMIN_DEPT) {
-        const deptFilter = $("filterDept");
-        deptFilter.value = ADMIN_DEPT;
-        deptFilter.disabled = true;
-
-        // Optional: i-hide buong dept filter group
-        const deptGroup = $("deptFilterGroup");
-        if (deptGroup) deptGroup.style.display = "none";
     }
+);
 
-    // Initial populate ng grade dropdowns
-    populateFilterGrades();
-
-    // Initial render
-    refresh();
-});
 </script>
+
 {% endblock %}

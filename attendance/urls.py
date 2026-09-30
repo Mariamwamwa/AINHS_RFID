@@ -71,6 +71,16 @@ urlpatterns = [
     views.edit_student,
     name='edit_student'
    ),
+path(
+    'admin/classes/assign/<int:class_id>/',
+    views.assign_class,
+    name='assign_class'
+),
 
+path(
+    'admin/classes/unassign/<int:class_id>/',
+    views.unassign_class,
+    name='unassign_class'
+),
     
 ]
