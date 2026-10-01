@@ -101,5 +101,10 @@ views.export_attendance_monthly,
 name='export_attendance_monthly'
 ),
 
+path(
+    'admin/class-counts/',
+    views.admin_class_counts,
+    name='admin_class_counts'
+),
     
 ]

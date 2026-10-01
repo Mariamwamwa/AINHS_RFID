@@ -515,17 +515,6 @@ def record_rfid_attendance(request):
 
     # =================================================
     # DATABASE TRANSACTION
-    #
-    # Lock ONLY the Student row.
-    #
-    # IMPORTANT:
-    # Do NOT use:
-    #
-    # .select_related('adviser')
-    #
-    # together with select_for_update()
-    # because adviser is nullable and PostgreSQL
-    # may reject FOR UPDATE on the nullable LEFT JOIN.
     # =================================================
 
     with transaction.atomic():
@@ -822,6 +811,7 @@ def record_rfid_attendance(request):
         }
 
     })
+
 
 # =====================================================
 # ADMIN — DASHBOARD
@@ -1298,8 +1288,27 @@ def admin_students(request):
         .count()
     )
 
+    classes = (
+        Class.objects
+        .values(
+            'grade',
+            'section',
+            'department'
+        )
+        .order_by(
+            'grade',
+            'section'
+        )
+    )
+
+    if admin_dept:
+
+        classes = classes.filter(
+            department=admin_dept
+        )
+
     sections = (
-        Student.objects
+        classes
         .values_list(
             'section',
             flat=True
@@ -1308,20 +1317,13 @@ def admin_students(request):
         .order_by('section')
     )
 
-    if admin_dept:
-
-        sections = (
-            Student.objects
-            .filter(
-                department=admin_dept
-            )
-            .values_list(
-                'section',
-                flat=True
-            )
-            .distinct()
-            .order_by('section')
+    class_options = list(
+        classes.values(
+            'grade',
+            'section',
+            'department'
         )
+    )
 
     context = {
 
@@ -1342,6 +1344,9 @@ def admin_students(request):
 
         'sections':
             sections,
+
+        'class_options':
+            class_options,
 
         'admin_dept':
             admin_dept,
@@ -1439,7 +1444,6 @@ def edit_student(
             status=400
         )
 
-    # Check duplicate LRN
     if (
         Student.objects
         .filter(lrn=new_lrn)
@@ -1479,8 +1483,6 @@ def edit_student(
                 status=400
             )
 
-        # Format:
-        # Last Name, First Name Middle Name
         if ',' in name:
 
             last_name, remaining_name = (
@@ -1510,8 +1512,6 @@ def edit_student(
                 name_parts[1:]
             )
 
-        # Format:
-        # First Name Middle Name Last Name
         else:
 
             name_parts = name.split()
@@ -1725,6 +1725,7 @@ def edit_student(
 
     })
 
+
 # =====================================================
 # ADMIN — DELETE STUDENT
 # =====================================================
@@ -1867,7 +1868,7 @@ def admin_classes(request):
             Student.objects
             .filter(
                 grade=class_obj.grade,
-                section=class_obj.section,
+                section__iexact=class_obj.section,
                 department=class_obj.department,
                 is_active=True,
             )
@@ -1986,6 +1987,48 @@ def admin_classes(request):
         'ADMIN/Admin_Classes.html',
         context
     )
+
+
+# =====================================================
+# ADMIN — CLASS COUNTS (AJAX REFRESH)
+# =====================================================
+
+@login_required
+@require_http_methods(["GET"])
+def admin_class_counts(request):
+    """
+    Return fresh student counts per class as JSON.
+    Called by Class Manager JS so counts are always
+    up-to-date even after editing students elsewhere.
+    """
+
+    admin_dept = get_admin_department(request)
+
+    classes = Class.objects.all()
+
+    if admin_dept:
+        classes = classes.filter(department=admin_dept)
+
+    data = []
+
+    for class_obj in classes:
+
+        student_count = Student.objects.filter(
+            grade=class_obj.grade,
+            section__iexact=class_obj.section,
+            department=class_obj.department,
+            is_active=True,
+        ).count()
+
+        data.append({
+            'id': class_obj.id,
+            'students': student_count,
+        })
+
+    return JsonResponse({
+        'success': True,
+        'counts': data,
+    })
 
 
 # =====================================================
@@ -2884,587 +2927,6 @@ def delete_class(
         'message':
             'Section deleted successfully.'
 
-    })
-
-
-# =====================================================
-# ADMIN — ADD CLASS
-# =====================================================
-
-@login_required
-@csrf_protect
-@require_http_methods(["POST"])
-def add_class(request):
-
-    try:
-
-        payload = json.loads(
-            request.body
-        )
-
-    except json.JSONDecodeError:
-
-        return JsonResponse(
-            {
-                'success': False,
-                'error': 'Invalid JSON'
-            },
-            status=400
-        )
-
-    admin_dept = get_admin_department(
-        request
-    )
-
-    grade = (
-        payload
-        .get(
-            'grade',
-            ''
-        )
-        .strip()
-    )
-
-    section = (
-        payload
-        .get(
-            'section',
-            ''
-        )
-        .strip()
-    )
-
-    teacher_id = payload.get(
-        'teacherId'
-    )
-
-    if not grade or not section:
-
-        return JsonResponse(
-            {
-                'success': False,
-                'error':
-                    'Grade and Section are required.'
-            },
-            status=400
-        )
-
-    try:
-
-        grade_num = int(
-            grade
-            .replace(
-                'Grade ',
-                ''
-            )
-            .strip()
-        )
-
-        department = (
-            'SHS'
-            if grade_num >= 11
-            else
-            'JHS'
-        )
-
-    except ValueError:
-
-        return JsonResponse(
-            {
-                'success': False,
-                'error':
-                    'Invalid grade.'
-            },
-            status=400
-        )
-
-    if (
-        admin_dept
-        and
-        department != admin_dept
-    ):
-
-        if admin_dept == 'SHS':
-
-            return JsonResponse({
-                'success':
-                    False,
-
-                'error':
-                    'SHS admin can only add Grade 11 and 12 classes.'
-            }, status=403)
-
-        else:
-
-            return JsonResponse({
-                'success':
-                    False,
-
-                'error':
-                    'JHS admin can only add Grade 7-10 classes.'
-            }, status=403)
-
-    if (
-        Class.objects
-        .filter(
-            grade=grade,
-            section__iexact=section
-        )
-        .exists()
-    ):
-
-        return JsonResponse({
-
-            'success':
-                False,
-
-            'error':
-                f'Section "{section}" '
-                f'in {grade} already exists.'
-
-        }, status=400)
-
-    teacher = None
-
-    if teacher_id:
-
-        try:
-
-            teacher = Teacher.objects.get(
-                id=teacher_id
-            )
-
-        except Teacher.DoesNotExist:
-
-            return JsonResponse(
-                {
-                    'success': False,
-                    'error':
-                        'Teacher not found'
-                },
-                status=404
-            )
-
-        if (
-            admin_dept
-            and
-            teacher.department != admin_dept
-        ):
-
-            return JsonResponse({
-
-                'success':
-                    False,
-
-                'error':
-                    'You can only assign teachers in your department.'
-
-            }, status=403)
-
-        existing_class = (
-            Class.objects
-            .filter(
-                teacher=teacher
-            )
-            .first()
-        )
-
-        if existing_class:
-
-            return JsonResponse({
-
-                'success':
-                    False,
-
-                'error':
-                    (
-                        f'Teacher '
-                        f'{teacher.first_name} '
-                        f'{teacher.last_name} '
-                        f'already has '
-                        f'a class: '
-                        f'{existing_class.grade} - '
-                        f'{existing_class.section}.'
-                    )
-
-            }, status=400)
-
-    class_obj = Class.objects.create(
-
-        department=department,
-
-        teacher=teacher,
-
-        grade=grade,
-
-        section=section,
-
-    )
-
-    if teacher:
-
-        teacher.grade = grade
-
-        teacher.section = section
-
-        teacher.department = department
-
-        teacher.save()
-
-    return JsonResponse({
-
-        'success':
-            True,
-
-        'class': {
-
-            'id':
-                class_obj.id,
-
-            'grade':
-                class_obj.grade.replace(
-                    'Grade ',
-                    ''
-                ).strip(),
-
-            'section':
-                class_obj.section,
-
-            'teacher':
-                (
-                    f"{teacher.first_name} "
-                    f"{teacher.last_name}".strip()
-                    if teacher
-                    else ''
-                ),
-
-            'teacherId':
-                teacher.id
-                if teacher
-                else '',
-
-            'department':
-                class_obj.department,
-
-            'students':
-                0,
-
-        }
-
-    })
-
-
-# =====================================================
-# ADMIN — EDIT CLASS
-# =====================================================
-
-@login_required
-@csrf_protect
-@require_http_methods(["POST"])
-def edit_class(
-    request,
-    class_id
-):
-
-    try:
-
-        class_obj = Class.objects.get(
-            id=class_id
-        )
-
-    except Class.DoesNotExist:
-
-        return JsonResponse(
-            {
-                'success': False,
-                'error':
-                    'Class not found'
-            },
-            status=404
-        )
-
-    admin_dept = get_admin_department(
-        request
-    )
-
-    if (
-        admin_dept
-        and
-        class_obj.department != admin_dept
-    ):
-
-        return JsonResponse({
-            'success': False,
-            'error':
-                'Not authorized for this department.'
-        }, status=403)
-
-    try:
-
-        payload = json.loads(
-            request.body
-        )
-
-    except json.JSONDecodeError:
-
-        return JsonResponse({
-            'success': False,
-            'error':
-                'Invalid JSON'
-        }, status=400)
-
-    new_grade = (
-        payload
-        .get(
-            'grade',
-            class_obj.grade
-        )
-        .strip()
-    )
-
-    new_section = (
-        payload
-        .get(
-            'section',
-            class_obj.section
-        )
-        .strip()
-    )
-
-    new_teacher_id = payload.get(
-        'teacherId'
-    )
-
-    try:
-
-        grade_num = int(
-            new_grade
-            .replace(
-                'Grade ',
-                ''
-            )
-            .strip()
-        )
-
-        new_department = (
-            'SHS'
-            if grade_num >= 11
-            else
-            'JHS'
-        )
-
-    except ValueError:
-
-        new_department = (
-            class_obj.department
-        )
-
-    if (
-        admin_dept
-        and
-        new_department != admin_dept
-    ):
-
-        return JsonResponse({
-
-            'success':
-                False,
-
-            'error':
-                f'You can only manage '
-                f'{admin_dept} classes.'
-
-        }, status=403)
-
-    if (
-        Class.objects
-        .filter(
-            grade=new_grade,
-            section__iexact=new_section
-        )
-        .exclude(
-            id=class_id
-        )
-        .exists()
-    ):
-
-        return JsonResponse({
-
-            'success':
-                False,
-
-            'error':
-                (
-                    f'Section "{new_section}" '
-                    f'in {new_grade} already exists.'
-                )
-
-        }, status=400)
-
-    class_obj.grade = new_grade
-
-    class_obj.section = new_section
-
-    class_obj.department = new_department
-
-    if new_teacher_id:
-
-        try:
-
-            new_teacher = Teacher.objects.get(
-                id=new_teacher_id
-            )
-
-        except Teacher.DoesNotExist:
-
-            return JsonResponse(
-                {
-                    'success': False,
-                    'error':
-                        'Teacher not found'
-                },
-                status=404
-            )
-
-        if (
-            admin_dept
-            and
-            new_teacher.department != admin_dept
-        ):
-
-            return JsonResponse({
-
-                'success':
-                    False,
-
-                'error':
-                    'You can only assign teachers in your department.'
-
-            }, status=403)
-
-        existing = (
-            Class.objects
-            .filter(
-                teacher=new_teacher
-            )
-            .exclude(
-                id=class_id
-            )
-            .first()
-        )
-
-        if existing:
-
-            return JsonResponse({
-
-                'success':
-                    False,
-
-                'error':
-                    (
-                        f'Teacher '
-                        f'{new_teacher.first_name} '
-                        f'{new_teacher.last_name} '
-                        f'already has '
-                        f'a class: '
-                        f'{existing.grade} - '
-                        f'{existing.section}.'
-                    )
-
-            }, status=400)
-
-        class_obj.teacher = (
-            new_teacher
-        )
-
-    class_obj.save()
-
-    if class_obj.teacher:
-
-        class_obj.teacher.grade = (
-            class_obj.grade
-        )
-
-        class_obj.teacher.section = (
-            class_obj.section
-        )
-
-        class_obj.teacher.department = (
-            class_obj.department
-        )
-
-        class_obj.teacher.save()
-
-    return JsonResponse({
-        'success': True
-    })
-
-
-# =====================================================
-# ADMIN — DELETE CLASS
-# =====================================================
-
-@login_required
-@csrf_protect
-@require_http_methods(["POST"])
-def delete_class(
-    request,
-    class_id
-):
-
-    try:
-
-        class_obj = Class.objects.get(
-            id=class_id
-        )
-
-    except Class.DoesNotExist:
-
-        return JsonResponse(
-            {
-                'success': False,
-                'error':
-                    'Class not found'
-            },
-            status=404
-        )
-
-    admin_dept = get_admin_department(
-        request
-    )
-
-    if (
-        admin_dept
-        and
-        class_obj.department != admin_dept
-    ):
-
-        return JsonResponse({
-
-            'success':
-                False,
-
-            'error':
-                'Not authorized for this department.'
-
-        }, status=403)
-
-    if class_obj.teacher:
-
-        teacher = (
-            class_obj.teacher
-        )
-
-        teacher.grade = None
-
-        teacher.section = None
-
-        teacher.save()
-
-    class_obj.delete()
-
-    return JsonResponse({
-        'success': True
     })
 
 

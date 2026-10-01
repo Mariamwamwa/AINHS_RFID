@@ -175,7 +175,7 @@ class Class(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ('grade', 'section')
+        unique_together = ('grade', 'section', 'department')
 
     def __str__(self):
         return f"{self.grade} - {self.section} ({self.department})"

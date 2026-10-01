@@ -1595,11 +1595,15 @@ Students - RFID Attendance Management System
 
 </div>
 
+```django
 {{ admin_dept|json_script:"adminDept" }}
+
+{{ class_options|json_script:"classOptions" }}
 
 {% csrf_token %}
 
 {% endblock %}
+
 
 {% block extra_js %}
 
@@ -1631,6 +1635,28 @@ document.addEventListener(
             ADMIN_DEPT = null;
 
         }
+
+
+/* =====================================================
+   CLASS OPTIONS
+   ===================================================== */
+
+let CLASS_OPTIONS = [];
+
+try {
+
+    CLASS_OPTIONS = JSON.parse(
+        document
+            .getElementById("classOptions")
+            .textContent || "[]"
+    );
+
+} catch (err) {
+
+    CLASS_OPTIONS = [];
+
+}
+
 
 
         /* =====================================================
@@ -2583,90 +2609,81 @@ document.addEventListener(
         const sectionsByGrade = {};
 
 
-        function buildSectionsByGrade() {
+function buildSectionsByGrade() {
 
-            Object.keys(
-                sectionsByGrade
-            ).forEach(
-                function (key) {
+    Object.keys(
+        sectionsByGrade
+    ).forEach(
+        function (key) {
 
-                    delete sectionsByGrade[key];
+            delete sectionsByGrade[key];
 
-                }
-            );
-
-
-            const rows =
-                getDataRows();
+        }
+    );
 
 
-            rows.forEach(
-                function (row) {
+    CLASS_OPTIONS.forEach(
+        function (classItem) {
 
-                    const grade =
-                        (
-                            row.dataset.grade ||
-                            ""
-                        ).trim();
+            const grade =
+                String(
+                    classItem.grade || ""
+                ).trim();
 
-                    const section =
-                        (
-                            row.dataset.section ||
-                            ""
-                        ).trim();
+            const section =
+                String(
+                    classItem.section || ""
+                ).trim();
 
 
-                    if (
-                        !grade ||
-                        !section
-                    ) {
+            if (
+                !grade ||
+                !section
+            ) {
 
-                        return;
+                return;
 
-                    }
-
-
-                    if (
-                        !sectionsByGrade[grade]
-                    ) {
-
-                        sectionsByGrade[grade] = [];
-
-                    }
+            }
 
 
-                    if (
-                        sectionsByGrade[grade]
-                            .indexOf(section) === -1
-                    ) {
+            if (
+                !sectionsByGrade[grade]
+            ) {
 
-                        sectionsByGrade[grade].push(
-                            section
-                        );
+                sectionsByGrade[grade] = [];
 
-                    }
-
-                }
-            );
+            }
 
 
-            Object.keys(
-                sectionsByGrade
-            ).forEach(
-                function (grade) {
+            if (
+                sectionsByGrade[grade]
+                    .indexOf(section) === -1
+            ) {
 
-                    sectionsByGrade[grade].sort(
-                        function (a, b) {
+                sectionsByGrade[grade].push(
+                    section
+                );
 
-                            return a.localeCompare(
-                                b,
-                                undefined,
-                                {
-                                    numeric: true,
-                                    sensitivity: "base"
-                                }
-                            );
+            }
 
+        }
+    );
+
+
+    Object.keys(
+        sectionsByGrade
+    ).forEach(
+        function (grade) {
+
+            sectionsByGrade[grade].sort(
+                function (a, b) {
+
+                    return a.localeCompare(
+                        b,
+                        undefined,
+                        {
+                            numeric: true,
+                            sensitivity: "base"
                         }
                     );
 
@@ -2674,6 +2691,9 @@ document.addEventListener(
             );
 
         }
+    );
+
+}
 
 
         function populateEditSections(

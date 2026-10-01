@@ -3386,7 +3386,72 @@ document.addEventListener(
 
         }
 
+ let classManagerWasHidden = false;
 
+async function refreshClassCounts() {
+    try {
+        const response = await fetch(
+            "{% url 'admin_class_counts' %}",
+            {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                },
+            }
+        );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        // I-update ang local sections array
+        data.counts.forEach(item => {
+            const section = sections.find(
+                s => String(s.id) === String(item.id)
+            );
+
+            if (section) {
+                section.students = item.students;
+            }
+        });
+
+        // I-render muli ang table at stats
+        refresh();
+
+    } catch (error) {
+        console.error(
+            "Failed to refresh class counts:",
+            error
+        );
+    }
+}
+
+
+document.addEventListener(
+    "visibilitychange",
+    function () {
+        if (document.visibilityState === "hidden") {
+            classManagerWasHidden = true;
+            return;
+        }
+
+        if (
+            document.visibilityState === "visible" &&
+            classManagerWasHidden
+        ) {
+            // AJAX refresh lang — hindi full reload
+            refreshClassCounts();
+
+            classManagerWasHidden = false;
+        }
+    }
+);
         // =====================================================
         // INITIALIZE
         // =====================================================
@@ -3394,6 +3459,17 @@ document.addEventListener(
         populateFilterGrades();
 
         refresh();
+
+        // Fresh counts agad mula sa server
+        refreshClassCounts();
+
+        // Auto-refresh tuwing 5 segundo
+        setInterval(
+            function () {
+                refreshClassCounts();
+            },
+            5000
+        );
 
 
     }
