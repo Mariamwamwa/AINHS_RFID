@@ -632,3 +632,367 @@ a {
     }
 
 }
+
+/* =====================================================
+   NOTIFICATION WRAPPER
+   ===================================================== */
+
+.notification-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+
+/* =====================================================
+   NOTIFICATION BUTTON
+   ===================================================== */
+
+.notification-btn {
+    position: relative;
+}
+
+.notification-dot {
+    position: absolute;
+
+    top: 4px;
+    right: 4px;
+
+    width: 9px;
+    height: 9px;
+
+    background: #ef4444;
+
+    border: 2px solid var(--header-bg, #ffffff);
+
+    border-radius: 50%;
+}
+
+
+/* =====================================================
+   NOTIFICATION DROPDOWN
+   ===================================================== */
+
+.notification-dropdown {
+    position: absolute;
+
+    top: calc(100% + 14px);
+    right: 0;
+
+    width: 380px;
+    max-height: 500px;
+
+    background: var(--card-bg, #ffffff);
+
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 12px 35px
+        rgba(0, 0, 0, 0.18);
+
+    overflow: hidden;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform: translateY(-8px);
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
+
+    z-index: 9999;
+}
+
+
+.notification-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+
+    transform: translateY(0);
+}
+
+
+/* =====================================================
+   NOTIFICATION HEADER
+   ===================================================== */
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 16px 18px;
+
+    border-bottom:
+        1px solid rgba(0, 0, 0, 0.08);
+}
+
+
+.notification-header h3 {
+    margin: 0;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    color: var(--text-primary, #1f2937);
+}
+
+
+.notification-header span {
+    display: block;
+
+    margin-top: 3px;
+
+    font-size: 12px;
+
+    color: var(--text-secondary, #6b7280);
+}
+
+
+.notification-close {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: var(--text-secondary, #6b7280);
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.notification-close:hover {
+    background: rgba(0, 0, 0, 0.06);
+
+    color: var(--text-primary, #1f2937);
+}
+
+
+/* =====================================================
+   NOTIFICATION LIST
+   ===================================================== */
+
+.notification-list {
+    max-height: 420px;
+
+    overflow-y: auto;
+}
+
+
+/* =====================================================
+   NOTIFICATION ITEM
+   ===================================================== */
+
+.notification-item {
+    display: flex;
+
+    gap: 12px;
+
+    padding: 15px 18px;
+
+    border-bottom:
+        1px solid rgba(0, 0, 0, 0.06);
+
+    transition:
+        background 0.2s ease;
+}
+
+
+.notification-item:last-child {
+    border-bottom: none;
+}
+
+
+.notification-item:hover {
+    background: rgba(0, 0, 0, 0.025);
+}
+
+
+/* =====================================================
+   UNREAD
+   ===================================================== */
+
+.notification-item.unread {
+    background: rgba(59, 130, 246, 0.06);
+}
+
+
+/* =====================================================
+   ICON
+   ===================================================== */
+
+.notification-icon {
+    flex-shrink: 0;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+}
+
+
+/* SMS FAILED */
+
+.notification-icon.sms-failed {
+    background: rgba(245, 158, 11, 0.15);
+
+    color: #d97706;
+}
+
+
+/* GSM DISCONNECTED */
+
+.notification-icon.gsm-disconnected {
+    background: rgba(239, 68, 68, 0.15);
+
+    color: #dc2626;
+}
+
+
+/* =====================================================
+   CONTENT
+   ===================================================== */
+
+.notification-content {
+    flex: 1;
+
+    min-width: 0;
+}
+
+
+.notification-title {
+    margin: 0 0 3px 0;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    color: var(--text-primary, #1f2937);
+}
+
+
+.notification-student {
+    margin: 0 0 5px 0;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: var(--text-primary, #374151);
+}
+
+
+.notification-message {
+    margin: 0;
+
+    font-size: 12px;
+    line-height: 1.5;
+
+    color: var(--text-secondary, #6b7280);
+
+    white-space: pre-line;
+
+    word-break: break-word;
+}
+
+
+.notification-time {
+    display: block;
+
+    margin-top: 7px;
+
+    font-size: 11px;
+
+    color: var(--text-secondary, #9ca3af);
+}
+
+
+/* =====================================================
+   UNREAD INDICATOR
+   ===================================================== */
+
+.notification-unread-dot {
+    flex-shrink: 0;
+
+    width: 7px;
+    height: 7px;
+
+    margin-top: 7px;
+
+    background: #3b82f6;
+
+    border-radius: 50%;
+}
+
+
+/* =====================================================
+   EMPTY / LOADING
+   ===================================================== */
+
+.notification-empty,
+.notification-loading {
+    min-height: 150px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    padding: 25px;
+
+    text-align: center;
+
+    color: var(--text-secondary, #6b7280);
+}
+
+
+.notification-empty i,
+.notification-loading i {
+    font-size: 22px;
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+    .notification-dropdown {
+        position: fixed;
+
+        top: 70px;
+        right: 12px;
+        left: 12px;
+
+        width: auto;
+
+        max-height: calc(100vh - 90px);
+    }
+
+    .notification-list {
+        max-height: calc(100vh - 170px);
+    }
+}

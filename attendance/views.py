@@ -1,6 +1,6 @@
 import json
 from datetime import date as date_cls, time as time_cls
-
+from attendance.sms.sms_queue import queue_attendance_sms
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -19,7 +19,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from django.http import HttpResponse
 from datetime import timedelta
-from .models import Admin, Teacher, Student, Class, Attendance, Notification
+from .models import Admin, Teacher, Student, Class, Attendance, Notification, SMSQueue, SystemNotification
 
 
 # =====================================================
@@ -649,8 +649,51 @@ def record_rfid_attendance(request):
         # SAVE ATTENDANCE
         # =================================================
 
-        attendance.save()
+        # =================================================
+# SAVE ATTENDANCE
+# =================================================
 
+    attendance.save()
+
+
+    # =================================================
+    # ADD SMS NOTIFICATION TO QUEUE
+    #
+    # IMPORTANT:
+    # This does NOT send the SMS yet.
+    #
+    # It only creates a PENDING SMSQueue record.
+    # GSM sending will be handled separately by
+    # the SMS worker.
+    # =================================================
+
+    try:
+
+        sms_result = queue_attendance_sms(
+            student=student,
+            attendance=attendance,
+            attendance_type=target_field,
+            attendance_label=attendance_label,
+            attendance_time=current_time
+        )
+
+        print(
+            "SMS QUEUE RESULT:",
+            sms_result
+        )
+
+    except Exception as error:
+
+        # -------------------------------------------------
+        # SMS QUEUE FAILURE MUST NEVER CANCEL ATTENDANCE
+        #
+        # attendance.save() already happened above.
+        # -------------------------------------------------
+
+        print(
+            "SMS QUEUE ERRO R:",
+            error
+        )
     # =================================================
     # STUDENT PICTURE
     # =================================================
@@ -5249,4 +5292,373 @@ def export_attendance_monthly(request):
         report_title,
         start_date,
         end_date
+    )
+
+# =========================================================
+# ADMIN NOTIFICATIONS
+# =========================================================
+
+@login_required
+@require_http_methods(["GET"])
+def admin_notifications(request):
+
+    # =====================================================
+    # ADMIN ONLY
+    # =====================================================
+
+    if not (
+        request.user.is_superuser
+        or getattr(request.user, "role", None) == "ADMIN"
+    ):
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Unauthorized."
+            },
+            status=403
+        )
+
+    # =====================================================
+    # GET LATEST NOTIFICATIONS
+    # =====================================================
+
+    notifications = (
+        SystemNotification.objects
+        .select_related(
+            "student",
+            "sms_queue"
+        )
+        .order_by(
+            "-created_at"
+        )[:20]
+    )
+
+    # =====================================================
+    # UNREAD COUNT
+    # =====================================================
+
+    unread_count = (
+        SystemNotification.objects.filter(
+            is_read=False
+        ).count()
+    )
+
+    # =====================================================
+    # BUILD RESPONSE
+    # =====================================================
+
+    notification_data = []
+
+    for notification in notifications:
+
+        # -------------------------------------------------
+        # STUDENT NAME
+        # -------------------------------------------------
+
+        student_name = None
+
+        if notification.student:
+
+            student_name = (
+                notification.student.full_name
+            )
+
+        # -------------------------------------------------
+        # TIME
+        # -------------------------------------------------
+
+        created_at = timezone.localtime(
+            notification.created_at
+        )
+
+        # -------------------------------------------------
+        # NOTIFICATION DATA
+        # -------------------------------------------------
+
+        notification_data.append(
+            {
+                "id": notification.id,
+
+                "type": (
+                    notification.notification_type
+                ),
+
+                "title": (
+                    notification.title
+                ),
+
+                "message": (
+                    notification.message
+                ),
+
+                "student_name": (
+                    student_name
+                ),
+
+                "is_read": (
+                    notification.is_read
+                ),
+
+                "time": (
+                    created_at.strftime(
+                        "%I:%M %p"
+                    )
+                ),
+
+                "date": (
+                    created_at.strftime(
+                        "%b %d, %Y"
+                    )
+                ),
+            }
+        )
+
+    # =====================================================
+    # RETURN JSON
+    # =====================================================
+
+    return JsonResponse(
+        {
+            "success": True,
+            "unread_count": unread_count,
+            "notifications": notification_data,
+        }
+    )
+
+
+# =========================================================
+# MARK ADMIN NOTIFICATIONS AS READ
+# =========================================================
+# =========================================================
+# ADMIN NOTIFICATIONS
+# =========================================================
+
+@login_required
+@require_http_methods(["GET"])
+def admin_notifications(request):
+
+    # =====================================================
+    # ADMIN ACCESS CHECK
+    # =====================================================
+
+    is_superadmin = request.user.is_superuser
+
+    is_admin = (
+        request.user.is_staff
+        or getattr(request.user, "role", None) == "ADMIN"
+    )
+
+    if not (
+        is_superadmin
+        or is_admin
+    ):
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Unauthorized."
+            },
+            status=403
+        )
+
+    # =====================================================
+    # BASE NOTIFICATION QUERYSET
+    # =====================================================
+
+    notifications_qs = (
+        SystemNotification.objects
+        .select_related(
+            "student",
+            "sms_queue"
+        )
+    )
+
+    # =====================================================
+    # NORMAL ADMIN FILTER
+    #
+    # Hardware / SIM notifications marked
+    # superadmin_only=True are completely hidden
+    # from normal administrators.
+    # =====================================================
+
+    if not is_superadmin:
+
+        notifications_qs = (
+            notifications_qs.filter(
+                superadmin_only=False
+            )
+        )
+
+    # =====================================================
+    # UNREAD COUNT
+    #
+    # IMPORTANT:
+    # Count only notifications this user is allowed to see.
+    # =====================================================
+
+    unread_count = (
+        notifications_qs.filter(
+            is_read=False
+        ).count()
+    )
+
+    # =====================================================
+    # LATEST 20 VISIBLE NOTIFICATIONS
+    # =====================================================
+
+    notifications = (
+        notifications_qs
+        .order_by(
+            "-created_at"
+        )[:20]
+    )
+
+    # =====================================================
+    # BUILD RESPONSE
+    # =====================================================
+
+    notification_data = []
+
+    for notification in notifications:
+
+        # -------------------------------------------------
+        # STUDENT NAME
+        # -------------------------------------------------
+
+        student_name = None
+
+        if notification.student:
+
+            student_name = (
+                notification.student.full_name
+            )
+
+        # -------------------------------------------------
+        # LOCAL DATE / TIME
+        # -------------------------------------------------
+
+        created_at = timezone.localtime(
+            notification.created_at
+        )
+
+        # -------------------------------------------------
+        # NOTIFICATION DATA
+        # -------------------------------------------------
+
+        notification_data.append(
+            {
+                "id":
+                    notification.id,
+
+                "type":
+                    notification.notification_type,
+
+                "title":
+                    notification.title,
+
+                "message":
+                    notification.message,
+
+                "student_name":
+                    student_name,
+
+                "is_read":
+                    notification.is_read,
+
+                "time":
+                    created_at.strftime(
+                        "%I:%M %p"
+                    ),
+
+                "date":
+                    created_at.strftime(
+                        "%b %d, %Y"
+                    ),
+            }
+        )
+
+    # =====================================================
+    # RETURN JSON
+    # =====================================================
+
+    return JsonResponse(
+        {
+            "success": True,
+            "unread_count": unread_count,
+            "notifications": notification_data,
+        }
+    )
+
+
+# =========================================================
+# MARK ADMIN NOTIFICATIONS AS READ
+# =========================================================
+
+@login_required
+@require_http_methods(["POST"])
+def mark_admin_notifications_read(request):
+
+    # =====================================================
+    # ADMIN ACCESS CHECK
+    # =====================================================
+
+    is_superadmin = request.user.is_superuser
+
+    is_admin = (
+        request.user.is_staff
+        or getattr(request.user, "role", None) == "ADMIN"
+    )
+
+    if not (
+        is_superadmin
+        or is_admin
+    ):
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Unauthorized."
+            },
+            status=403
+        )
+
+    # =====================================================
+    # GET ONLY NOTIFICATIONS THIS USER CAN ACCESS
+    # =====================================================
+
+    notifications_qs = (
+        SystemNotification.objects.all()
+    )
+
+    # Normal admins cannot touch superadmin-only
+    # notifications.
+    if not is_superadmin:
+
+        notifications_qs = (
+            notifications_qs.filter(
+                superadmin_only=False
+            )
+        )
+
+    # =====================================================
+    # MARK VISIBLE UNREAD NOTIFICATIONS AS READ
+    # =====================================================
+
+    updated = (
+        notifications_qs
+        .filter(
+            is_read=False
+        )
+        .update(
+            is_read=True
+        )
+    )
+
+    # =====================================================
+    # RETURN RESULT
+    # =====================================================
+
+    return JsonResponse(
+        {
+            "success": True,
+            "updated": updated,
+        }
     )

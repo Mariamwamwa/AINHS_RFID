@@ -106,5 +106,19 @@ path(
     views.admin_class_counts,
     name='admin_class_counts'
 ),
-    
+    # =========================================================
+# ADMIN NOTIFICATIONS
+# =========================================================
+
+path(
+    "admin/notifications/",
+    views.admin_notifications,
+    name="admin_notifications"
+),
+
+path(
+    "admin/notifications/read/",
+    views.mark_admin_notifications_read,
+    name="mark_admin_notifications_read"
+),
 ]

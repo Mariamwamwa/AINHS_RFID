@@ -266,3 +266,266 @@ class Notification(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# =====================================================
+# SMS ATTENDANCE QUEUE
+# =====================================================
+
+class SMSQueue(models.Model):
+
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('SENDING', 'Sending'),
+        ('SENT', 'Sent'),
+    ]
+
+    ATTENDANCE_TYPE_CHOICES = [
+        ('time_in_am', 'AM TIME IN'),
+        ('time_out_am', 'AM TIME OUT'),
+        ('time_in_pm', 'PM TIME IN'),
+        ('time_out_pm', 'PM TIME OUT'),
+    ]
+
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.CASCADE,
+        related_name='sms_queue'
+    )
+
+    attendance = models.ForeignKey(
+        Attendance,
+        on_delete=models.CASCADE,
+        related_name='sms_queue'
+    )
+
+    attendance_type = models.CharField(
+        max_length=20,
+        choices=ATTENDANCE_TYPE_CHOICES
+    )
+
+    attendance_time = models.TimeField()
+
+    phone_number = models.CharField(
+        max_length=20
+    )
+
+    message = models.TextField()
+
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='PENDING'
+    )
+
+    attempts = models.PositiveIntegerField(
+        default=0
+    )
+
+    last_error = models.TextField(
+        blank=True,
+        null=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    sent_at = models.DateTimeField(
+        blank=True,
+        null=True
+    )
+
+    class Meta:
+
+        ordering = [
+            'created_at'
+        ]
+
+        constraints = [
+
+            models.UniqueConstraint(
+                fields=[
+                    'attendance',
+                    'attendance_type',
+                    'phone_number',
+                ],
+                name='unique_attendance_sms'
+            )
+
+        ]
+
+    def __str__(self):
+
+        return (
+            f"{self.student.full_name} - "
+            f"{self.attendance_type} - "
+            f"{self.status}"
+        )
+
+# =========================================================
+# SYSTEM NOTIFICATION
+# =========================================================
+# =========================================================
+# SYSTEM NOTIFICATION
+# =========================================================
+
+class SystemNotification(models.Model):
+
+    NOTIFICATION_TYPE_CHOICES = [
+
+        (
+            "SIM_STATUS",
+            "SIM Status"
+        ),
+
+        (
+            "GSM_CONNECTED",
+            "GSM Connected"
+        ),
+
+        (
+            "GSM_DISCONNECTED",
+            "GSM Disconnected"
+        ),
+
+        (
+            "SMS_FAILED",
+            "SMS Failed"
+        ),
+
+    ]
+
+
+    # =====================================================
+    # NOTIFICATION TYPE
+    # =====================================================
+
+    notification_type = models.CharField(
+        max_length=30,
+        choices=NOTIFICATION_TYPE_CHOICES
+    )
+
+
+    # =====================================================
+    # TITLE
+    # =====================================================
+
+    title = models.CharField(
+        max_length=150
+    )
+
+
+    # =====================================================
+    # MESSAGE
+    # =====================================================
+
+    message = models.TextField()
+
+
+    # =====================================================
+    # SUPER ADMIN ONLY
+    #
+    # True:
+    #     Only Django superusers can see it.
+    #
+    # False:
+    #     Normal admin notifications may also see it.
+    # =====================================================
+
+    superadmin_only = models.BooleanField(
+        default=False
+    )
+
+
+    # =====================================================
+    # OPTIONAL STUDENT
+    #
+    # Used mainly for SMS failure notifications.
+    # =====================================================
+
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="system_notifications"
+    )
+
+
+    # =====================================================
+    # OPTIONAL SMS RECORD
+    # =====================================================
+
+    sms_queue = models.ForeignKey(
+        SMSQueue,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name="system_notifications"
+    )
+
+
+    # =====================================================
+    # READ STATUS
+    # =====================================================
+
+    is_read = models.BooleanField(
+        default=False
+    )
+
+
+    # =====================================================
+    # DATE CREATED
+    # =====================================================
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+
+    # =====================================================
+    # DATABASE SETTINGS
+    # =====================================================
+
+    class Meta:
+
+        ordering = [
+            "-created_at"
+        ]
+
+        constraints = [
+
+            # -------------------------------------------------
+            # Prevent the SAME SMS queue record from creating
+            # multiple SMS failure notifications.
+            # -------------------------------------------------
+
+            models.UniqueConstraint(
+
+                fields=[
+                    "sms_queue",
+                    "notification_type"
+                ],
+
+                condition=models.Q(
+                    notification_type="SMS_FAILED"
+                ),
+
+                name="unique_sms_failed_notification"
+
+            )
+
+        ]
+
+
+    # =====================================================
+    # STRING DISPLAY
+    # =====================================================
+
+    def __str__(self):
+
+        return (
+            f"{self.title} - "
+            f"{self.created_at}"
+        )

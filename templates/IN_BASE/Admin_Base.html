@@ -87,17 +87,89 @@
 
 
             <!-- NOTIFICATION -->
+           <!-- =====================================================
+     NOTIFICATIONS
+     ===================================================== -->
+
+<div class="notification-wrapper">
+
+    <button
+        class="notification-btn"
+        id="notificationBtn"
+        type="button"
+        aria-label="Notifications"
+    >
+
+        <i class="fa-regular fa-bell"></i>
+
+        <span
+            class="notification-dot"
+            id="notificationDot"
+            style="display: none;"
+        ></span>
+
+    </button>
+
+
+    <!-- =================================================
+         NOTIFICATION DROPDOWN
+         ================================================= -->
+
+    <div
+        class="notification-dropdown"
+        id="notificationDropdown"
+    >
+
+        <!-- HEADER -->
+
+        <div class="notification-header">
+
+            <div>
+
+                <h3>Notifications</h3>
+
+                <span id="notificationCount">
+                    No unread notifications
+                </span>
+
+            </div>
+
             <button
-                class="notification-btn"
                 type="button"
+                class="notification-close"
+                id="notificationClose"
+                aria-label="Close notifications"
             >
 
-                <i class="fa-regular fa-bell"></i>
-
-                <span class="notification-dot"></span>
+                <i class="fa-solid fa-xmark"></i>
 
             </button>
 
+        </div>
+
+
+        <!-- LIST -->
+
+        <div
+            class="notification-list"
+            id="notificationList"
+        >
+
+            <div class="notification-loading">
+
+                <i class="fa-solid fa-spinner fa-spin"></i>
+
+                <span>
+                    Loading notifications...
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
             <!-- =================================================
@@ -464,7 +536,518 @@
 
         });
 
+/* =====================================================
+   ADMIN NOTIFICATIONS
+   ===================================================== */
 
+const notificationBtn =
+    document.getElementById("notificationBtn");
+
+const notificationDropdown =
+    document.getElementById("notificationDropdown");
+
+const notificationClose =
+    document.getElementById("notificationClose");
+
+const notificationDot =
+    document.getElementById("notificationDot");
+
+const notificationCount =
+    document.getElementById("notificationCount");
+
+const notificationList =
+    document.getElementById("notificationList");
+
+
+/* =====================================================
+   ESCAPE HTML
+   ===================================================== */
+
+function escapeNotificationHtml(value) {
+
+    if (value === null || value === undefined) {
+        return "";
+    }
+
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+
+/* =====================================================
+   LOAD NOTIFICATIONS
+   ===================================================== */
+
+async function loadNotifications() {
+
+    try {
+
+        const response = await fetch(
+            "{% url 'admin_notifications' %}",
+            {
+                method: "GET",
+                headers: {
+                    "X-Requested-With":
+                        "XMLHttpRequest"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Unable to load notifications."
+            );
+        }
+
+        const data = await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        updateNotificationDot(
+            data.unread_count
+        );
+
+        renderNotifications(
+            data.notifications
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Notification error:",
+            error
+        );
+
+    }
+}
+
+
+/* =====================================================
+   UPDATE RED DOT
+   ===================================================== */
+
+function updateNotificationDot(
+    unreadCount
+) {
+
+    if (unreadCount > 0) {
+
+        notificationDot.style.display =
+            "block";
+
+        notificationCount.textContent =
+            unreadCount === 1
+                ? "1 unread notification"
+                : `${unreadCount} unread notifications`;
+
+    } else {
+
+        notificationDot.style.display =
+            "none";
+
+        notificationCount.textContent =
+            "No unread notifications";
+    }
+}
+
+
+/* =====================================================
+   RENDER NOTIFICATIONS
+   ===================================================== */
+
+function renderNotifications(
+    notifications
+) {
+
+    notificationList.innerHTML = "";
+
+    if (!notifications.length) {
+
+        notificationList.innerHTML = `
+            <div class="notification-empty">
+
+                <i class="fa-regular fa-bell-slash"></i>
+
+                <span>
+                    No notifications yet.
+                </span>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    notifications.forEach(
+        notification => {
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "notification-item";
+
+            if (!notification.is_read) {
+
+                item.classList.add(
+                    "unread"
+                );
+            }
+
+
+            /* =========================================
+               TYPE / ICON
+               ========================================= */
+
+            let iconClass =
+                "fa-solid fa-triangle-exclamation";
+
+            let typeClass =
+                "sms-failed";
+
+
+            if (
+                notification.type ===
+                "GSM_DISCONNECTED"
+            ) {
+
+                iconClass =
+                    "fa-solid fa-signal";
+
+                typeClass =
+                    "gsm-disconnected";
+            }
+
+
+            /* =========================================
+               STUDENT
+               ========================================= */
+
+            let studentHtml = "";
+
+            if (
+                notification.student_name
+            ) {
+
+                studentHtml = `
+                    <p class="notification-student">
+                        ${escapeNotificationHtml(
+                            notification.student_name
+                        )}
+                    </p>
+                `;
+            }
+
+
+            /* =========================================
+               UNREAD INDICATOR
+               ========================================= */
+
+            let unreadHtml = "";
+
+            if (!notification.is_read) {
+
+                unreadHtml = `
+                    <span
+                        class="notification-unread-dot"
+                    ></span>
+                `;
+            }
+
+
+            /* =========================================
+               CONTENT
+               ========================================= */
+
+            item.innerHTML = `
+
+                <div
+                    class="
+                        notification-icon
+                        ${typeClass}
+                    "
+                >
+
+                    <i class="${iconClass}"></i>
+
+                </div>
+
+
+                <div class="notification-content">
+
+                    <p class="notification-title">
+                        ${escapeNotificationHtml(
+                            notification.title
+                        )}
+                    </p>
+
+                    ${studentHtml}
+
+                    <p class="notification-message">
+                        ${escapeNotificationHtml(
+                            notification.message
+                        )}
+                    </p>
+
+                    <span class="notification-time">
+
+                        ${escapeNotificationHtml(
+                            notification.time
+                        )}
+
+                        ·
+
+                        ${escapeNotificationHtml(
+                            notification.date
+                        )}
+
+                    </span>
+
+                </div>
+
+
+                ${unreadHtml}
+            `;
+
+            notificationList.appendChild(
+                item
+            );
+        }
+    );
+}
+
+
+/* =====================================================
+   MARK NOTIFICATIONS READ
+   ===================================================== */
+
+async function markNotificationsRead() {
+
+    try {
+
+        const response = await fetch(
+            "{% url 'mark_admin_notifications_read' %}",
+            {
+                method: "POST",
+
+                headers: {
+                    "X-CSRFToken":
+                        getNotificationCSRFToken(),
+
+                    "X-Requested-With":
+                        "XMLHttpRequest"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        if (!data.success) {
+            return;
+        }
+
+        /* Remove header red dot */
+
+        updateNotificationDot(0);
+
+
+        /* Remove unread styling */
+
+        document
+            .querySelectorAll(
+                ".notification-item.unread"
+            )
+            .forEach(
+                item => {
+
+                    item.classList.remove(
+                        "unread"
+                    );
+
+                }
+            );
+
+
+        /* Remove item dots */
+
+        document
+            .querySelectorAll(
+                ".notification-unread-dot"
+            )
+            .forEach(
+                dot => {
+
+                    dot.remove();
+
+                }
+            );
+
+    } catch (error) {
+
+        console.error(
+            "Unable to mark notifications read:",
+            error
+        );
+
+    }
+}
+
+
+/* =====================================================
+   GET CSRF TOKEN
+   ===================================================== */
+
+function getNotificationCSRFToken() {
+
+    const cookies =
+        document.cookie.split(";");
+
+    for (const cookie of cookies) {
+
+        const trimmed =
+            cookie.trim();
+
+        if (
+            trimmed.startsWith(
+                "csrftoken="
+            )
+        ) {
+
+            return decodeURIComponent(
+                trimmed.substring(
+                    "csrftoken=".length
+                )
+            );
+        }
+    }
+
+    return "";
+}
+
+
+/* =====================================================
+   OPEN NOTIFICATIONS
+   ===================================================== */
+
+notificationBtn.addEventListener(
+    "click",
+    async function (event) {
+
+        event.stopPropagation();
+
+        const isOpening =
+            !notificationDropdown
+                .classList
+                .contains("show");
+
+        /* Close profile dropdown */
+
+        profileDropdown.classList.remove(
+            "show"
+        );
+
+
+        /* Toggle notifications */
+
+        notificationDropdown
+            .classList
+            .toggle("show");
+
+
+        if (isOpening) {
+
+            await loadNotifications();
+
+            /*
+             * Give the admin a short moment
+             * to actually see the unread state
+             * before marking it read.
+             */
+
+            setTimeout(
+                markNotificationsRead,
+                700
+            );
+        }
+    }
+);
+
+
+/* =====================================================
+   CLOSE BUTTON
+   ===================================================== */
+
+notificationClose.addEventListener(
+    "click",
+    function (event) {
+
+        event.stopPropagation();
+
+        notificationDropdown
+            .classList
+            .remove("show");
+    }
+);
+
+
+/* =====================================================
+   CLOSE WHEN CLICKING OUTSIDE
+   ===================================================== */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (
+            !event.target.closest(
+                ".notification-wrapper"
+            )
+        ) {
+
+            notificationDropdown
+                .classList
+                .remove("show");
+        }
+    }
+);
+
+
+/* =====================================================
+   AUTOMATIC NOTIFICATION CHECK
+   ===================================================== */
+
+/*
+ * Check immediately when the page loads.
+ */
+
+loadNotifications();
+
+
+/*
+ * Check every 15 seconds while the
+ * admin page remains open.
+ *
+ * This does NOT send SMS.
+ * It only checks whether the worker
+ * created a new notification.
+ */
+
+setInterval(
+    loadNotifications,
+    15000
+);
     </script>
 
 
