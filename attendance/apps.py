@@ -14,5 +14,5 @@ class AttendanceConfig(AppConfig):
         from attendance.sms.sms_runner import (
             start_sms_worker
         )
-
+    
         start_sms_worker()

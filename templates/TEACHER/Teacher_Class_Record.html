@@ -20,11 +20,15 @@ Class Record - RFID Attendance Management System
 >
 {% endblock %}
 
+
 {% block content %}
 
 <section class="class-record-page">
 
-    <!-- PAGE HEADING -->
+    <!-- =====================================================
+         PAGE HEADING
+    ====================================================== -->
+
     <div class="section-header">
         <div>
             <h2>Class Record</h2>
@@ -32,27 +36,41 @@ Class Record - RFID Attendance Management System
         </div>
     </div>
 
-    <!-- STUDENT LIST -->
+
+    <!-- =====================================================
+         STUDENT LIST
+    ====================================================== -->
+
     <div class="content-card class-record-card">
 
+        <!-- CARD HEADER -->
         <div class="card-header">
+
             <div>
                 <h3>List of Students</h3>
                 <p>{{ grade }} - {{ section }}</p>
             </div>
 
+
+            <!-- TOOLS -->
             <div class="class-tools">
 
+                <!-- SEARCH -->
                 <div class="search-box">
+
                     <i class="fa-solid fa-magnifying-glass"></i>
+
                     <input
                         id="studentSearch"
                         type="search"
                         placeholder="Search student..."
                         aria-label="Search students"
                     >
+
                 </div>
 
+
+                <!-- PROMOTE BUTTON -->
                 <button
                     class="promote-btn"
                     id="promoteBtn"
@@ -64,47 +82,118 @@ Class Record - RFID Attendance Management System
                 </button>
 
             </div>
+
         </div>
 
+
+        <!-- =================================================
+             STUDENT TABLE
+        ================================================== -->
+
         <div class="table-container large-table">
+
             <table id="studentTable">
 
+                <!-- =========================================
+                     TABLE HEADER
+                ========================================== -->
+
                 <thead>
+
                     <tr>
+
+                        <!-- SELECT -->
                         <th class="select-column">
+
                             <label class="select-all-control">
+
                                 <input
                                     id="selectAllStudents"
                                     type="checkbox"
                                     aria-label="Select all students"
                                 >
+
                                 <span></span>
+
                                 <em>Select All</em>
+
                             </label>
+
                         </th>
 
-                        <th class="picture-column">Picture</th>
-                        <th>LRN</th>
-                        <th>Student Name</th>
-                        <th>Age</th>
-                        <th>Sex</th>
-                        <th>Email</th>
-                        <th>Contact Number</th>
-                        <th>Parent / Guardian Name</th>
-                        <th>Parent / Guardian Contact Number</th>
-                        <th>Attendance</th>
+
+                        <!-- PICTURE -->
+                        <th class="picture-column">
+                            Picture
+                        </th>
+
+
+                        <!-- LRN -->
+                        <th>
+                            LRN
+                        </th>
+
+
+                        <!-- STUDENT NAME -->
+                        <th>
+                            Student Name
+                        </th>
+
+
+                        <!-- SEX -->
+                        <th>
+                            Sex
+                        </th>
+
+
+                        <!-- CONTACT -->
+                        <th>
+                            Contact Number
+                        </th>
+
+
+                        <!-- GUARDIAN NAME -->
+                        <th>
+                            Parent / Guardian Name
+                        </th>
+
+
+                        <!-- GUARDIAN CONTACT -->
+                        <th>
+                            Parent / Guardian Contact Number
+                        </th>
+
+
+                        <!-- ATTENDANCE -->
+                        <th>
+                            Attendance
+                        </th>
+
                     </tr>
+
                 </thead>
+
+
+                <!-- =========================================
+                     TABLE BODY
+                ========================================== -->
 
                 <tbody>
 
                     {% for student in students %}
+
                     <tr
                         data-student-name="{{ student.full_name }}"
                         data-lrn="{{ student.lrn }}"
                     >
+
+
+                        <!-- SELECT -->
+
                         <td class="select-column">
+
                             <label class="student-checkbox">
+
                                 <input
                                     class="student-select"
                                     type="checkbox"
@@ -112,55 +201,159 @@ Class Record - RFID Attendance Management System
                                     data-student-name="{{ student.full_name }}"
                                     aria-label="Select {{ student.full_name }}"
                                 >
+
                                 <span></span>
+
                             </label>
+
                         </td>
+
+
+                        <!-- PICTURE -->
 
                         <td class="picture-column">
-                            <div class="student-photo" title="{{ student.full_name }}">
-                                <span>{{ student.initials }}</span>
+
+                            <div
+                                class="student-photo"
+                                title="{{ student.full_name }}"
+                            >
+
+                                <span>
+                                    {{ student.initials }}
+                                </span>
+
                             </div>
+
                         </td>
 
-                        <td>{{ student.lrn }}</td>
-                        <td>{{ student.full_name }}</td>
-                        <td>{{ student.age }}</td>
-                        <td>{{ student.sex }}</td>
-                        <td>{{ student.email|default:"—" }}</td>
-                        <td>{{ student.contact_number|default:"—" }}</td>
-                        <td>{{ student.guardian_name|default:"—" }}</td>
-                        <td>{{ student.guardian_contact|default:"—" }}</td>
+
+                        <!-- LRN -->
 
                         <td>
-                            <span class="attendance-rate {{ student.attendance_class }}">
+                            {{ student.lrn }}
+                        </td>
+
+
+                        <!-- STUDENT NAME -->
+
+                        <td>
+                            {{ student.full_name }}
+                        </td>
+
+
+                        <!-- SEX -->
+
+                        <td>
+                            {{ student.sex }}
+                        </td>
+
+
+                        <!-- CONTACT NUMBER -->
+
+                        <td>
+                            {{ student.contact_number|default:"—" }}
+                        </td>
+
+
+                        <!-- PARENT / GUARDIAN NAME -->
+
+                        <td>
+                            {{ student.guardian_name|default:"—" }}
+                        </td>
+
+
+                        <!-- PARENT / GUARDIAN CONTACT -->
+
+                        <td>
+                            {{ student.guardian_contact|default:"—" }}
+                        </td>
+
+
+                        <!-- ATTENDANCE -->
+
+                        <td>
+
+                            <span
+                                class="attendance-rate {{ student.attendance_class }}"
+                            >
                                 {{ student.attendance_rate }}%
                             </span>
+
                         </td>
+
                     </tr>
 
+
                     {% empty %}
+
+
+                    <!-- NO STUDENTS -->
+
                     <tr>
-                        <td colspan="11" style="text-align:center; padding: 40px;">
-                            <i class="fa-solid fa-users" style="font-size: 40px; color: #ccc; display: block; margin-bottom: 10px;"></i>
-                            <strong>No students found</strong>
-                            <p>Add students via the admin panel to see them here.</p>
+
+                        <td
+                            colspan="9"
+                            style="text-align:center; padding:40px;"
+                        >
+
+                            <i
+                                class="fa-solid fa-users"
+                                style="
+                                    font-size:40px;
+                                    color:#ccc;
+                                    display:block;
+                                    margin-bottom:10px;
+                                "
+                            ></i>
+
+                            <strong>
+                                No students found
+                            </strong>
+
+                            <p>
+                                Add students via the admin panel to see them here.
+                            </p>
+
                         </td>
+
                     </tr>
+
+
                     {% endfor %}
 
                 </tbody>
+
             </table>
+
         </div>
 
-        <div class="class-record-empty" id="studentSearchEmpty" hidden>
+
+        <!-- =================================================
+             SEARCH EMPTY STATE
+        ================================================== -->
+
+        <div
+            class="class-record-empty"
+            id="studentSearchEmpty"
+            hidden
+        >
+
             <i class="fa-solid fa-magnifying-glass"></i>
-            <strong>No students found</strong>
-            <p>Try a different name or LRN.</p>
+
+            <strong>
+                No students found
+            </strong>
+
+            <p>
+                Try a different name or LRN.
+            </p>
+
         </div>
 
     </div>
 
 </section>
+
 
 
 <!-- =====================================================
@@ -172,11 +365,15 @@ Class Record - RFID Attendance Management System
     id="promoteModal"
     aria-hidden="true"
 >
+
+    <!-- OVERLAY -->
     <div
         class="promote-modal-overlay"
         id="promoteModalOverlay"
     ></div>
 
+
+    <!-- MODAL PANEL -->
     <div
         class="promote-panel"
         role="dialog"
@@ -184,8 +381,15 @@ Class Record - RFID Attendance Management System
         aria-labelledby="promotePanelTitle"
     >
 
+
+        <!-- =================================================
+             MODAL HEADER
+        ================================================== -->
+
         <div class="promote-panel-header">
+
             <div>
+
                 <h3 id="promotePanelTitle">
                     Promote / Transfer Students
                 </h3>
@@ -193,7 +397,9 @@ Class Record - RFID Attendance Management System
                 <p id="selectedStudentCount">
                     0 students selected
                 </p>
+
             </div>
+
 
             <button
                 class="promote-close-btn"
@@ -201,52 +407,120 @@ Class Record - RFID Attendance Management System
                 type="button"
                 aria-label="Close"
             >
+
                 <i class="fa-solid fa-xmark"></i>
+
             </button>
+
         </div>
+
+
+
+        <!-- =================================================
+             PROMOTE FORM
+        ================================================== -->
 
         <div class="promote-form promote-form-row">
 
+
+            <!-- GRADE -->
+
             <div class="form-group">
-                <label for="promoteGrade">Grade</label>
+
+                <label for="promoteGrade">
+                    Grade
+                </label>
 
                 <select id="promoteGrade">
-                    <option value="">Select grade</option>
+
+                    <option value="">
+                        Select grade
+                    </option>
+
                     {% for g in grade_options %}
-                    <option value="{{ g }}" {% if g == grade %}selected{% endif %}>
+
+                    <option
+                        value="{{ g }}"
+                        {% if g == grade %}selected{% endif %}
+                    >
                         {{ g }}
                     </option>
+
                     {% endfor %}
+
                 </select>
+
             </div>
 
-            <div class="form-group">
-                <label for="promoteSection">Section</label>
 
-                <select id="promoteSection" disabled>
-                    <option value="">Select section</option>
+
+            <!-- SECTION -->
+
+            <div class="form-group">
+
+                <label for="promoteSection">
+                    Section
+                </label>
+
+                <select
+                    id="promoteSection"
+                    disabled
+                >
+
+                    <option value="">
+                        Select section
+                    </option>
+
                     {% for s in section_options %}
-                    <option value="{{ s }}" {% if s == section %}selected{% endif %}>
+
+                    <option
+                        value="{{ s }}"
+                        {% if s == section %}selected{% endif %}
+                    >
                         {{ s }}
                     </option>
+
                     {% endfor %}
+
                 </select>
+
             </div>
 
         </div>
 
+
+
+        <!-- =================================================
+             MODAL ACTIONS
+        ================================================== -->
+
         <div class="promote-panel-actions">
+
+
+            <!-- CLEAR -->
 
             <button
                 class="clear-promote-btn"
                 id="clearPromoteBtn"
                 type="button"
             >
+
                 <i class="fa-solid fa-rotate-left"></i>
-                <span>Clear</span>
+
+                <span>
+                    Clear
+                </span>
+
             </button>
 
+
+
+            <!-- RIGHT ACTIONS -->
+
             <div class="promote-right-actions">
+
+
+                <!-- CANCEL -->
 
                 <button
                     class="cancel-promote-btn"
@@ -256,22 +530,33 @@ Class Record - RFID Attendance Management System
                     Cancel
                 </button>
 
+
+                <!-- CONFIRM -->
+
                 <button
                     class="confirm-promote-btn"
                     id="confirmPromoteBtn"
                     type="button"
                 >
+
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    <span>Promote</span>
+
+                    <span>
+                        Promote
+                    </span>
+
                 </button>
 
             </div>
+
         </div>
 
     </div>
+
 </div>
 
 {% endblock %}
+
 
 
 <!-- =====================================================
@@ -279,5 +564,10 @@ Class Record - RFID Attendance Management System
 ===================================================== -->
 
 {% block extra_js %}
-<script src="{% static 'js/TEACHER/Teacher_Class_Record.js' %}" defer></script>
+
+<script
+    src="{% static 'js/TEACHER/Teacher_Class_Record.js' %}"
+    defer
+></script>
+
 {% endblock %}

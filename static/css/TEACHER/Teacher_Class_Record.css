@@ -1,4 +1,3 @@
-
 /* =====================================================
    TEACHER CLASS RECORD
    RFID ATTENDANCE MANAGEMENT SYSTEM
@@ -8,6 +7,7 @@
     padding: 20px 32px 40px;
     min-width: 0;
 }
+
 
 /* =====================================================
    SECTION HEADER
@@ -32,23 +32,31 @@
     color: var(--gray, #6C757D);
 }
 
+
 /* =====================================================
    CONTENT CARD
 ===================================================== */
 
 .class-record-card {
+    width: 100%;
     min-width: 0;
+
     background: var(--white, #FFFFFF);
     border: 1px solid var(--border, #E9ECEF);
     border-radius: 14px;
+
     padding: 22px;
+
+    box-sizing: border-box;
 }
 
 .class-record-card > .card-header {
     position: relative;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 15px;
 
     padding: 16px 18px;
@@ -67,14 +75,17 @@
     font-size: 16px;
     color: var(--dark, #212529);
     margin-bottom: 4px;
+
     transition: color 0.25s ease;
 }
 
 .class-record-card .card-header p {
     font-size: 12px;
     color: var(--gray, #6C757D);
+
     transition: color 0.25s ease;
 }
+
 
 /* =====================================================
    SEARCH AND PROMOTE BUTTON
@@ -92,12 +103,16 @@
 
     border: 1px solid var(--border, #E9ECEF);
     border-radius: 8px;
+
     background: var(--white, #FFFFFF);
 
     display: flex;
     align-items: center;
+
     padding: 0 11px;
     gap: 8px;
+
+    box-sizing: border-box;
 }
 
 .class-record-page .search-box i {
@@ -108,8 +123,10 @@
 .class-record-page .search-box input {
     width: 100%;
     min-width: 0;
+
     border: none;
     outline: none;
+
     background: transparent;
 
     font-family: inherit;
@@ -121,10 +138,17 @@
     color: var(--gray-light, #ADB5BD);
 }
 
+
+/* =====================================================
+   PROMOTE BUTTON
+===================================================== */
+
 .promote-btn {
     height: 38px;
+
     border: none;
     border-radius: 8px;
+
     padding: 0 14px;
 
     background: var(--primary-purple, #6F42C1);
@@ -137,9 +161,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     gap: 7px;
 
     cursor: pointer;
+
     transition: 0.2s ease;
 }
 
@@ -152,44 +178,83 @@
     display: none;
 }
 
+
 /* =====================================================
-   TABLE
+   TABLE CONTAINER
 ===================================================== */
 
 .class-record-page .table-container {
     width: 100%;
-    overflow-x: auto;
+    max-width: 100%;
+
+    overflow-x: hidden;
+
+    box-sizing: border-box;
 }
+
+
+/* =====================================================
+   TABLE
+===================================================== */
 
 .class-record-page .large-table table {
     width: 100%;
-    min-width: 1250px;
+    max-width: 100%;
+
+    min-width: 0;
+
+    table-layout: fixed;
     border-collapse: collapse;
 }
 
-#studentTable th {
-    padding: 12px 14px;
-    text-align: left;
 
-    font-size: 10px;
+/* =====================================================
+   TABLE HEADER
+===================================================== */
+
+#studentTable th {
+    padding: 12px 7px;
+
+    text-align: left;
+    vertical-align: middle;
+
+    font-size: 9px;
     font-weight: 700;
+
     color: var(--gray, #6C757D);
 
     text-transform: uppercase;
-    letter-spacing: 0.4px;
-    white-space: nowrap;
+    letter-spacing: 0.25px;
+
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: normal;
 
     border-bottom: 1px solid var(--border, #E9ECEF);
+
+    box-sizing: border-box;
 }
 
-#studentTable td {
-    padding: 14px;
 
-    font-size: 12px;
+/* =====================================================
+   TABLE BODY
+===================================================== */
+
+#studentTable td {
+    padding: 14px 7px;
+
+    font-size: 11px;
+
     color: var(--gray-dark, #495057);
 
-    white-space: nowrap;
+    vertical-align: middle;
+
+    white-space: normal;
+    overflow-wrap: anywhere;
+
     border-bottom: 1px solid #F1F3F5;
+
+    box-sizing: border-box;
 }
 
 #studentTable tbody tr:hover {
@@ -200,13 +265,82 @@
     border-bottom: none;
 }
 
+
+/* =====================================================
+   TABLE COLUMN WIDTHS
+===================================================== */
+
+/* SELECT */
+#studentTable th:nth-child(1),
+#studentTable td:nth-child(1) {
+    width: 8%;
+}
+
+
+/* PICTURE */
+#studentTable th:nth-child(2),
+#studentTable td:nth-child(2) {
+    width: 7%;
+}
+
+
+/* LRN */
+#studentTable th:nth-child(3),
+#studentTable td:nth-child(3) {
+    width: 10%;
+}
+
+
+/* STUDENT NAME */
+#studentTable th:nth-child(4),
+#studentTable td:nth-child(4) {
+    width: 14%;
+}
+
+
+/* SEX */
+#studentTable th:nth-child(5),
+#studentTable td:nth-child(5) {
+    width: 6%;
+}
+
+
+/* CONTACT NUMBER */
+#studentTable th:nth-child(6),
+#studentTable td:nth-child(6) {
+    width: 12%;
+}
+
+
+/* PARENT / GUARDIAN NAME */
+#studentTable th:nth-child(7),
+#studentTable td:nth-child(7) {
+    width: 16%;
+}
+
+
+/* PARENT / GUARDIAN CONTACT */
+#studentTable th:nth-child(8),
+#studentTable td:nth-child(8) {
+    width: 17%;
+}
+
+
+/* ATTENDANCE */
+#studentTable th:nth-child(9),
+#studentTable td:nth-child(9) {
+    width: 10%;
+}
+
+
 /* =====================================================
    SELECT ALL / STUDENT CHECKBOXES
 ===================================================== */
 
 #studentTable .select-column {
-    width: 105px;
-    min-width: 105px;
+    width: 8%;
+    min-width: 0;
+
     text-align: center !important;
 }
 
@@ -215,19 +349,26 @@
     position: relative;
 
     width: 100%;
+
     display: grid;
     grid-template-columns: 17px 1fr;
+
     align-items: center;
     justify-content: start;
-    gap: 7px;
 
-    padding-left: 10px;
+    gap: 5px;
+
+    padding-left: 2px;
+
     cursor: pointer;
+
+    box-sizing: border-box;
 }
 
 .select-all-control input,
 .student-checkbox input {
     position: absolute;
+
     opacity: 0;
     pointer-events: none;
 }
@@ -242,6 +383,7 @@
 
     border: 1.5px solid #C9CED6;
     border-radius: 5px;
+
     background: #FFFFFF;
 
     display: inline-flex;
@@ -249,6 +391,8 @@
     justify-content: center;
 
     transition: 0.18s ease;
+
+    box-sizing: border-box;
 }
 
 .select-all-control input:checked + span,
@@ -261,17 +405,23 @@
 .select-all-control input:checked + span::after,
 .student-checkbox input:checked + span::after {
     content: "\f00c";
+
     font-family: "Font Awesome 6 Free";
     font-weight: 900;
+
     font-size: 10px;
+
     color: #FFFFFF;
 }
 
 .select-all-control input:indeterminate + span::after {
     content: "";
+
     width: 8px;
     height: 2px;
+
     background: #FFFFFF;
+
     border-radius: 2px;
 }
 
@@ -286,32 +436,39 @@
     grid-row: 1;
 
     font-style: normal;
-    font-size: 10px;
+
+    font-size: 9px;
     font-weight: 700;
+
     color: var(--gray, #6C757D);
+
     white-space: nowrap;
     text-align: left;
 }
+
 
 /* =====================================================
    STUDENT PICTURES
 ===================================================== */
 
 #studentTable .picture-column {
-    width: 86px;
-    min-width: 86px;
+    width: 7%;
+    min-width: 0;
+
     text-align: center !important;
 }
 
 .student-photo {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
+
     margin: 0 auto;
 
     border-radius: 50%;
     overflow: hidden;
 
     background: #F0F1F5;
+
     border: 1px solid var(--border, #E9ECEF);
 
     display: flex;
@@ -319,16 +476,20 @@
     justify-content: center;
 
     color: var(--primary-purple, #6F42C1);
-    font-size: 11px;
+
+    font-size: 10px;
     font-weight: 700;
 }
 
 .student-photo img {
     width: 100%;
     height: 100%;
+
     object-fit: cover;
+
     display: block;
 }
+
 
 /* =====================================================
    ATTENDANCE RATE
@@ -336,11 +497,15 @@
 
 .attendance-rate {
     display: inline-flex;
-    padding: 5px 9px;
+
+    padding: 5px 8px;
+
     border-radius: 20px;
 
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
+
+    white-space: nowrap;
 }
 
 .attendance-rate.high {
@@ -352,6 +517,7 @@
     color: #F0AD4E;
     background: rgba(240, 173, 78, 0.12);
 }
+
 
 /* =====================================================
    SELECTED STUDENT ROW
@@ -374,19 +540,22 @@
 }
 
 #studentTable tbody tr.student-selected td:first-child {
-    box-shadow: inset 3px 0 0 var(--primary-purple, #6F42C1);
+    box-shadow:
+        inset 3px 0 0 var(--primary-purple, #6F42C1);
 }
+
 
 /* =====================================================
    SELECTED CARD HEADER
 ===================================================== */
 
 .class-record-card.has-selection > .card-header {
-    background: linear-gradient(
-        135deg,
-        rgba(111, 66, 193, 0.12),
-        rgba(111, 66, 193, 0.055)
-    );
+    background:
+        linear-gradient(
+            135deg,
+            rgba(111, 66, 193, 0.12),
+            rgba(111, 66, 193, 0.055)
+        );
 
     border-color: rgba(111, 66, 193, 0.18);
     border-bottom-color: rgba(111, 66, 193, 0.22);
@@ -406,12 +575,16 @@
 
 .class-record-card.has-selection > .card-header .search-box {
     border-color: rgba(111, 66, 193, 0.20);
-    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.04);
+
+    box-shadow:
+        0 0 0 3px rgba(111, 66, 193, 0.04);
 }
 
 .class-record-card.has-selection > .card-header .promote-btn {
-    box-shadow: 0 4px 10px rgba(111, 66, 193, 0.16);
+    box-shadow:
+        0 4px 10px rgba(111, 66, 193, 0.16);
 }
+
 
 /* =====================================================
    SEARCH EMPTY STATE
@@ -419,7 +592,9 @@
 
 .class-record-empty {
     padding: 35px 20px;
+
     text-align: center;
+
     color: var(--gray, #6C757D);
 }
 
@@ -429,21 +604,28 @@
 
 .class-record-empty i {
     display: block;
+
     margin-bottom: 12px;
+
     font-size: 28px;
+
     color: var(--primary-purple, #6F42C1);
 }
 
 .class-record-empty strong {
     display: block;
+
     margin-bottom: 6px;
+
     font-size: 14px;
+
     color: var(--dark, #212529);
 }
 
 .class-record-empty p {
     font-size: 12px;
 }
+
 
 /* =====================================================
    PROMOTE / TRANSFER MODAL
@@ -455,42 +637,58 @@ body.modal-open {
 
 .promote-modal {
     position: fixed;
+
     inset: 0;
+
     z-index: 3000;
+
     display: none;
 }
 
 .promote-modal.show {
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     padding: 24px;
 }
 
 .promote-modal-overlay {
     position: absolute;
+
     inset: 0;
 
     background: rgba(33, 37, 41, 0.42);
+
     backdrop-filter: blur(2px);
 }
+
+
+/* =====================================================
+   PROMOTE PANEL
+===================================================== */
 
 .promote-panel {
     position: relative;
 
     width: min(500px, 100%);
+
     background: var(--white, #FFFFFF);
 
     border: 1px solid var(--border, #E9ECEF);
     border-radius: 16px;
 
-    box-shadow: 0 22px 60px rgba(33, 37, 41, 0.20);
+    box-shadow:
+        0 22px 60px rgba(33, 37, 41, 0.20);
+
     overflow: hidden;
 
     animation: promotePanelIn 0.18s ease-out;
 }
 
 @keyframes promotePanelIn {
+
     from {
         opacity: 0;
         transform: translateY(10px) scale(0.98);
@@ -502,35 +700,54 @@ body.modal-open {
     }
 }
 
+
+/* =====================================================
+   PROMOTE PANEL HEADER
+===================================================== */
+
 .promote-panel-header {
     display: flex;
+
     align-items: flex-start;
     justify-content: space-between;
+
     gap: 15px;
 
     padding: 22px 24px 18px;
+
     border-bottom: 1px solid var(--border, #E9ECEF);
 }
 
 .promote-panel-header h3 {
     font-size: 17px;
+
     color: var(--dark, #212529);
+
     margin-bottom: 5px;
 }
 
 .promote-panel-header p {
     font-size: 11px;
+
     color: var(--gray, #6C757D);
 }
+
+
+/* =====================================================
+   CLOSE BUTTON
+===================================================== */
 
 .promote-close-btn {
     width: 34px;
     height: 34px;
+
     flex-shrink: 0;
 
     border: none;
     border-radius: 8px;
+
     background: #F5F7FB;
+
     color: var(--gray, #6C757D);
 
     cursor: pointer;
@@ -544,8 +761,10 @@ body.modal-open {
 
 .promote-close-btn:hover {
     color: var(--primary-purple, #6F42C1);
+
     background: #EEEAF8;
 }
+
 
 /* =====================================================
    PROMOTE FORM
@@ -557,12 +776,15 @@ body.modal-open {
 
 .promote-form.promote-form-row {
     display: grid;
+
     grid-template-columns: 1fr 1fr;
+
     gap: 14px;
 }
 
 .promote-form .form-group {
     min-width: 0;
+
     margin-bottom: 16px;
 }
 
@@ -572,10 +794,12 @@ body.modal-open {
 
 .promote-form .form-group label {
     display: block;
+
     margin-bottom: 7px;
 
     font-size: 11px;
     font-weight: 600;
+
     color: var(--gray-dark, #495057);
 }
 
@@ -585,26 +809,36 @@ body.modal-open {
 
     border: 1px solid var(--border, #E9ECEF);
     border-radius: 8px;
+
     padding: 0 12px;
 
     background: var(--white, #FFFFFF);
+
     outline: none;
 
     font-family: inherit;
     font-size: 12px;
+
     color: var(--dark, #212529);
+
+    box-sizing: border-box;
 }
 
 .promote-form select:focus {
     border-color: var(--primary-purple, #6F42C1);
-    box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.08);
+
+    box-shadow:
+        0 0 0 3px rgba(111, 66, 193, 0.08);
 }
 
 .promote-form select:disabled {
     background: #F5F6F8;
+
     color: var(--gray-light, #ADB5BD);
+
     cursor: not-allowed;
 }
+
 
 /* =====================================================
    MODAL ACTIONS
@@ -612,11 +846,14 @@ body.modal-open {
 
 .promote-panel-actions {
     display: flex;
+
     align-items: center;
     justify-content: space-between;
+
     gap: 12px;
 
     padding: 18px 24px 22px;
+
     margin-top: 8px;
 
     border-top: 1px solid var(--border, #E9ECEF);
@@ -624,7 +861,9 @@ body.modal-open {
 
 .promote-right-actions {
     display: flex;
+
     align-items: center;
+
     gap: 8px;
 }
 
@@ -632,7 +871,9 @@ body.modal-open {
 .cancel-promote-btn,
 .confirm-promote-btn {
     height: 38px;
+
     border-radius: 8px;
+
     padding: 0 14px;
 
     font-family: inherit;
@@ -644,6 +885,7 @@ body.modal-open {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     gap: 7px;
 
     transition: 0.2s ease;
@@ -652,7 +894,9 @@ body.modal-open {
 .clear-promote-btn,
 .cancel-promote-btn {
     border: 1px solid var(--border, #E9ECEF);
+
     background: var(--white, #FFFFFF);
+
     color: var(--gray-dark, #495057);
 }
 
@@ -667,7 +911,9 @@ body.modal-open {
 
 .confirm-promote-btn {
     border: none;
+
     background: var(--primary-purple, #6F42C1);
+
     color: var(--white, #FFFFFF);
 }
 
@@ -675,17 +921,58 @@ body.modal-open {
     background: #5F36AA;
 }
 
+
 /* =====================================================
-   RESPONSIVE
+   RESPONSIVE - TABLET
+===================================================== */
+
+@media (max-width: 1100px) {
+
+    #studentTable th {
+        padding-left: 5px;
+        padding-right: 5px;
+
+        font-size: 8px;
+    }
+
+    #studentTable td {
+        padding-left: 5px;
+        padding-right: 5px;
+
+        font-size: 10px;
+    }
+
+    .student-photo {
+        width: 34px;
+        height: 34px;
+    }
+
+    .select-all-control em {
+        font-size: 8px;
+    }
+
+}
+
+
+/* =====================================================
+   RESPONSIVE - SMALL TABLET
 ===================================================== */
 
 @media (max-width: 850px) {
+
     .class-record-page {
         padding: 20px 24px 35px;
     }
+
 }
 
+
+/* =====================================================
+   RESPONSIVE - MOBILE
+===================================================== */
+
 @media (max-width: 650px) {
+
     .class-record-page {
         padding: 18px 18px 35px;
     }
@@ -702,6 +989,7 @@ body.modal-open {
 
     .class-tools {
         width: 100%;
+
         flex-direction: column;
         align-items: stretch;
     }
@@ -711,12 +999,26 @@ body.modal-open {
         width: 100%;
     }
 
+
+    /* Mobile tables may scroll because the screen
+       becomes too narrow for all student information */
+
+    .class-record-page .table-container {
+        overflow-x: auto;
+    }
+
+    .class-record-page .large-table table {
+        min-width: 800px;
+    }
+
+
     .promote-modal.show {
         padding: 14px;
     }
 
     .promote-panel-actions {
         align-items: stretch;
+
         flex-direction: column;
     }
 
@@ -729,16 +1031,23 @@ body.modal-open {
     .confirm-promote-btn {
         flex: 1;
     }
+
 }
 
+
+/* =====================================================
+   RESPONSIVE - SMALL MOBILE
+===================================================== */
+
 @media (max-width: 520px) {
+
     .promote-form.promote-form-row {
         grid-template-columns: 1fr;
     }
 
     #studentTable .select-column {
-        width: 90px;
-        min-width: 90px;
+        width: 8%;
+        min-width: 0;
     }
 
     .select-all-control {
@@ -746,11 +1055,18 @@ body.modal-open {
     }
 
     .select-all-control em {
-        font-size: 9px;
+        font-size: 8px;
     }
+
 }
 
+
+/* =====================================================
+   RESPONSIVE - VERY SMALL MOBILE
+===================================================== */
+
 @media (max-width: 480px) {
+
     .class-record-page {
         padding: 15px 12px 30px;
     }
@@ -762,4 +1078,5 @@ body.modal-open {
     .class-record-card > .card-header {
         margin: -16px -16px 18px;
     }
+
 }
