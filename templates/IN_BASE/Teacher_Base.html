@@ -1,4 +1,3 @@
-
 {% load static %}
 
 <!DOCTYPE html>
@@ -19,21 +18,47 @@
         {% endblock %}
     </title>
 
-    <!-- FONT AWESOME -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
-    <!-- TEACHER BASE CSS -->
     <link
         rel="stylesheet"
         href="{% static 'css/IN_BASE/Teacher_Base.css' %}"
     >
 
-    <!-- PAGE-SPECIFIC CSS -->
     {% block extra_css %}
     {% endblock %}
+
+    <style>
+
+    .notification-badge-num {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background: #ef4444;
+        color: #ffffff;
+        font-size: 0.68rem;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #ffffff;
+        line-height: 1;
+        box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+    }
+
+    .notification-item.unread {
+        background: #eff6ff;
+        border-left: 3px solid #3b82f6;
+    }
+
+    </style>
 
 </head>
 
@@ -41,21 +66,9 @@
 <body>
 
 
-    <!-- =====================================================
-         TOP HEADER
-         ===================================================== -->
-
     <header class="topbar">
 
-
-        <!-- =================================================
-             LEFT SIDE
-             ================================================= -->
-
         <div class="topbar-left">
-
-
-            <!-- SIDEBAR TOGGLE -->
 
             <button
                 class="sidebar-toggle"
@@ -65,17 +78,10 @@
                 aria-expanded="true"
                 aria-controls="sidebar"
             >
-
                 <i class="fa-solid fa-bars"></i>
-
             </button>
 
-
-
-            <!-- PAGE HEADING -->
-
             <div class="page-heading">
-
 
                 {% block page_heading %}
 
@@ -85,8 +91,6 @@
 
                 {% endblock %}
 
-
-
                 {% block page_subheading %}
 
                 <p id="pageSubtitle">
@@ -95,24 +99,14 @@
 
                 {% endblock %}
 
-
             </div>
-
 
         </div>
 
 
 
-        <!-- =================================================
-             RIGHT SIDE
-             ================================================= -->
-
         <div class="topbar-right">
 
-
-            <!-- =================================================
-                 NOTIFICATION BUTTON
-                 ================================================= -->
 
             <button
                 class="notification-btn"
@@ -125,152 +119,70 @@
 
                 <i class="fa-regular fa-bell"></i>
 
-                {% if unread_notification_count %}
-
-                <span class="notification-dot"></span>
-
-                {% endif %}
+                <span
+                    class="notification-badge-num"
+                    id="notificationBadge"
+                    style="display: none;"
+                >
+                    0
+                </span>
 
             </button>
 
 
-
-            <!-- =================================================
-                 NOTIFICATION PANEL
-                 ================================================= -->
 
             <div
                 class="notification-panel"
                 id="notificationPanel"
             >
 
-
-                <!-- NOTIFICATION HEADER -->
-
                 <div class="notification-panel-header">
-
 
                     <div>
 
                         <h3>Notifications</h3>
 
-                        <p>
-                            Latest system updates
-                        </p>
+                        <p>Latest attendance updates</p>
 
                     </div>
 
-
-
-                    <span class="notification-count">
-
-                        {{ unread_notification_count|default:"0" }}
-
+                    <span
+                        class="notification-count"
+                        id="notificationPanelCount"
+                    >
+                        0
                     </span>
 
-
                 </div>
 
 
 
-                <!-- =================================================
-                     LATEST NOTIFICATIONS
-                     ================================================= -->
+                <div
+                    class="notification-panel-list"
+                    id="notificationPanelList"
+                >
 
-                {% for notification in latest_notifications %}
+                    <div class="notification-item">
 
+                        <div class="notification-icon purple">
 
-                <div class="{% if forloop.first %}latest-notification{% else %}notification-item{% endif %}">
+                            <i class="fa-regular fa-bell"></i>
 
+                        </div>
 
-                    <div class="notification-icon blue">
+                        <div class="notification-content">
 
-                        <i class="fa-solid fa-bell"></i>
+                            <strong>Loading...</strong>
 
-                    </div>
+                            <p>Fetching your notifications.</p>
 
-
-
-                    <div class="notification-content">
-
-
-                        <strong>
-
-                            {{ notification.title }}
-
-                        </strong>
-
-
-
-                        <p>
-
-                            {{ notification.message }}
-
-                        </p>
-
-
-
-                        <small>
-
-                            {% if notification.created_at %}
-
-                                {{ notification.created_at|timesince }} ago
-
-                            {% endif %}
-
-                        </small>
-
+                        </div>
 
                     </div>
-
 
                 </div>
 
 
-
-                {% empty %}
-
-
-                <!-- NO NOTIFICATIONS -->
-
-                <div class="notification-item">
-
-
-                    <div class="notification-icon purple">
-
-                        <i class="fa-regular fa-bell"></i>
-
-                    </div>
-
-
-
-                    <div class="notification-content">
-
-
-                        <strong>
-                            No new notifications
-                        </strong>
-
-
-
-                        <p>
-                            You have no notifications at the moment.
-                        </p>
-
-
-                    </div>
-
-
-                </div>
-
-
-                {% endfor %}
-
-
-
-                <!-- =================================================
-                     VIEW ALL NOTIFICATIONS
-                     ================================================= -->
 
                 <a
                     href="{% url 'teacher_dashboard' %}#notificationsPage"
@@ -284,19 +196,11 @@
 
                 </a>
 
-
             </div>
 
 
 
-            <!-- =================================================
-                 TEACHER PROFILE
-                 ================================================= -->
-
             <div class="profile-wrapper">
-
-
-                <!-- PROFILE BUTTON -->
 
                 <button
                     class="profile-btn"
@@ -306,21 +210,13 @@
                     aria-controls="profileDropdown"
                 >
 
-
-                    <!-- PROFILE AVATAR -->
-
                     <div class="profile-avatar">
 
                         {{ teacher_initials|default:"T" }}
 
                     </div>
 
-
-
-                    <!-- PROFILE DETAILS -->
-
                     <div class="profile-details">
-
 
                         <strong>
 
@@ -328,38 +224,22 @@
 
                         </strong>
 
-
-
-                        <span>
-                            Teacher
-                        </span>
-
+                        <span>Teacher</span>
 
                     </div>
 
-
-
                     <i class="fa-solid fa-chevron-down profile-chevron"></i>
-
 
                 </button>
 
 
-
-                <!-- =================================================
-                     PROFILE DROPDOWN
-                     ================================================= -->
 
                 <div
                     class="profile-dropdown"
                     id="profileDropdown"
                 >
 
-
-                    <!-- PROFILE INFORMATION -->
-
                     <div class="dropdown-user">
-
 
                         <div class="dropdown-avatar">
 
@@ -367,10 +247,7 @@
 
                         </div>
 
-
-
                         <div>
-
 
                             <strong>
 
@@ -378,15 +255,9 @@
 
                             </strong>
 
-
-
-                            <span>
-                                Teacher
-                            </span>
-
+                            <span>Teacher</span>
 
                         </div>
-
 
                     </div>
 
@@ -395,10 +266,6 @@
                     <div class="dropdown-divider"></div>
 
 
-
-                    <!-- =================================================
-                         PERSONAL INFORMATION
-                         ================================================= -->
 
                     <a
                         href="{% url 'teacher_profile' %}"
@@ -407,17 +274,11 @@
 
                         <i class="fa-regular fa-user"></i>
 
-                        <span>
-                            Personal Information
-                        </span>
+                        <span>Personal Information</span>
 
                     </a>
 
 
-
-                    <!-- =================================================
-                         SECURITY / ACCOUNT
-                         ================================================= -->
 
                     <a
                         href="{% url 'teacher_security' %}"
@@ -426,9 +287,7 @@
 
                         <i class="fa-solid fa-lock"></i>
 
-                        <span>
-                            Security / Account
-                        </span>
+                        <span>Security / Account</span>
 
                     </a>
 
@@ -438,484 +297,521 @@
 
 
 
-                    <!-- =================================================
-                         LOGOUT
-                         ================================================= -->
-
-                    <form
-                        method="post"
-                        action="{% url 'logout' %}"
-                    >
+                    <form method="post" action="{% url 'logout' %}">
 
                         {% csrf_token %}
 
-                        <button
-                            type="submit"
-                            class="dropdown-item logout"
-                        >
+                        <button type="submit" class="dropdown-item logout">
 
                             <i class="fa-solid fa-right-from-bracket"></i>
 
-                            <span>
-                                Logout
-                            </span>
+                            <span>Logout</span>
 
                         </button>
 
                     </form>
 
-
                 </div>
-
 
             </div>
 
-
         </div>
-
 
     </header>
 
 
 
-    <!-- =====================================================
-         SIDEBAR
-         ===================================================== -->
-
-    <aside
-        class="sidebar"
-        id="sidebar"
-    >
-
+    <aside class="sidebar" id="sidebar">
 
         <div class="sidebar-menu">
 
-
-            <!-- =================================================
-                 MAIN MENU
-                 ================================================= -->
-
-            <div class="menu-label">
-
-                MAIN
-
-            </div>
-
-
-
-            <!-- =================================================
-                 DASHBOARD
-                 ================================================= -->
+            <div class="menu-label">MAIN</div>
 
             <a
                 href="{% url 'teacher_dashboard' %}"
                 class="menu-item {% if request.resolver_match.url_name == 'teacher_dashboard' %}active{% endif %}"
             >
-
                 <i class="fa-solid fa-gauge-high"></i>
-
-                <span>
-                    Dashboard
-                </span>
-
+                <span>Dashboard</span>
             </a>
 
 
 
-            <!-- =================================================
-                 TEACHER MENU
-                 ================================================= -->
-
-            <div class="menu-label">
-
-                TEACHER
-
-            </div>
-
-
-
-            <!-- =================================================
-                 PERSONAL INFORMATION
-                 ================================================= -->
+            <div class="menu-label">TEACHER</div>
 
             <a
                 href="{% url 'teacher_profile' %}"
                 class="menu-item {% if request.resolver_match.url_name == 'teacher_profile' %}active{% endif %}"
             >
-
                 <i class="fa-regular fa-id-card"></i>
-
-                <span>
-                    Personal Information
-                </span>
-
+                <span>Personal Information</span>
             </a>
-
-
-
-            <!-- =================================================
-                 CLASS RECORD
-                 ================================================= -->
 
             <a
                 href="{% url 'teacher_class_record' %}"
                 class="menu-item {% if request.resolver_match.url_name == 'teacher_class_record' %}active{% endif %}"
             >
-
                 <i class="fa-solid fa-users"></i>
-
-                <span>
-                    Class Record
-                </span>
-
+                <span>Class Record</span>
             </a>
-
-
-
-            <!-- =================================================
-                 CLASS ATTENDANCE
-                 ================================================= -->
 
             <a
                 href="{% url 'teacher_class_attendance' %}"
                 class="menu-item {% if request.resolver_match.url_name == 'teacher_class_attendance' %}active{% endif %}"
             >
-
                 <i class="fa-solid fa-calendar-check"></i>
+                <span>Class Attendance</span>
+            </a>
 
-                <span>
-                    Class Attendance
-                </span>
-
+            <a
+                href="{% url 'teacher_history' %}"
+                class="menu-item {% if request.resolver_match.url_name == 'teacher_history' %}active{% endif %}"
+            >
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>History</span>
             </a>
 
 
 
-            <!-- =================================================
-                 HISTORY
-                 ================================================= -->
-
-            <!--
-                Your current urls.py does not contain a
-                teacher_history route.
-
-                Keep this button disabled until the
-                History page and its URL are created.
-            -->
-
-       <!-- =================================================
-     HISTORY
-================================================= -->
-
-<a
-    href="{% url 'teacher_history' %}"
-    class="menu-item {% if request.resolver_match.url_name == 'teacher_history' %}active{% endif %}"
->
-
-    <i class="fa-solid fa-clock-rotate-left"></i>
-
-    <span>History</span>
-
-</a>
-
-
-
-            <!-- =================================================
-                 ACCOUNT MENU
-                 ================================================= -->
-
-            <div class="menu-label">
-
-                ACCOUNT
-
-            </div>
-
-
-
-            <!-- =================================================
-                 SECURITY / ACCOUNT
-                 ================================================= -->
+            <div class="menu-label">ACCOUNT</div>
 
             <a
                 href="{% url 'teacher_security' %}"
                 class="menu-item {% if request.resolver_match.url_name == 'teacher_security' %}active{% endif %}"
             >
-
                 <i class="fa-solid fa-shield-halved"></i>
-
-                <span>
-                    Security / Account
-                </span>
-
+                <span>Security / Account</span>
             </a>
 
-
         </div>
-
 
     </aside>
 
 
 
-    <!-- =====================================================
-         MAIN CONTENT
-         ===================================================== -->
-
-    <main
-        class="main-content"
-        id="mainContent"
-    >
-
+    <main class="main-content" id="mainContent">
 
         {% block content %}
-
         {% endblock %}
-
 
     </main>
 
 
 
-    <!-- =====================================================
-         SHARED JAVASCRIPT
-         ===================================================== -->
-
     <script>
 
-        document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
+
+        "use strict";
 
 
-            /* =================================================
-               ELEMENTS
-               ================================================= */
+        const POLL_INTERVAL = 5000;
 
-            const sidebar =
-                document.getElementById("sidebar");
+        const API_URL = "/teacher/notifications/api/";
 
-            const sidebarToggle =
-                document.getElementById("sidebarToggle");
+        const MARK_READ_URL = "/teacher/notifications/mark-read/";
 
-            const profileBtn =
-                document.getElementById("profileBtn");
-
-            const profileDropdown =
-                document.getElementById("profileDropdown");
-
-            const notificationBtn =
-                document.getElementById("notificationBtn");
-
-            const notificationPanel =
-                document.getElementById("notificationPanel");
-
-            const viewAllNotifications =
-                document.getElementById("viewAllNotifications");
+        const CSRF_TOKEN = "{{ csrf_token }}";
 
 
 
-            /* =================================================
-               SIDEBAR TOGGLE
-               ================================================= */
+        const sidebar =
+            document.getElementById("sidebar");
 
-            if (sidebar && sidebarToggle) {
+        const sidebarToggle =
+            document.getElementById("sidebarToggle");
 
-                sidebarToggle.addEventListener("click", function (event) {
+        const profileBtn =
+            document.getElementById("profileBtn");
 
-                    event.stopPropagation();
+        const profileDropdown =
+            document.getElementById("profileDropdown");
 
-                    const isCollapsed =
-                        sidebar.classList.toggle("collapsed");
+        const notificationBtn =
+            document.getElementById("notificationBtn");
 
-                    sidebarToggle.setAttribute(
-                        "aria-expanded",
-                        String(!isCollapsed)
-                    );
+        const notificationPanel =
+            document.getElementById("notificationPanel");
 
-                });
+        const notificationBadge =
+            document.getElementById("notificationBadge");
 
+        const notificationPanelList =
+            document.getElementById("notificationPanelList");
+
+        const notificationPanelCount =
+            document.getElementById("notificationPanelCount");
+
+        const viewAllNotifications =
+            document.getElementById("viewAllNotifications");
+
+
+
+        if (sidebar && sidebarToggle) {
+
+            sidebarToggle.addEventListener("click", function (event) {
+
+                event.stopPropagation();
+
+                const isCollapsed =
+                    sidebar.classList.toggle("collapsed");
+
+                sidebarToggle.setAttribute(
+                    "aria-expanded",
+                    String(!isCollapsed)
+                );
+
+            });
+
+        }
+
+
+
+        function closeProfileDropdown() {
+
+            if (profileDropdown) {
+                profileDropdown.classList.remove("show");
             }
 
-
-
-            /* =================================================
-               CLOSE PROFILE DROPDOWN
-               ================================================= */
-
-            function closeProfileDropdown() {
-
-                if (profileDropdown) {
-
-                    profileDropdown.classList.remove("show");
-
-                }
-
-
-                if (profileBtn) {
-
-                    profileBtn.setAttribute(
-                        "aria-expanded",
-                        "false"
-                    );
-
-                }
-
+            if (profileBtn) {
+                profileBtn.setAttribute("aria-expanded", "false");
             }
 
+        }
 
+        function closeNotificationPanel() {
 
-            /* =================================================
-               CLOSE NOTIFICATION PANEL
-               ================================================= */
-
-            function closeNotificationPanel() {
-
-                if (notificationPanel) {
-
-                    notificationPanel.classList.remove("show");
-
-                }
-
-
-                if (notificationBtn) {
-
-                    notificationBtn.setAttribute(
-                        "aria-expanded",
-                        "false"
-                    );
-
-                }
-
+            if (notificationPanel) {
+                notificationPanel.classList.remove("show");
             }
 
-
-
-            /* =================================================
-               PROFILE DROPDOWN
-               ================================================= */
-
-            if (profileBtn && profileDropdown) {
-
-                profileBtn.addEventListener("click", function (event) {
-
-                    event.stopPropagation();
-
-                    const isOpen =
-                        profileDropdown.classList.toggle("show");
-
-                    profileBtn.setAttribute(
-                        "aria-expanded",
-                        String(isOpen)
-                    );
-
-                    closeNotificationPanel();
-
-                });
-
-
-
-                profileDropdown.addEventListener("click", function (event) {
-
-                    event.stopPropagation();
-
-                });
-
+            if (notificationBtn) {
+                notificationBtn.setAttribute("aria-expanded", "false");
             }
 
-
-
-            /* =================================================
-               NOTIFICATION PANEL
-               ================================================= */
-
-            if (notificationBtn && notificationPanel) {
-
-                notificationBtn.addEventListener("click", function (event) {
-
-                    event.preventDefault();
-
-                    event.stopPropagation();
-
-                    const isOpen =
-                        notificationPanel.classList.toggle("show");
-
-                    notificationBtn.setAttribute(
-                        "aria-expanded",
-                        String(isOpen)
-                    );
-
-                    closeProfileDropdown();
-
-                });
+        }
 
 
 
-                notificationPanel.addEventListener("click", function (event) {
+        if (profileBtn && profileDropdown) {
 
-                    event.stopPropagation();
+            profileBtn.addEventListener("click", function (event) {
 
-                });
+                event.stopPropagation();
 
-            }
+                const isOpen =
+                    profileDropdown.classList.toggle("show");
 
-
-
-            /* =================================================
-               VIEW ALL NOTIFICATIONS
-               ================================================= */
-
-            if (viewAllNotifications) {
-
-                viewAllNotifications.addEventListener("click", function () {
-
-                    closeNotificationPanel();
-
-                    closeProfileDropdown();
-
-                });
-
-            }
-
-
-
-            /* =================================================
-               CLOSE PANELS WHEN CLICKING OUTSIDE
-               ================================================= */
-
-            document.addEventListener("click", function () {
-
-                closeProfileDropdown();
+                profileBtn.setAttribute(
+                    "aria-expanded",
+                    String(isOpen)
+                );
 
                 closeNotificationPanel();
 
             });
 
+            profileDropdown.addEventListener("click", function (event) {
+
+                event.stopPropagation();
+
+            });
+
+        }
 
 
-            /* =================================================
-               ESCAPE KEY
-               ================================================= */
 
-            document.addEventListener("keydown", function (event) {
+        /* =================================================
+           NOTIFICATION PANEL
+           - Click bell → open panel
+           - Auto-mark as read pag binuksan
+           ================================================= */
 
-                if (event.key === "Escape") {
+        if (notificationBtn && notificationPanel) {
 
-                    closeProfileDropdown();
+            notificationBtn.addEventListener("click", function (event) {
 
-                    closeNotificationPanel();
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                const isOpen =
+                    notificationPanel.classList.toggle("show");
+
+                notificationBtn.setAttribute(
+                    "aria-expanded",
+                    String(isOpen)
+                );
+
+                closeProfileDropdown();
+
+                if (isOpen) {
+
+                    // Fetch at i-render ang notifications
+                    fetchNotifications();
+
+                    // Mark as read pag binuksan ang panel
+                    markAllAsRead();
 
                 }
 
             });
 
+            notificationPanel.addEventListener("click", function (event) {
+
+                event.stopPropagation();
+
+            });
+
+        }
+
+
+
+        if (viewAllNotifications) {
+
+            viewAllNotifications.addEventListener("click", function () {
+
+                closeNotificationPanel();
+
+                closeProfileDropdown();
+
+            });
+
+        }
+
+
+
+        document.addEventListener("click", function () {
+
+            closeProfileDropdown();
+
+            closeNotificationPanel();
 
         });
+
+        document.addEventListener("keydown", function (event) {
+
+            if (event.key === "Escape") {
+
+                closeProfileDropdown();
+
+                closeNotificationPanel();
+
+            }
+
+        });
+
+
+
+        function escapeHtml(text) {
+
+            const div = document.createElement("div");
+
+            div.textContent = text == null ? "" : text;
+
+            return div.innerHTML;
+
+        }
+
+
+
+        function renderPanelNotifications(notifications) {
+
+            if (!notificationPanelList) return;
+
+            if (!notifications || !notifications.length) {
+
+                notificationPanelList.innerHTML = `
+
+                    <div class="notification-item">
+
+                        <div class="notification-icon purple">
+
+                            <i class="fa-regular fa-bell"></i>
+
+                        </div>
+
+                        <div class="notification-content">
+
+                            <strong>No new notifications</strong>
+
+                            <p>You have no notifications at the moment.</p>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+            let html = "";
+
+            notifications.slice(0, 5).forEach(function (n) {
+
+                html += `
+
+                    <div class="notification-item ${n.is_read ? '' : 'unread'}">
+
+                        <div class="notification-icon blue">
+
+                            <i class="fa-solid fa-bell"></i>
+
+                        </div>
+
+                        <div class="notification-content">
+
+                            <strong>${escapeHtml(n.title)}</strong>
+
+                            <p>${escapeHtml(n.message)}</p>
+
+                            <small>${escapeHtml(n.created_at)}</small>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            });
+
+            notificationPanelList.innerHTML = html;
+
+        }
+
+
+
+        function updateBadge(count) {
+
+            if (!notificationBadge) return;
+
+            if (count > 0) {
+
+                notificationBadge.textContent = count > 99 ? "99+" : count;
+
+                notificationBadge.style.display = "inline-flex";
+
+            } else {
+
+                notificationBadge.style.display = "none";
+
+            }
+
+            if (notificationPanelCount) {
+
+                notificationPanelCount.textContent = count;
+
+            }
+
+        }
+
+
+
+        /* =================================================
+           FETCH NOTIFICATIONS
+           ================================================= */
+
+        function fetchNotifications() {
+
+            fetch(API_URL, {
+
+                method: "GET",
+
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+
+                credentials: "same-origin"
+
+            })
+
+            .then(function (res) { return res.json(); })
+
+            .then(function (data) {
+
+                if (!data.success) return;
+
+                updateBadge(data.unread_count);
+
+                renderPanelNotifications(data.all);
+
+            })
+
+            .catch(function (err) {
+
+                console.error("Notification fetch error:", err);
+
+            });
+
+        }
+
+
+
+        /* =================================================
+           MARK ALL AS READ
+           ================================================= */
+
+        function markAllAsRead() {
+
+            fetch(MARK_READ_URL, {
+
+                method: "POST",
+
+                headers: {
+
+                    "X-CSRFToken": CSRF_TOKEN,
+
+                    "X-Requested-With": "XMLHttpRequest",
+
+                    "Content-Type": "application/json"
+
+                },
+
+                credentials: "same-origin"
+
+            })
+
+            .then(function (res) { return res.json(); })
+
+            .then(function (data) {
+
+                if (data.success) {
+
+                    // Hide badge agad
+                    updateBadge(0);
+
+                    // Refresh list para mawala ang "unread" highlight
+                    fetchNotifications();
+
+                }
+
+            })
+
+            .catch(function (err) {
+
+                console.error("Mark read error:", err);
+
+            });
+
+        }
+
+
+
+        /* =================================================
+           INITIAL + POLLING
+           ================================================= */
+
+        fetchNotifications();
+
+        setInterval(fetchNotifications, POLL_INTERVAL);
+
+    });
 
     </script>
 
 
-
-    <!-- =====================================================
-         PAGE-SPECIFIC JAVASCRIPT
-         ===================================================== -->
 
     {% block extra_js %}
     {% endblock %}

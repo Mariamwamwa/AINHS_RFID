@@ -55,12 +55,9 @@ urlpatterns = [
     path('teacher/class-attendance/', views.teacher_class_attendance, name='teacher_class_attendance'),
     path('teacher/history/', views.teacher_history, name="teacher_history"),
     path('teacher/security/', views.teacher_security, name='teacher_security'),
-
-    path(
-        'teacher/security/change-password/',
-        views.teacher_change_password,
-        name='teacher_change_password'
-    ),
+    path('teacher/notifications/api/',views.teacher_notifications_api,name='teacher_notifications_api'),
+    path('teacher/notifications/mark-read/',views.teacher_notifications_mark_read,name='teacher_notifications_mark_read'),
+    path('teacher/security/change-password/',views.teacher_change_password,name='teacher_change_password'),
     path(
         'teacher/security/save/',
         views.teacher_save_security,

@@ -645,15 +645,56 @@ def record_rfid_attendance(request):
 
             attendance.status = 'present'
 
-        # =================================================
-        # SAVE ATTENDANCE
-        # =================================================
-
-        # =================================================
-# SAVE ATTENDANCE
-# =================================================
+    # =================================================
+    # SAVE ATTENDANCE
+    # =================================================
 
     attendance.save()
+
+
+    # =================================================
+    # NOTIFY THE ADVISER (TEACHER)
+    # =================================================
+
+    try:
+
+        if student.adviser:
+
+            label_map = {
+                'time_in_am': 'AM Time In',
+                'time_out_am': 'AM Time Out',
+                'time_in_pm': 'PM Time In',
+                'time_out_pm': 'PM Time Out',
+            }
+
+            label_text = label_map.get(
+                target_field,
+                attendance_label
+            )
+
+            Notification.objects.create(
+
+                user=student.adviser.user,
+
+                title=(
+                    f"{student.full_name} — "
+                    f"{label_text}"
+                ),
+
+                message=(
+                    f"Student {student.full_name} "
+                    f"({student.lrn}) recorded "
+                    f"{label_text} at "
+                    f"{current_time.strftime('%I:%M %p')} "
+                    f"on "
+                    f"{current_date.strftime('%B %d, %Y')}."
+                ),
+
+            )
+
+    except Exception as error:
+
+        print("TEACHER NOTIFICATION ERROR:", error)
 
 
     # =================================================
@@ -3258,24 +3299,62 @@ def admin_register_rfid(request):
                 'admin_register_rfid'
             )
 
-        if (
-            rfid
-            and
-            Student.objects
-            .filter(
-                rfid=rfid
-            )
-            .exists()
-        ):
+        # =================================================
+        # RFID REQUIRED
+        # =================================================
+
+        if not rfid:
 
             messages.error(
                 request,
-                'RFID card is already registered.'
+                'Please tap the RFID card first.'
             )
 
             return redirect(
                 'admin_register_rfid'
             )
+
+        # =================================================
+        # RFID DUPLICATE CHECK (SMART)
+        #
+        # Only block if the RFID is currently assigned
+        # to an ACTIVE student. If the previous owner
+        # is inactive, allow re-assignment.
+        # =================================================
+
+        existing_rfid_student = (
+            Student.objects
+            .filter(rfid=rfid)
+            .first()
+        )
+
+        if existing_rfid_student:
+
+            if existing_rfid_student.is_active:
+
+                messages.error(
+                    request,
+                    (
+                        f'RFID card is already registered to an '
+                        f'active student: '
+                        f'{existing_rfid_student.full_name} '
+                        f'({existing_rfid_student.lrn}).'
+                    )
+                )
+
+                return redirect(
+                    'admin_register_rfid'
+                )
+
+            else:
+
+                # Clear old inactive owner's RFID
+                # so the card can be reused.
+                existing_rfid_student.rfid = None
+
+                existing_rfid_student.save(
+                    update_fields=['rfid']
+                )
 
         if (
             Student.objects
@@ -3981,13 +4060,22 @@ def teacher_dashboard(request):
     )
 
     notifications = (
-        Notification.objects
+    Notification.objects
         .filter(
             user=request.user
         )
         .order_by(
             '-created_at'
         )[:20]
+    )
+
+    unread_count = (
+        Notification.objects
+        .filter(
+            user=request.user,
+            is_read=False,
+        )
+        .count()
     )
 
     context = {
@@ -4027,6 +4115,9 @@ def teacher_dashboard(request):
         'notifications':
             notifications,
 
+        'unread_count':
+            unread_count,
+
     }
 
     return render(
@@ -4034,7 +4125,6 @@ def teacher_dashboard(request):
         'TEACHER/Teacher_Dashboard.html',
         context
     )
-
 
 # =====================================================
 # TEACHER — CLASS ATTENDANCE
@@ -5294,299 +5384,7 @@ def export_attendance_monthly(request):
         end_date
     )
 
-# =========================================================
-# ADMIN NOTIFICATIONS
-# =========================================================
 
-@login_required
-@require_http_methods(["GET"])
-def admin_notifications(request):
-
-    # =====================================================
-    # ADMIN ONLY
-    # =====================================================
-
-    if not (
-        request.user.is_superuser
-        or getattr(request.user, "role", None) == "ADMIN"
-    ):
-        return JsonResponse(
-            {
-                "success": False,
-                "message": "Unauthorized."
-            },
-            status=403
-        )
-
-    # =====================================================
-    # GET LATEST NOTIFICATIONS
-    # =====================================================
-
-    notifications = (
-        SystemNotification.objects
-        .select_related(
-            "student",
-            "sms_queue"
-        )
-        .order_by(
-            "-created_at"
-        )[:20]
-    )
-
-    # =====================================================
-    # UNREAD COUNT
-    # =====================================================
-
-    unread_count = (
-        SystemNotification.objects.filter(
-            is_read=False
-        ).count()
-    )
-
-    # =====================================================
-    # BUILD RESPONSE
-    # =====================================================
-
-    notification_data = []
-
-    for notification in notifications:
-
-        # -------------------------------------------------
-        # STUDENT NAME
-        # -------------------------------------------------
-
-        student_name = None
-
-        if notification.student:
-
-            student_name = (
-                notification.student.full_name
-            )
-
-        # -------------------------------------------------
-        # TIME
-        # -------------------------------------------------
-
-        created_at = timezone.localtime(
-            notification.created_at
-        )
-
-        # -------------------------------------------------
-        # NOTIFICATION DATA
-        # -------------------------------------------------
-
-        notification_data.append(
-            {
-                "id": notification.id,
-
-                "type": (
-                    notification.notification_type
-                ),
-
-                "title": (
-                    notification.title
-                ),
-
-                "message": (
-                    notification.message
-                ),
-
-                "student_name": (
-                    student_name
-                ),
-
-                "is_read": (
-                    notification.is_read
-                ),
-
-                "time": (
-                    created_at.strftime(
-                        "%I:%M %p"
-                    )
-                ),
-
-                "date": (
-                    created_at.strftime(
-                        "%b %d, %Y"
-                    )
-                ),
-            }
-        )
-
-    # =====================================================
-    # RETURN JSON
-    # =====================================================
-
-    return JsonResponse(
-        {
-            "success": True,
-            "unread_count": unread_count,
-            "notifications": notification_data,
-        }
-    )
-
-
-# =========================================================
-# MARK ADMIN NOTIFICATIONS AS READ
-# =========================================================
-# =========================================================
-# ADMIN NOTIFICATIONS
-# =========================================================
-
-@login_required
-@require_http_methods(["GET"])
-def admin_notifications(request):
-
-    # =====================================================
-    # ADMIN ACCESS CHECK
-    # =====================================================
-
-    is_superadmin = request.user.is_superuser
-
-    is_admin = (
-        request.user.is_staff
-        or getattr(request.user, "role", None) == "ADMIN"
-    )
-
-    if not (
-        is_superadmin
-        or is_admin
-    ):
-        return JsonResponse(
-            {
-                "success": False,
-                "message": "Unauthorized."
-            },
-            status=403
-        )
-
-    # =====================================================
-    # BASE NOTIFICATION QUERYSET
-    # =====================================================
-
-    notifications_qs = (
-        SystemNotification.objects
-        .select_related(
-            "student",
-            "sms_queue"
-        )
-    )
-
-    # =====================================================
-    # NORMAL ADMIN FILTER
-    #
-    # Hardware / SIM notifications marked
-    # superadmin_only=True are completely hidden
-    # from normal administrators.
-    # =====================================================
-
-    if not is_superadmin:
-
-        notifications_qs = (
-            notifications_qs.filter(
-                superadmin_only=False
-            )
-        )
-
-    # =====================================================
-    # UNREAD COUNT
-    #
-    # IMPORTANT:
-    # Count only notifications this user is allowed to see.
-    # =====================================================
-
-    unread_count = (
-        notifications_qs.filter(
-            is_read=False
-        ).count()
-    )
-
-    # =====================================================
-    # LATEST 20 VISIBLE NOTIFICATIONS
-    # =====================================================
-
-    notifications = (
-        notifications_qs
-        .order_by(
-            "-created_at"
-        )[:20]
-    )
-
-    # =====================================================
-    # BUILD RESPONSE
-    # =====================================================
-
-    notification_data = []
-
-    for notification in notifications:
-
-        # -------------------------------------------------
-        # STUDENT NAME
-        # -------------------------------------------------
-
-        student_name = None
-
-        if notification.student:
-
-            student_name = (
-                notification.student.full_name
-            )
-
-        # -------------------------------------------------
-        # LOCAL DATE / TIME
-        # -------------------------------------------------
-
-        created_at = timezone.localtime(
-            notification.created_at
-        )
-
-        # -------------------------------------------------
-        # NOTIFICATION DATA
-        # -------------------------------------------------
-
-        notification_data.append(
-            {
-                "id":
-                    notification.id,
-
-                "type":
-                    notification.notification_type,
-
-                "title":
-                    notification.title,
-
-                "message":
-                    notification.message,
-
-                "student_name":
-                    student_name,
-
-                "is_read":
-                    notification.is_read,
-
-                "time":
-                    created_at.strftime(
-                        "%I:%M %p"
-                    ),
-
-                "date":
-                    created_at.strftime(
-                        "%b %d, %Y"
-                    ),
-            }
-        )
-
-    # =====================================================
-    # RETURN JSON
-    # =====================================================
-
-    return JsonResponse(
-        {
-            "success": True,
-            "unread_count": unread_count,
-            "notifications": notification_data,
-        }
-    )
 
 
 # =========================================================
@@ -5604,7 +5402,7 @@ def mark_admin_notifications_read(request):
     is_superadmin = request.user.is_superuser
 
     is_admin = (
-        request.user.is_staff
+    request.user.is_staff
         or getattr(request.user, "role", None) == "ADMIN"
     )
 
@@ -5662,3 +5460,239 @@ def mark_admin_notifications_read(request):
             "updated": updated,
         }
     )
+
+# =========================================================
+# ADMIN NOTIFICATIONS
+# =========================================================
+
+@login_required
+@require_http_methods(["GET"])
+def admin_notifications(request):
+
+    # =====================================================
+    # ADMIN ACCESS CHECK
+    # =====================================================
+
+    is_superadmin = request.user.is_superuser
+
+    is_admin = (
+        request.user.is_staff
+        or getattr(request.user, "role", None) == "ADMIN"
+    )
+
+    if not (
+        is_superadmin
+        or is_admin
+    ):
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Unauthorized."
+            },
+            status=403
+        )
+
+    # =====================================================
+    # BASE NOTIFICATION QUERYSET
+    # =====================================================
+
+    notifications_qs = (
+        SystemNotification.objects
+        .select_related(
+            "student",
+            "sms_queue"
+        )
+    )
+
+    # =====================================================
+    # NORMAL ADMIN FILTER
+    # =====================================================
+
+    if not is_superadmin:
+
+        notifications_qs = (
+            notifications_qs.filter(
+                superadmin_only=False
+            )
+        )
+
+    # =====================================================
+    # UNREAD COUNT
+    # =====================================================
+
+    unread_count = (
+        notifications_qs.filter(
+            is_read=False
+        ).count()
+    )
+
+    # =====================================================
+    # LATEST 20 VISIBLE NOTIFICATIONS
+    # =====================================================
+
+    notifications = (
+        notifications_qs
+        .order_by(
+            "-created_at"
+        )[:20]
+    )
+
+    # =====================================================
+    # BUILD RESPONSE
+    # =====================================================
+
+    notification_data = []
+
+    for notification in notifications:
+
+        student_name = None
+
+        if notification.student:
+
+            student_name = (
+                notification.student.full_name
+            )
+
+        created_at = timezone.localtime(
+            notification.created_at
+        )
+
+        notification_data.append(
+            {
+                "id":
+                    notification.id,
+
+                "type":
+                    notification.notification_type,
+
+                "title":
+                    notification.title,
+
+                "message":
+                    notification.message,
+
+                "student_name":
+                    student_name,
+
+                "is_read":
+                    notification.is_read,
+
+                "time":
+                    created_at.strftime(
+                        "%I:%M %p"
+                    ),
+
+                "date":
+                    created_at.strftime(
+                        "%b %d, %Y"
+                    ),
+            }
+        )
+
+    # =====================================================
+    # RETURN JSON
+    # =====================================================
+
+    return JsonResponse(
+        {
+            "success": True,
+            "unread_count": unread_count,
+            "notifications": notification_data,
+        }
+    )
+
+# =========================================================
+# TEACHER — NOTIFICATIONS API (LIVE POLLING)
+# =========================================================
+
+@login_required
+@require_http_methods(["GET"])
+def teacher_notifications_api(request):
+
+    teacher = get_teacher(request)
+
+    if not teacher:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error': 'Teacher profile not found.'
+            },
+            status=404
+        )
+
+    notifications_qs = (
+        Notification.objects
+        .filter(user=request.user)
+        .order_by('-created_at')
+    )
+
+    unread_count = (
+        notifications_qs
+        .filter(is_read=False)
+        .count()
+    )
+
+    def serialize(n):
+
+        return {
+
+            'id': n.id,
+
+            'title': n.title,
+
+            'message': n.message,
+
+            'is_read': n.is_read,
+
+            'created_at': timezone.localtime(
+                n.created_at
+            ).strftime('%b %d, %Y • %I:%M %p'),
+
+        }
+
+    all_notifications = notifications_qs[:100]
+
+    return JsonResponse({
+
+        'success': True,
+
+        'unread_count': unread_count,
+
+        'all': [
+            serialize(n) for n in all_notifications
+        ],
+
+    })
+
+
+# =========================================================
+# TEACHER — MARK NOTIFICATIONS AS READ
+# =========================================================
+
+@login_required
+@require_http_methods(["POST"])
+def teacher_notifications_mark_read(request):
+
+    teacher = get_teacher(request)
+
+    if not teacher:
+
+        return JsonResponse(
+            {
+                'success': False,
+                'error': 'Teacher profile not found.'
+            },
+            status=404
+        )
+
+    updated = (
+        Notification.objects
+        .filter(user=request.user, is_read=False)
+        .update(is_read=True)
+    )
+
+    return JsonResponse({
+        'success': True,
+        'updated': updated,
+    })

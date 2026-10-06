@@ -8,18 +8,12 @@ Teacher Dashboard - RFID Attendance Management System
 
 
 {% block page_heading %}
-
 <h1 id="pageTitle">Dashboard</h1>
-
 {% endblock %}
 
 
 {% block page_subheading %}
-
-<p id="pageSubtitle">
-    Teacher Management Panel
-</p>
-
+<p id="pageSubtitle">Teacher Management Panel</p>
 {% endblock %}
 
 
@@ -46,9 +40,7 @@ Teacher Dashboard - RFID Attendance Management System
 >
 
 
-    <!-- =================================================
-         WELCOME CARD
-         ================================================= -->
+    <!-- WELCOME CARD -->
 
     <div class="welcome-card">
 
@@ -89,128 +81,66 @@ Teacher Dashboard - RFID Attendance Management System
 
 
 
-    <!-- =====================================================
-         STATISTICS
-         ===================================================== -->
+    <!-- STATISTICS -->
 
     <div class="stats-grid">
 
 
-        <!-- =================================================
-             TOTAL STUDENTS
-             ================================================= -->
-
         <div class="stat-card">
-
 
             <div class="stat-icon purple">
-
                 <i class="fa-solid fa-users"></i>
-
             </div>
-
-
 
             <div class="stat-info">
-
                 <span>Total Students</span>
-
-                <strong>
-                    {{ total_students|default:"0" }}
-                </strong>
-
+                <strong>{{ total_students|default:"0" }}</strong>
             </div>
-
 
         </div>
 
 
 
-        <!-- =================================================
-             TOTAL PRESENT
-             ================================================= -->
-
         <div class="stat-card">
-
 
             <div class="stat-icon blue">
-
                 <i class="fa-solid fa-user-check"></i>
-
             </div>
-
-
 
             <div class="stat-info">
-
                 <span>Total Present</span>
-
-                <strong>
-                    {{ total_present|default:"0" }}
-                </strong>
-
+                <strong>{{ total_present|default:"0" }}</strong>
             </div>
-
 
         </div>
 
 
 
-        <!-- =================================================
-             TOTAL ABSENT
-             ================================================= -->
-
         <div class="stat-card">
-
 
             <div class="stat-icon red">
-
                 <i class="fa-solid fa-user-xmark"></i>
-
             </div>
-
-
 
             <div class="stat-info">
-
                 <span>Total Absent</span>
-
-                <strong>
-                    {{ total_absent|default:"0" }}
-                </strong>
-
+                <strong>{{ total_absent|default:"0" }}</strong>
             </div>
-
 
         </div>
 
 
 
-        <!-- =================================================
-             ATTENDANCE RATE
-             ================================================= -->
-
         <div class="stat-card">
 
-
             <div class="stat-icon teal">
-
                 <i class="fa-solid fa-chart-line"></i>
-
             </div>
-
-
 
             <div class="stat-info">
-
                 <span>Attendance Rate</span>
-
-                <strong>
-                    {{ attendance_rate|default:"0" }}%
-                </strong>
-
+                <strong>{{ attendance_rate|default:"0" }}%</strong>
             </div>
-
 
         </div>
 
@@ -218,16 +148,12 @@ Teacher Dashboard - RFID Attendance Management System
 
 
 
-    <!-- =====================================================
-         DASHBOARD BOTTOM
-         ===================================================== -->
+    <!-- DASHBOARD BOTTOM -->
 
     <div class="dashboard-grid">
 
 
-        <!-- =================================================
-             RECENT ATTENDANCE
-             ================================================= -->
+        <!-- RECENT ATTENDANCE -->
 
         <div class="content-card">
 
@@ -236,38 +162,24 @@ Teacher Dashboard - RFID Attendance Management System
 
 
                 <div>
-
                     <h3>Recent Attendance</h3>
-
-                    <p>
-                        Latest student attendance records
-                    </p>
-
+                    <p>Latest student attendance records</p>
                 </div>
 
 
-
-                <!-- VIEW ALL ATTENDANCE -->
 
                 <a
                     href="{% url 'teacher_class_attendance' %}"
                     class="view-all-btn"
                 >
-
                     View All
-
                     <i class="fa-solid fa-arrow-right"></i>
-
                 </a>
 
 
             </div>
 
 
-
-            <!-- =================================================
-                 ATTENDANCE TABLE
-                 ================================================= -->
 
             <div class="table-container">
 
@@ -278,17 +190,11 @@ Teacher Dashboard - RFID Attendance Management System
                     <thead>
 
                         <tr>
-
                             <th>LRN</th>
-
                             <th>Student Name</th>
-
                             <th>Time In</th>
-
                             <th>Time Out</th>
-
                             <th>Status</th>
-
                         </tr>
 
                     </thead>
@@ -303,71 +209,31 @@ Teacher Dashboard - RFID Attendance Management System
 
                         <tr>
 
+                            <td>{{ record.lrn }}</td>
 
-                            <!-- LRN -->
-
-                            <td>
-                                {{ record.lrn }}
-                            </td>
-
-
-
-                            <!-- STUDENT NAME -->
+                            <td>{{ record.student_name }}</td>
 
                             <td>
-                                {{ record.student_name }}
-                            </td>
-
-
-
-                            <!-- TIME IN -->
-
-                            <td>
-
                                 {% if record.time_in %}
-
                                     {{ record.time_in|time:"g:i A" }}
-
                                 {% else %}
-
                                     —
-
                                 {% endif %}
-
                             </td>
 
-
-
-                            <!-- TIME OUT -->
-
                             <td>
-
                                 {% if record.time_out %}
-
                                     {{ record.time_out|time:"g:i A" }}
-
                                 {% else %}
-
                                     —
-
                                 {% endif %}
-
                             </td>
-
-
-
-                            <!-- STATUS -->
 
                             <td>
-
                                 <span class="status {{ record.status|lower }}">
-
                                     {{ record.status }}
-
                                 </span>
-
                             </td>
-
 
                         </tr>
 
@@ -376,17 +242,13 @@ Teacher Dashboard - RFID Attendance Management System
                         {% empty %}
 
 
-                        <!-- NO ATTENDANCE RECORDS -->
-
                         <tr>
 
                             <td
                                 colspan="5"
                                 style="text-align: center; padding: 20px;"
                             >
-
                                 No attendance records found.
-
                             </td>
 
                         </tr>
@@ -408,26 +270,17 @@ Teacher Dashboard - RFID Attendance Management System
 
 
 
-        <!-- =====================================================
-             QUICK ACTIONS
-             ===================================================== -->
+        <!-- QUICK ACTIONS -->
 
         <div class="content-card quick-actions-card">
 
 
             <div class="card-header">
 
-
                 <div>
-
                     <h3>Quick Actions</h3>
-
-                    <p>
-                        Access teacher functions
-                    </p>
-
+                    <p>Access teacher functions</p>
                 </div>
-
 
             </div>
 
@@ -436,157 +289,81 @@ Teacher Dashboard - RFID Attendance Management System
             <div class="quick-actions">
 
 
-                <!-- =================================================
-                     CLASS RECORD
-                     ================================================= -->
-
                 <a
                     href="{% url 'teacher_class_record' %}"
                     class="quick-action"
                 >
 
-
                     <div class="quick-icon purple">
-
                         <i class="fa-solid fa-users"></i>
-
                     </div>
-
-
 
                     <div>
-
-                        <strong>
-                            Class Record
-                        </strong>
-
-                        <span>
-                            View list of students
-                        </span>
-
+                        <strong>Class Record</strong>
+                        <span>View list of students</span>
                     </div>
 
-
-
                     <i class="fa-solid fa-chevron-right"></i>
-
 
                 </a>
 
 
-
-                <!-- =================================================
-                     CLASS ATTENDANCE
-                     ================================================= -->
 
                 <a
                     href="{% url 'teacher_class_attendance' %}"
                     class="quick-action"
                 >
 
-
                     <div class="quick-icon blue">
-
                         <i class="fa-solid fa-calendar-check"></i>
-
                     </div>
-
-
 
                     <div>
-
-                        <strong>
-                            Class Attendance
-                        </strong>
-
-                        <span>
-                            View attendance records
-                        </span>
-
+                        <strong>Class Attendance</strong>
+                        <span>View attendance records</span>
                     </div>
 
-
-
                     <i class="fa-solid fa-chevron-right"></i>
-
 
                 </a>
 
 
-
-                <!-- =================================================
-                     PERSONAL INFORMATION
-                     ================================================= -->
 
                 <a
                     href="{% url 'teacher_profile' %}"
                     class="quick-action"
                 >
 
-
                     <div class="quick-icon teal">
-
                         <i class="fa-regular fa-id-card"></i>
-
                     </div>
-
-
 
                     <div>
-
-                        <strong>
-                            Personal Information
-                        </strong>
-
-                        <span>
-                            View teacher information
-                        </span>
-
+                        <strong>Personal Information</strong>
+                        <span>View teacher information</span>
                     </div>
 
-
-
                     <i class="fa-solid fa-chevron-right"></i>
-
 
                 </a>
 
 
-
-                <!-- =================================================
-                     SECURITY / ACCOUNT
-                     ================================================= -->
 
                 <a
                     href="{% url 'teacher_security' %}"
                     class="quick-action"
                 >
 
-
                     <div class="quick-icon gray">
-
                         <i class="fa-solid fa-shield-halved"></i>
-
                     </div>
-
-
 
                     <div>
-
-                        <strong>
-                            Security / Account
-                        </strong>
-
-                        <span>
-                            Manage account security
-                        </span>
-
+                        <strong>Security / Account</strong>
+                        <span>Manage account security</span>
                     </div>
 
-
-
                     <i class="fa-solid fa-chevron-right"></i>
-
 
                 </a>
 
@@ -601,7 +378,7 @@ Teacher Dashboard - RFID Attendance Management System
 
 
 <!-- =====================================================
-     NOTIFICATIONS PAGE
+     NOTIFICATIONS FULL PAGE (View All target)
      ===================================================== -->
 
 <section
@@ -610,19 +387,13 @@ Teacher Dashboard - RFID Attendance Management System
 >
 
 
-    <!-- =================================================
-         SECTION HEADER
-         ================================================= -->
-
     <div class="section-header">
 
         <div>
 
             <h2>Notifications</h2>
 
-            <p>
-                View all recent notifications and system updates.
-            </p>
+            <p>All your attendance notifications</p>
 
         </div>
 
@@ -630,82 +401,14 @@ Teacher Dashboard - RFID Attendance Management System
 
 
 
-    <!-- =================================================
-         NOTIFICATIONS CARD
-         ================================================= -->
-
     <div class="content-card notifications-page-card">
 
-        <div class="notifications-page-list">
+        <div
+            class="notifications-page-list"
+            id="notificationsPageList"
+        >
 
-            {% for notification in notifications %}
-
-            <div class="full-notification {% if not notification.is_read %}unread{% endif %}">
-
-                <div class="notification-icon blue">
-
-                    <i class="fa-solid fa-bell"></i>
-
-                </div>
-
-
-
-                <div class="notification-content">
-
-                    <strong>
-                        {{ notification.title }}
-                    </strong>
-
-
-
-                    <p>
-                        {{ notification.message }}
-                    </p>
-
-
-
-                    <small>
-                        {{ notification.created_at|date:"F j, Y, g:i A" }}
-                    </small>
-
-                </div>
-
-            </div>
-
-
-
-            {% empty %}
-
-
-            <!-- NO NOTIFICATIONS -->
-
-            <div class="full-notification">
-
-                <div class="notification-icon purple">
-
-                    <i class="fa-regular fa-bell"></i>
-
-                </div>
-
-
-
-                <div class="notification-content">
-
-                    <strong>
-                        No notifications
-                    </strong>
-
-
-
-                    <p>
-                        You have no notifications at the moment.
-                    </p>
-
-                </div>
-
-            </div>
-
-            {% endfor %}
+            <!-- Populated by JavaScript -->
 
         </div>
 
@@ -714,123 +417,285 @@ Teacher Dashboard - RFID Attendance Management System
 </section>
 
 
+
+<style>
+
+/* =====================================================
+   NOTIFICATIONS PAGE
+   ===================================================== */
+
+#notificationsPage {
+    display: none;
+}
+
+#notificationsPage.active {
+    display: block;
+}
+
+#dashboardPage {
+    display: none;
+}
+
+#dashboardPage.active {
+    display: block;
+}
+
+.notifications-page-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.full-notification {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+}
+
+.full-notification.unread {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.full-notification .notification-icon {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.full-notification .notification-icon.blue   { background: #3b82f6; }
+.full-notification .notification-icon.purple { background: #8b5cf6; }
+
+.full-notification .notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.full-notification .notification-content strong {
+    display: block;
+    font-size: 0.95rem;
+    color: #111827;
+    margin-bottom: 0.25rem;
+}
+
+.full-notification .notification-content p {
+    margin: 0 0 0.5rem 0;
+    color: #4b5563;
+    font-size: 0.85rem;
+    line-height: 1.45;
+}
+
+.full-notification .notification-content small {
+    color: #9ca3af;
+    font-size: 0.75rem;
+}
+
+</style>
+
 {% endblock %}
 
 
-
-<!-- =====================================================
-     DASHBOARD JAVASCRIPT
-     ===================================================== -->
 
 {% block extra_js %}
 
 <script>
 
-    document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
+
+    "use strict";
 
 
-        /* =================================================
-           ELEMENTS
-           ================================================= */
+    /* =================================================
+       PAGE SWITCHER — Dashboard / Notifications
+       ================================================= */
 
-        const dashboardPage =
-            document.getElementById("dashboardPage");
+    const dashboardPage =
+        document.getElementById("dashboardPage");
 
-        const notificationsPage =
-            document.getElementById("notificationsPage");
+    const notificationsPage =
+        document.getElementById("notificationsPage");
 
-        const pageTitle =
-            document.getElementById("pageTitle");
+    const notificationsPageList =
+        document.getElementById("notificationsPageList");
 
-        const pageSubtitle =
-            document.getElementById("pageSubtitle");
+    const pageTitle =
+        document.getElementById("pageTitle");
 
-
-        /* =================================================
-           PAGE DISPLAY
-           ================================================= */
-
-        function updateDashboardPage() {
-
-
-            const showNotifications =
-                window.location.hash === "#notificationsPage";
+    const pageSubtitle =
+        document.getElementById("pageSubtitle");
 
 
 
-            /* SHOW / HIDE DASHBOARD */
+    function escapeHtml(text) {
 
-            if (dashboardPage) {
+        const div = document.createElement("div");
 
-                dashboardPage.classList.toggle(
-                    "active",
-                    !showNotifications
-                );
+        div.textContent = text == null ? "" : text;
 
-            }
+        return div.innerHTML;
 
-
-
-            /* SHOW / HIDE NOTIFICATIONS */
-
-            if (notificationsPage) {
-
-                notificationsPage.classList.toggle(
-                    "active",
-                    showNotifications
-                );
-
-            }
+    }
 
 
 
-            /* UPDATE PAGE TITLE */
+    function renderFullNotifications(notifications) {
 
-            if (pageTitle) {
+        if (!notificationsPageList) return;
 
-                pageTitle.textContent =
-                    showNotifications
-                        ? "Notifications"
-                        : "Dashboard";
+        if (!notifications || !notifications.length) {
 
-            }
+            notificationsPageList.innerHTML = `
 
+                <div class="full-notification">
 
+                    <div class="notification-icon purple">
 
-            /* UPDATE PAGE SUBTITLE */
+                        <i class="fa-regular fa-bell"></i>
 
-            if (pageSubtitle) {
+                    </div>
 
-                pageSubtitle.textContent =
-                    showNotifications
-                        ? "System Notifications"
-                        : "Teacher Management Panel";
+                    <div class="notification-content">
 
-            }
+                        <strong>No notifications</strong>
+
+                        <p>You have no notifications at the moment.</p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            return;
 
         }
 
+        let html = "";
+
+        notifications.forEach(function (n) {
+
+            html += `
+
+                <div class="full-notification ${n.is_read ? '' : 'unread'}">
+
+                    <div class="notification-icon blue">
+
+                        <i class="fa-solid fa-bell"></i>
+
+                    </div>
+
+                    <div class="notification-content">
+
+                        <strong>${escapeHtml(n.title)}</strong>
+
+                        <p>${escapeHtml(n.message)}</p>
+
+                        <small>${escapeHtml(n.created_at)}</small>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        });
+
+        notificationsPageList.innerHTML = html;
+
+    }
 
 
-        /* =================================================
-           HANDLE NOTIFICATION NAVIGATION
-           ================================================= */
 
-        window.addEventListener(
-            "hashchange",
-            updateDashboardPage
-        );
+    function fetchFullNotifications() {
+
+        fetch("/teacher/notifications/api/", {
+
+            credentials: "same-origin"
+
+        })
+
+        .then(function (res) { return res.json(); })
+
+        .then(function (data) {
+
+            if (data.success) {
+
+                renderFullNotifications(data.all);
+
+            }
+
+        })
+
+        .catch(function (err) {
+
+            console.error("Fetch error:", err);
+
+        });
+
+    }
 
 
 
-        /* =================================================
-           INITIAL PAGE DISPLAY
-           ================================================= */
+    function updatePage() {
 
-        updateDashboardPage();
+        const showNotif =
+            window.location.hash === "#notificationsPage";
 
 
-    });
+
+        if (dashboardPage) {
+
+            dashboardPage.classList.toggle("active", !showNotif);
+
+        }
+
+        if (notificationsPage) {
+
+            notificationsPage.classList.toggle("active", showNotif);
+
+        }
+
+        if (pageTitle) {
+
+            pageTitle.textContent =
+                showNotif ? "Notifications" : "Dashboard";
+
+        }
+
+        if (pageSubtitle) {
+
+            pageSubtitle.textContent =
+                showNotif
+                    ? "All your attendance notifications"
+                    : "Teacher Management Panel";
+
+        }
+
+        if (showNotif) {
+
+            fetchFullNotifications();
+
+        }
+
+    }
+
+
+
+    window.addEventListener("hashchange", updatePage);
+
+    updatePage();
+
+
+});
 
 </script>
 

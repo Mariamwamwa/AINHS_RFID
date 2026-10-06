@@ -46,10 +46,6 @@
                             <label for="rfid">RFID Card <span class="required">*</span></label>
                             <p class="rfid-help">Tap the student's RFID card on the scanner.</p>
                         </div>
-                        <button type="button" class="scan-rfid-btn" id="scanRfidBtn">
-                            <i class="fa-solid fa-wifi"></i>
-                            <span>Scan RFID Card</span>
-                        </button>
                     </div>
 
                     <div class="rfid-status-box" id="rfidStatusBox" role="status" aria-live="polite">
@@ -59,7 +55,7 @@
                         <div class="rfid-status-content">
                             <strong id="rfidStatusTitle">Ready to scan</strong>
                             <span id="rfidStatusText">
-                                Click "Scan RFID Card" and tap the student's card.
+                                Tap the student's card on the scanner.
                             </span>
                         </div>
                     </div>
@@ -69,9 +65,10 @@
                             <i class="fa-solid fa-fingerprint"></i>
                             <input type="text" id="rfid" name="rfid"
                              placeholder="RFID UID will appear here"
+                             readonly
                              required>
                         </div>
-                        <button type="button" class="clear-rfid-btn" id="clearRfidBtn">
+                        <button type="button" class="clear-rfid-btn" id="clearRfidBtn" title="Clear RFID">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -384,7 +381,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const form = document.getElementById("registerStudentForm");
     const rfidInput = document.getElementById("rfid");
-    const scanRfidBtn = document.getElementById("scanRfidBtn");
     const clearRfidBtn = document.getElementById("clearRfidBtn");
     const rfidStatusBox = document.getElementById("rfidStatusBox");
     const rfidStatusIcon = document.getElementById("rfidStatusIcon");
@@ -419,13 +415,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const grade = gradeSelect.value;
         const currentSection = sectionSelect.value;
 
-        // Reset
         sectionSelect.innerHTML = '<option value="" disabled selected>Select section</option>';
         adviserInput.value = "";
 
         if (!grade) return;
 
-        // Filter classes base sa grade
         const filtered = classes.filter(c => c.grade === grade);
 
         if (!filtered.length) {
@@ -437,7 +431,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Add options
         filtered.forEach(c => {
             const opt = document.createElement("option");
             opt.value = c.section;
@@ -446,7 +439,6 @@ document.addEventListener("DOMContentLoaded", function () {
             sectionSelect.appendChild(opt);
         });
 
-        // Restore previous selection kung valid pa
         if (currentSection && filtered.some(c => c.section === currentSection)) {
             sectionSelect.value = currentSection;
             autoFillAdviser();
@@ -454,7 +446,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // =========================================
-    // AUTO-FILL ADVISER — kapag napili ang section
+    // AUTO-FILL ADVISER
     // =========================================
     function autoFillAdviser() {
         const selectedOption = sectionSelect.options[sectionSelect.selectedIndex];
@@ -462,16 +454,12 @@ document.addEventListener("DOMContentLoaded", function () {
             adviserInput.value = "";
             return;
         }
-
         const teacherName = selectedOption.dataset.teacher || "";
         adviserInput.value = teacherName || "No adviser assigned";
     }
 
-    // Event listeners
     gradeSelect.addEventListener("change", updateSections);
     sectionSelect.addEventListener("change", autoFillAdviser);
-
-    // Initial load — kung may default value
     updateSections();
 
     // =========================================
@@ -483,7 +471,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         gradeOptions.forEach(opt => {
             if (!opt.value) return;
-
             const gradeNum = parseInt(opt.value.replace("Grade ", ""), 10);
 
             if (dept === "JHS" && gradeNum > 10) {
@@ -498,7 +485,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Reset grade + section kapag nagbago department
         if (gradeSelect.value) {
             const gradeNum = parseInt(gradeSelect.value.replace("Grade ", ""), 10);
             if ((dept === "JHS" && gradeNum > 10) ||
@@ -510,11 +496,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // =========================================
-    // RFID SCANNING
+    // RFID AUTO-CAPTURE (walang button)
     // =========================================
-    let rfidScanning = false;
     let rfidBuffer = "";
     let rfidScanTimer = null;
+    const RFID_TIMEOUT = 150;   // ms — bilis ng typing ng scanner
+    const RFID_MIN_LENGTH = 4;  // minimum na haba ng UID
 
     function setRfidStatus(type, title, message) {
         rfidStatusBox.classList.remove("scanning", "success", "error");
@@ -531,65 +518,74 @@ document.addEventListener("DOMContentLoaded", function () {
         rfidStatusText.textContent = message;
     }
 
-    function stopRfidScan() {
-        rfidScanning = false;
+    function resetRfidStatus() {
+        setRfidStatus("", "Ready to scan", "Tap the student's card on the scanner.");
+    }
+
+    function commitRfid() {
+        const uid = rfidBuffer.trim();
         rfidBuffer = "";
         clearTimeout(rfidScanTimer);
-        scanRfidBtn.classList.remove("scanning");
-        scanRfidBtn.innerHTML = '<i class="fa-solid fa-wifi"></i><span>Scan RFID Card</span>';
-        document.body.classList.remove("rfid-scan-active");
-    }
 
-    function startRfidScan() {
-        stopRfidScan();
-        rfidScanning = true;
-        rfidInput.value = "";
-        scanRfidBtn.classList.add("scanning");
-        scanRfidBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i><span>Waiting for RFID...</span>';
-        setRfidStatus("scanning", "Waiting for RFID card", "Tap the RFID card on the scanner now.");
-        document.body.classList.add("rfid-scan-active");
-    }
-
-    function finishRfidScan(uid) {
-        uid = uid.trim();
         if (!uid) return;
+        if (uid.length < RFID_MIN_LENGTH) return;
+
+        // Check duplicate sa ibang fields? (optional)
         rfidInput.value = uid;
-        stopRfidScan();
-        setRfidStatus("success", "RFID card detected", "The RFID UID has been assigned to this student.");
+        setRfidStatus(
+            "success",
+            "RFID card detected",
+            "UID: " + uid + " — assigned to this student."
+        );
     }
 
-    scanRfidBtn.addEventListener("click", function () {
-        if (rfidScanning) {
-            stopRfidScan();
-            setRfidStatus("", "Ready to scan", 'Click "Scan RFID Card" and tap the student\'s card.');
-        } else {
-            startRfidScan();
-        }
-    });
-
-    clearRfidBtn.addEventListener("click", function () {
-        stopRfidScan();
-        rfidInput.value = "";
-        setRfidStatus("", "Ready to scan", 'Click "Scan RFID Card" and tap the student\'s card.');
-    });
-
+    // Global keydown listener — laging naka-listen
     document.addEventListener("keydown", function (event) {
-        if (!rfidScanning) return;
+        // Huwag harangin kung nasa ibang input/textarea/select ang focus
+        const tag = (event.target.tagName || "").toLowerCase();
+        const isFormField = tag === "input" || tag === "textarea" ||
+                            tag === "select" || event.target.isContentEditable;
 
-        if (event.key === "Enter") {
-            event.preventDefault();
-            clearTimeout(rfidScanTimer);
-            if (rfidBuffer.trim()) finishRfidScan(rfidBuffer);
+        // Kung ang focus ay nasa RFID input mismo, hayaan lang
+        if (event.target === rfidInput) {
             return;
         }
 
+        // Kung nasa ibang form field, huwag harangin (para makapag-type ang user)
+        if (isFormField) {
+            return;
+        }
+
+        // Enter = end ng RFID scan
+        if (event.key === "Enter") {
+            if (rfidBuffer.trim()) {
+                event.preventDefault();
+                commitRfid();
+            }
+            return;
+        }
+
+        // Tanggapin lang ang printable characters
         if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
             rfidBuffer += event.key;
+
+            // Ipakita ang "scanning" status habang dumarating ang digits
+            if (rfidBuffer.length === 1) {
+                setRfidStatus("scanning", "Receiving RFID...", "Hold on, reading card...");
+            }
+
             clearTimeout(rfidScanTimer);
-            rfidScanTimer = setTimeout(function () {
-                if (rfidBuffer.trim()) finishRfidScan(rfidBuffer);
-            }, 150);
+            rfidScanTimer = setTimeout(commitRfid, RFID_TIMEOUT);
         }
+    });
+
+    // Clear RFID button
+    clearRfidBtn.addEventListener("click", function () {
+        rfidInput.value = "";
+        rfidBuffer = "";
+        clearTimeout(rfidScanTimer);
+        resetRfidStatus();
+        rfidInput.focus();
     });
 
     // =========================================
@@ -626,11 +622,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // =========================================
     function clearForm() {
         form.reset();
-        stopRfidScan();
+        rfidBuffer = "";
+        clearTimeout(rfidScanTimer);
         imagePreview.innerHTML = '<i class="fa-solid fa-user"></i>';
         fileName.textContent = "No file chosen";
         updateSections();
-        setRfidStatus("", "Ready to scan", 'Click "Scan RFID Card" and tap the student\'s card.');
+        resetRfidStatus();
     }
 
     document.getElementById("clearBtn").addEventListener("click", clearForm);
@@ -642,15 +639,21 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // =========================================
-    // SUBMIT — Django form submit (hindi na demo)
+    // SUBMIT
     // =========================================
-    // Walang preventDefault — hayaan ang browser mag-submit sa Django
     form.addEventListener("submit", function (event) {
+        if (!rfidInput.value.trim()) {
+            event.preventDefault();
+            setRfidStatus("error", "RFID required", "Please tap the RFID card first.");
+            rfidInput.focus();
+            return;
+        }
+
         if (!form.reportValidity()) {
             event.preventDefault();
             return;
         }
-        // I-disable ang submit button para hindi double-submit
+
         const submitBtn = form.querySelector(".btn-save");
         if (submitBtn) {
             submitBtn.disabled = true;
