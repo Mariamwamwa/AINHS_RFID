@@ -1,7 +1,7 @@
 import json
 from datetime import date as date_cls, time as time_cls
 from attendance.sms.sms_queue import queue_attendance_sms
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -9,6 +9,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth import update_session_auth_hash
 from django.contrib import messages
 from django.http import JsonResponse
+
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -20,7 +21,8 @@ from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from django.http import HttpResponse
 from datetime import timedelta
 from .models import Admin, Teacher, Student, Class, Attendance, Notification, SMSQueue, SystemNotification
-
+from django.urls import reverse
+import openpyxl
 
 # =====================================================
 # HELPER — GET ADMIN DEPARTMENT & GRADE FILTER
@@ -3098,7 +3100,6 @@ def admin_attendance(request):
 # =====================================================
 # ADMIN — REGISTER RFID STUDENT
 # =====================================================
-
 @login_required
 def admin_register_rfid(request):
 
@@ -3106,7 +3107,49 @@ def admin_register_rfid(request):
         request
     )
 
+    # =====================================================
+    # EDIT MODE
+    # =====================================================
+
+    edit_student = None
+
+    edit_student_id = (
+        request.GET.get('edit')
+        or
+        request.POST.get('edit_student_id')
+    )
+
+    if edit_student_id:
+
+        edit_student = get_object_or_404(
+            Student,
+            id=edit_student_id
+        )
+
+        if (
+            admin_dept
+            and
+            edit_student.department != admin_dept
+        ):
+
+            messages.error(
+                request,
+                'You cannot edit a student from another department.'
+            )
+
+            return redirect(
+                'admin_students'
+            )
+
+    # =====================================================
+    # POST
+    # =====================================================
+
     if request.method == 'POST':
+
+        # =================================================
+        # STUDENT INFORMATION
+        # =================================================
 
         rfid = request.POST.get(
             'rfid',
@@ -3135,7 +3178,7 @@ def admin_register_rfid(request):
 
         age = request.POST.get(
             'age'
-        ) or None
+        )
 
         sex = request.POST.get(
             'sex',
@@ -3167,6 +3210,10 @@ def admin_register_rfid(request):
             ''
         ).strip()
 
+        # =================================================
+        # GUARDIAN INFORMATION
+        # =================================================
+
         guardian_last = request.POST.get(
             'guardianLastName',
             ''
@@ -3174,6 +3221,11 @@ def admin_register_rfid(request):
 
         guardian_first = request.POST.get(
             'guardianFirstName',
+            ''
+        ).strip()
+
+        guardian_middle = request.POST.get(
+            'guardianMiddleName',
             ''
         ).strip()
 
@@ -3187,17 +3239,9 @@ def admin_register_rfid(request):
             ''
         ).strip()
 
-        guardian_first = (
-            " ".join(
-                guardian_first.split()
-            )
-        )
-
-        guardian_last = (
-            " ".join(
-                guardian_last.split()
-            )
-        )
+        # =================================================
+        # CLASS INFORMATION
+        # =================================================
 
         department = (
             request.POST.get(
@@ -3218,14 +3262,163 @@ def admin_register_rfid(request):
             ''
         ).strip()
 
-        adviser_name = request.POST.get(
-            'adviser',
-            ''
-        ).strip()
-
         image = request.FILES.get(
             'studentImage'
         )
+
+        # =================================================
+        # CLEAN VALUES
+        # =================================================
+
+        first_name = " ".join(
+            first_name.split()
+        )
+
+        last_name = " ".join(
+            last_name.split()
+        )
+
+        middle_name = " ".join(
+            middle_name.split()
+        )
+
+        guardian_first = " ".join(
+            guardian_first.split()
+        )
+
+        guardian_middle = " ".join(
+            guardian_middle.split()
+        )
+
+        guardian_last = " ".join(
+            guardian_last.split()
+        )
+
+        barangay = " ".join(
+            barangay.split()
+        )
+
+        municipality = " ".join(
+            municipality.split()
+        )
+
+        province = " ".join(
+            province.split()
+        )
+
+        section = " ".join(
+            section.split()
+        )
+
+        # =================================================
+        # REDIRECT HELPER
+        # =================================================
+
+        def form_redirect():
+
+            if edit_student:
+
+                return redirect(
+                    '{}?edit={}'.format(
+                        reverse(
+                            'admin_register_rfid'
+                        ),
+                        edit_student.id
+                    )
+                )
+
+            return redirect(
+                'admin_register_rfid'
+            )
+
+        # =================================================
+        # REQUIRED VALUES
+        # =================================================
+
+        if not lrn:
+
+            messages.error(
+                request,
+                'LRN is required.'
+            )
+
+            return form_redirect()
+
+        if not first_name:
+
+            messages.error(
+                request,
+                'First name is required.'
+            )
+
+            return form_redirect()
+
+        if not last_name:
+
+            messages.error(
+                request,
+                'Last name is required.'
+            )
+
+            return form_redirect()
+
+        if not guardian_first:
+
+            messages.error(
+                request,
+                'Guardian first name is required.'
+            )
+
+            return form_redirect()
+
+        if not guardian_last:
+
+            messages.error(
+                request,
+                'Guardian last name is required.'
+            )
+
+            return form_redirect()
+
+        if not guardian_contact:
+
+            messages.error(
+                request,
+                'Guardian contact number is required.'
+            )
+
+            return form_redirect()
+
+        if not department:
+
+            messages.error(
+                request,
+                'Department is required.'
+            )
+
+            return form_redirect()
+
+        if not grade:
+
+            messages.error(
+                request,
+                'Grade is required.'
+            )
+
+            return form_redirect()
+
+        if not section:
+
+            messages.error(
+                request,
+                'Section is required.'
+            )
+
+            return form_redirect()
+
+        # =================================================
+        # DEPARTMENT ACCESS
+        # =================================================
 
         if (
             admin_dept
@@ -3235,13 +3428,17 @@ def admin_register_rfid(request):
 
             messages.error(
                 request,
-                f'You can only register '
-                f'{admin_dept} students.'
+                (
+                    f'You can only manage '
+                    f'{admin_dept} students.'
+                )
             )
 
-            return redirect(
-                'admin_register_rfid'
-            )
+            return form_redirect()
+
+        # =================================================
+        # GRADE VALIDATION
+        # =================================================
 
         try:
 
@@ -3262,7 +3459,7 @@ def admin_register_rfid(request):
             grade_num = 0
 
         if (
-            admin_dept == 'SHS'
+            department == 'SHS'
             and
             grade_num not in (
                 11,
@@ -3272,15 +3469,13 @@ def admin_register_rfid(request):
 
             messages.error(
                 request,
-                'SHS admin can only register Grade 11 or 12 students.'
+                'SHS students must be Grade 11 or Grade 12.'
             )
 
-            return redirect(
-                'admin_register_rfid'
-            )
+            return form_redirect()
 
         if (
-            admin_dept == 'JHS'
+            department == 'JHS'
             and
             grade_num not in (
                 7,
@@ -3292,12 +3487,47 @@ def admin_register_rfid(request):
 
             messages.error(
                 request,
-                'JHS admin can only register Grade 7-10 students.'
+                'JHS students must be Grade 7 to Grade 10.'
             )
 
-            return redirect(
-                'admin_register_rfid'
+            return form_redirect()
+
+        # =================================================
+        # AGE
+        # =================================================
+
+        try:
+
+            age_value = (
+                int(age)
+                if age
+                else 0
             )
+
+        except (
+            TypeError,
+            ValueError
+        ):
+
+            messages.error(
+                request,
+                'Please enter a valid age.'
+            )
+
+            return form_redirect()
+
+        if (
+            age_value < 0
+            or
+            age_value > 100
+        ):
+
+            messages.error(
+                request,
+                'Please enter a valid age.'
+            )
+
+            return form_redirect()
 
         # =================================================
         # RFID REQUIRED
@@ -3310,22 +3540,57 @@ def admin_register_rfid(request):
                 'Please tap the RFID card first.'
             )
 
-            return redirect(
-                'admin_register_rfid'
+            return form_redirect()
+
+        # =================================================
+        # DUPLICATE LRN
+        # =================================================
+
+        lrn_query = (
+            Student.objects
+            .filter(
+                lrn=lrn
+            )
+        )
+
+        if edit_student:
+
+            lrn_query = (
+                lrn_query.exclude(
+                    id=edit_student.id
+                )
             )
 
+        if lrn_query.exists():
+
+            messages.error(
+                request,
+                'LRN already exists.'
+            )
+
+            return form_redirect()
+
         # =================================================
-        # RFID DUPLICATE CHECK (SMART)
-        #
-        # Only block if the RFID is currently assigned
-        # to an ACTIVE student. If the previous owner
-        # is inactive, allow re-assignment.
+        # DUPLICATE RFID
         # =================================================
 
-        existing_rfid_student = (
+        rfid_query = (
             Student.objects
-            .filter(rfid=rfid)
-            .first()
+            .filter(
+                rfid=rfid
+            )
+        )
+
+        if edit_student:
+
+            rfid_query = (
+                rfid_query.exclude(
+                    id=edit_student.id
+                )
+            )
+
+        existing_rfid_student = (
+            rfid_query.first()
         )
 
         if existing_rfid_student:
@@ -3335,100 +3600,193 @@ def admin_register_rfid(request):
                 messages.error(
                     request,
                     (
-                        f'RFID card is already registered to an '
-                        f'active student: '
+                        'RFID card is already registered '
+                        'to an active student: '
                         f'{existing_rfid_student.full_name} '
                         f'({existing_rfid_student.lrn}).'
                     )
                 )
 
-                return redirect(
-                    'admin_register_rfid'
-                )
+                return form_redirect()
 
-            else:
+            existing_rfid_student.rfid = None
 
-                # Clear old inactive owner's RFID
-                # so the card can be reused.
-                existing_rfid_student.rfid = None
-
-                existing_rfid_student.save(
-                    update_fields=['rfid']
-                )
-
-        if (
-            Student.objects
-            .filter(
-                lrn=lrn
+            existing_rfid_student.save(
+                update_fields=[
+                    'rfid'
+                ]
             )
-            .exists()
-        ):
+
+        # =================================================
+        # CLASS
+        # =================================================
+
+        class_obj = (
+            Class.objects
+            .filter(
+                department=department,
+                grade=grade,
+                section__iexact=section
+            )
+            .select_related(
+                'teacher'
+            )
+            .first()
+        )
+
+        if not class_obj:
 
             messages.error(
                 request,
-                'LRN already exists.'
+                (
+                    'The selected class does not exist. '
+                    'Please select a valid grade and section.'
+                )
+            )
+
+            return form_redirect()
+
+        adviser = (
+            class_obj.teacher
+            if class_obj.teacher
+            else None
+        )
+
+        # Use exact class values from database.
+
+        grade = class_obj.grade
+
+        section = class_obj.section
+
+        department = class_obj.department
+
+        # =================================================
+        # PARENT NAME
+        # =================================================
+
+        parent_name_parts = [
+            guardian_first
+        ]
+
+        if guardian_middle:
+
+            parent_name_parts.append(
+                guardian_middle
+            )
+
+        parent_name_parts.append(
+            guardian_last
+        )
+
+        parent_name = " ".join(
+            parent_name_parts
+        )
+
+        # =================================================
+        # UPDATE EXISTING STUDENT
+        # =================================================
+
+        if edit_student:
+
+            edit_student.lrn = (
+                lrn
+            )
+
+            edit_student.first_name = (
+                first_name
+            )
+
+            edit_student.last_name = (
+                last_name
+            )
+
+            edit_student.middle_name = (
+                middle_name
+            )
+
+            edit_student.age = (
+                age_value
+            )
+
+            edit_student.sex = (
+                sex
+            )
+
+            edit_student.email = (
+                email
+            )
+
+            edit_student.contact = (
+                contact
+            )
+
+            edit_student.parent_name = (
+                parent_name
+            )
+
+            edit_student.parent_contact = (
+                guardian_contact
+            )
+
+            edit_student.parent_relationship = (
+                relationship
+            )
+
+            edit_student.barangay = (
+                barangay
+            )
+
+            edit_student.municipality = (
+                municipality
+            )
+
+            edit_student.province = (
+                province
+            )
+
+            edit_student.department = (
+                department
+            )
+
+            edit_student.grade = (
+                grade
+            )
+
+            edit_student.section = (
+                section
+            )
+
+            edit_student.adviser = (
+                adviser
+            )
+
+            edit_student.rfid = (
+                rfid
+            )
+
+            # Only replace image if a new one
+            # was selected.
+
+            if image:
+
+                edit_student.image = (
+                    image
+                )
+
+            edit_student.save()
+
+            messages.success(
+                request,
+                'Student updated successfully!'
             )
 
             return redirect(
-                'admin_register_rfid'
+                'admin_students'
             )
 
-        adviser = None
-
-        if grade and section:
-
-            class_obj = (
-                Class.objects
-                .filter(
-                    grade=grade,
-                    section__iexact=section,
-                )
-                .select_related('teacher')
-                .first()
-            )
-
-            if (
-                class_obj
-                and
-                class_obj.teacher
-            ):
-
-                adviser = (
-                    class_obj.teacher
-                )
-
-        if (
-            not adviser
-            and
-            adviser_name
-        ):
-
-            adviser = (
-                Teacher.objects
-                .filter(
-                    Q(
-                        first_name__icontains=
-                        adviser_name
-                    )
-                    |
-                    Q(
-                        last_name__icontains=
-                        adviser_name
-                    )
-                )
-                .first()
-            )
-
-        parent_name = (
-            f"{guardian_first} "
-            f"{guardian_last}"
-        ).strip()
-
-        parent_name = (
-            " ".join(
-                parent_name.split()
-            )
-        )
+        # =================================================
+        # CREATE NEW STUDENT
+        # =================================================
 
         Student.objects.create(
 
@@ -3438,15 +3796,15 @@ def admin_register_rfid(request):
 
             last_name=last_name,
 
-            middle_name=middle_name or '',
+            middle_name=middle_name,
 
-            age=int(age) if age else 0,
+            age=age_value,
 
-            sex=sex or '',
+            sex=sex,
 
-            email=email or '',
+            email=email,
 
-            contact=contact or '',
+            contact=contact,
 
             parent_name=parent_name,
 
@@ -3468,9 +3826,10 @@ def admin_register_rfid(request):
 
             adviser=adviser,
 
-            rfid=rfid or None,
+            rfid=rfid,
 
             image=image,
+
         )
 
         messages.success(
@@ -3482,46 +3841,67 @@ def admin_register_rfid(request):
             'admin_students'
         )
 
+    # =====================================================
+    # CLASSES
+    # =====================================================
+
     classes = (
         Class.objects
-        .select_related('teacher')
+        .select_related(
+            'teacher'
+        )
         .all()
     )
 
     if admin_dept:
 
-        classes = classes.filter(
-            department=admin_dept
+        classes = (
+            classes.filter(
+                department=admin_dept
+            )
         )
+
+    classes = (
+        classes.order_by(
+            'grade',
+            'section'
+        )
+    )
+
+    # =====================================================
+    # CLASS JSON
+    # =====================================================
 
     classes_data = [
 
         {
-
             'id':
-                c.id,
+                class_item.id,
 
             'grade':
-                c.grade,
+                class_item.grade,
 
             'section':
-                c.section,
+                class_item.section,
 
             'teacher':
                 (
-                    f"{c.teacher.first_name} "
-                    f"{c.teacher.last_name}"
+                    f'{class_item.teacher.first_name} '
+                    f'{class_item.teacher.last_name}'
                 ).strip()
-                if c.teacher
-                else "",
+                if class_item.teacher
+                else '',
 
             'department':
-                c.department,
-
+                class_item.department,
         }
 
-        for c in classes
+        for class_item in classes
     ]
+
+    # =====================================================
+    # PAGE
+    # =====================================================
 
     return render(
         request,
@@ -3532,10 +3912,11 @@ def admin_register_rfid(request):
 
             'admin_dept':
                 admin_dept,
+
+            'edit_student':
+                edit_student,
         }
     )
-
-
 # =====================================================
 # ADMIN — ADD TEACHER
 # =====================================================
@@ -5695,4 +6076,402 @@ def teacher_notifications_mark_read(request):
     return JsonResponse({
         'success': True,
         'updated': updated,
+    })
+def import_students(request):
+    if request.method != "POST":
+        return JsonResponse({
+            "success":False,
+            "message":"Invalid request method.",
+            "total":0,
+            "saved":0,
+            "failed":0,
+            "errors":[]
+        },status=405)
+
+    excel_file=request.FILES.get("student_excel_file")
+
+    if not excel_file:
+        return JsonResponse({
+            "success":False,
+            "message":"No Excel file was selected.",
+            "total":0,
+            "saved":0,
+            "failed":0,
+            "errors":["No Excel file was selected."]
+        },status=400)
+
+    if not excel_file.name.lower().endswith(".xlsx"):
+        return JsonResponse({
+            "success":False,
+            "message":"Please upload a valid Excel (.xlsx) file.",
+            "total":0,
+            "saved":0,
+            "failed":0,
+            "errors":["The selected file is not an .xlsx file."]
+        },status=400)
+
+    try:
+        workbook=openpyxl.load_workbook(
+            excel_file,
+            data_only=True
+        )
+        worksheet=workbook.active
+    except Exception as error:
+        return JsonResponse({
+            "success":False,
+            "message":"Unable to read the Excel file.",
+            "total":0,
+            "saved":0,
+            "failed":0,
+            "errors":[str(error)]
+        },status=400)
+
+    expected_headers=[
+        "LRN",
+        "RFID",
+        "Last Name",
+        "First Name",
+        "Middle Name",
+        "Age",
+        "Sex",
+        "Email",
+        "Contact",
+        "Parent Name",
+        "Parent Contact",
+        "Relationship",
+        "Barangay",
+        "Municipality",
+        "Province",
+        "Department",
+        "Grade",
+        "Section",
+    ]
+
+    headers=[]
+
+    for cell in worksheet[1]:
+        value=str(cell.value).strip() if cell.value is not None else ""
+        headers.append(value)
+
+    if headers[:len(expected_headers)]!=expected_headers:
+        return JsonResponse({
+            "success":False,
+            "message":"The Excel columns do not match the official student import template.",
+            "total":0,
+            "saved":0,
+            "failed":0,
+            "errors":[
+                "Required columns: "+", ".join(expected_headers)
+            ]
+        },status=400)
+
+    def excel_text(value):
+        if value is None:
+            return ""
+        if isinstance(value,float) and value.is_integer():
+            return str(int(value))
+        return str(value).strip()
+
+    imported=0
+    skipped=0
+    errors=[]
+    rows_found=0
+
+    grade_map={
+        "7":"Grade 7",
+        "grade 7":"Grade 7",
+        "8":"Grade 8",
+        "grade 8":"Grade 8",
+        "9":"Grade 9",
+        "grade 9":"Grade 9",
+        "10":"Grade 10",
+        "grade 10":"Grade 10",
+        "11":"Grade 11",
+        "grade 11":"Grade 11",
+        "12":"Grade 12",
+        "grade 12":"Grade 12",
+    }
+
+    for row_number,row in enumerate(
+        worksheet.iter_rows(
+            min_row=2,
+            values_only=True
+        ),
+        start=2
+    ):
+        if not any(
+            value is not None and str(value).strip()!=""
+            for value in row
+        ):
+            continue
+
+        rows_found+=1
+
+        data=dict(zip(expected_headers,row))
+
+        lrn=excel_text(data.get("LRN"))
+        rfid=excel_text(data.get("RFID"))
+
+        last_name=excel_text(
+            data.get("Last Name")
+        ).upper()
+
+        first_name=excel_text(
+            data.get("First Name")
+        ).upper()
+
+        middle_name=excel_text(
+            data.get("Middle Name")
+        ).upper()
+
+        sex=excel_text(
+            data.get("Sex")
+        ).upper()
+
+        email=excel_text(
+            data.get("Email")
+        ).lower()
+
+        contact=excel_text(
+            data.get("Contact")
+        )
+
+        parent_name=excel_text(
+            data.get("Parent Name")
+        ).upper()
+
+        parent_contact=excel_text(
+            data.get("Parent Contact")
+        )
+
+        relationship=excel_text(
+            data.get("Relationship")
+        ).upper()
+
+        barangay=excel_text(
+            data.get("Barangay")
+        ).upper()
+
+        municipality=excel_text(
+            data.get("Municipality")
+        ).upper()
+
+        province=excel_text(
+            data.get("Province")
+        ).upper()
+
+        department=excel_text(
+            data.get("Department")
+        ).upper()
+
+        grade=excel_text(
+            data.get("Grade")
+        )
+
+        section=excel_text(
+            data.get("Section")
+        ).upper()
+
+        student_name=" ".join(
+            value for value in [
+                first_name,
+                middle_name,
+                last_name
+            ]
+            if value
+        )
+
+        def reject(reason):
+            nonlocal skipped
+            skipped+=1
+            errors.append({
+                "row":row_number,
+                "student":student_name if student_name else lrn,
+                "reason":reason
+            })
+
+        try:
+            age_value=data.get("Age")
+
+            if age_value is None:
+                raise ValueError
+
+            age=int(float(age_value))
+
+            if age<=0 or age>100:
+                raise ValueError
+
+        except (TypeError,ValueError):
+            reject("Invalid age.")
+            continue
+
+        if not lrn:
+            reject("LRN is required.")
+            continue
+
+        if not first_name:
+            reject("First name is required.")
+            continue
+
+        if not last_name:
+            reject("Last name is required.")
+            continue
+
+        if not sex:
+            reject("Sex is required.")
+            continue
+
+        if not parent_name:
+            reject("Parent/guardian name is required.")
+            continue
+
+        if not parent_contact:
+            reject("Parent contact is required.")
+            continue
+
+        if not department:
+            reject("Department is required.")
+            continue
+
+        if not grade:
+            reject("Grade is required.")
+            continue
+
+        if not section:
+            reject("Section is required.")
+            continue
+
+        if sex not in ["MALE","FEMALE"]:
+            reject("Sex must be Male or Female.")
+            continue
+
+        if department not in ["JHS","SHS"]:
+            reject("Department must be JHS or SHS.")
+            continue
+
+        grade=grade_map.get(grade.lower())
+
+        if not grade:
+            reject("Invalid grade.")
+            continue
+
+        grade_number=int(
+            grade.replace("Grade ","")
+        )
+
+        if department=="JHS" and grade_number not in [7,8,9,10]:
+            reject(
+                f"{grade} does not belong to JHS."
+            )
+            continue
+
+        if department=="SHS" and grade_number not in [11,12]:
+            reject(
+                f"{grade} does not belong to SHS."
+            )
+            continue
+
+        if Student.objects.filter(
+            lrn=lrn
+        ).exists():
+            reject(
+                f"LRN {lrn} already exists."
+            )
+            continue
+
+        if rfid and Student.objects.filter(
+            rfid=rfid
+        ).exists():
+            reject(
+                f"RFID {rfid} is already assigned to another student."
+            )
+            continue
+
+        class_record=(
+            Class.objects
+            .filter(
+                department__iexact=department,
+                grade__iexact=grade,
+                section__iexact=section
+            )
+            .select_related("teacher")
+            .first()
+        )
+
+        if not class_record:
+            reject(
+                f"Class {department} / {grade} / {section} does not exist."
+            )
+            continue
+
+        try:
+            with transaction.atomic():
+                Student.objects.create(
+                    lrn=lrn,
+                    rfid=rfid if rfid else None,
+                    last_name=last_name,
+                    first_name=first_name,
+                    middle_name=middle_name if middle_name else None,
+                    age=age,
+                    sex=sex,
+                    email=email if email else None,
+                    contact=contact if contact else None,
+                    parent_name=parent_name,
+                    parent_contact=parent_contact,
+                    parent_relationship=relationship if relationship else None,
+                    barangay=barangay if barangay else None,
+                    municipality=municipality if municipality else None,
+                    province=province if province else None,
+                    department=class_record.department,
+                    grade=class_record.grade,
+                    section=class_record.section,
+                    adviser=class_record.teacher,
+                    is_active=True
+                )
+
+            imported+=1
+
+        except Exception as row_error:
+            reject(
+                f"Database save failed: {str(row_error)}"
+            )
+            continue
+
+    try:
+        workbook.close()
+    except Exception:
+        pass
+
+    if rows_found==0:
+        return JsonResponse({
+            "success":False,
+            "message":"The Excel file contains no student records.",
+            "total":0,
+            "saved":0,
+            "failed":0,
+            "errors":[
+                {
+                    "row":"-",
+                    "student":"-",
+                    "reason":"No student records were found."
+                }
+            ]
+        })
+
+    if imported>0 and skipped==0:
+        message=f"{imported} student(s) were successfully saved."
+
+    elif imported>0:
+        message=f"{imported} student(s) were saved and {skipped} student(s) were not saved."
+
+    else:
+        message="No students were saved."
+
+    return JsonResponse({
+        "success":imported>0,
+        "message":message,
+        "total":rows_found,
+        "saved":imported,
+        "failed":skipped,
+        "errors":errors
     })

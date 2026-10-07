@@ -1,665 +1,1657 @@
 {% extends 'IN_BASE/Admin_Base.html' %}
 {% load static %}
-
-{% block title %}Register Student - RFID Attendance Management System{% endblock %}
-
+{% block title %}
+{% if edit_student %}
+Edit Student - RFID Attendance Management System
+{% else %}
+Register Student - RFID Attendance Management System
+{% endif %}
+{% endblock %}
 {% block page_heading %}
-<h2>Register Student</h2>
+<h2>
+    {% if edit_student %}
+    Edit Student
+    {% else %}
+    Register Student
+    {% endif %}
+</h2>
 {% endblock %}
-
 {% block page_subheading %}
-<p>Register a new student in the system.</p>
+<p>
+    {% if edit_student %}
+    Update the student's information.
+    {% else %}
+    Register a new student in the system.
+    {% endif %}
+</p>
 {% endblock %}
-
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/ADMIN/Admin_Register_RFID.css' %}">
 {% endblock %}
-
 {% block content %}
 <div class="register-student-content">
-
     <div class="page-intro">
         <div class="intro-icon">
+            {% if edit_student %}
+            <i class="fa-solid fa-user-pen"></i>
+            {% else %}
             <i class="fa-solid fa-user-plus"></i>
+            {% endif %}
         </div>
         <div class="intro-text">
-            <h3>Student Information</h3>
-            <p>Enter the student's information and class assignment.</p>
+            <h3>
+                {% if edit_student %}
+                Edit Student Information
+                {% else %}
+                Student Information
+                {% endif %}
+            </h3>
+            <p>
+                {% if edit_student %}
+                Review and update the student's information and class assignment.
+                {% else %}
+                Enter the student's information and class assignment.
+                {% endif %}
+            </p>
         </div>
+        {% if not edit_student %}
+        <div class="intro-actions">
+            <form
+                id="importStudentForm"
+                method="POST"
+                action="{% url 'import_students' %}"
+                enctype="multipart/form-data"
+            >
+                {% csrf_token %}
+                <button
+                    type="button"
+                    class="import-student-btn"
+                    id="importStudentBtn"
+                >
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span>Import Students</span>
+                </button>
+                <input
+                    type="file"
+                    id="studentExcelFile"
+                    name="student_excel_file"
+                    accept=".xlsx"
+                    hidden
+                >
+            </form>
+        </div>
+        {% endif %}
     </div>
-
-    <form class="form-card" id="registerStudentForm" method="POST" enctype="multipart/form-data">
+    <form
+        class="form-card"
+        id="registerStudentForm"
+        method="POST"
+        enctype="multipart/form-data"
+    >
         {% csrf_token %}
-
+        {% if edit_student %}
+        <input
+            type="hidden"
+            name="edit_student_id"
+            value="{{ edit_student.id }}"
+        >
+        {% endif %}
         <!-- PERSONAL INFORMATION -->
         <section class="form-section">
             <div class="section-title">
                 <i class="fa-solid fa-user"></i>
                 <span>Personal Information</span>
             </div>
-
             <div class="form-grid personal-grid">
-
+                <!-- RFID -->
                 <div class="rfid-card-field">
                     <div class="rfid-card-header">
                         <div>
-                            <label for="rfid">RFID Card <span class="required">*</span></label>
-                            <p class="rfid-help">Tap the student's RFID card on the scanner.</p>
+                            <label for="rfid">
+                                RFID Card
+                                <span class="required">*</span>
+                            </label>
+                            <p class="rfid-help">
+                                {% if edit_student %}
+                                Current RFID is shown below. Tap another card to replace it.
+                                {% else %}
+                                Tap the student's RFID card on the scanner.
+                                {% endif %}
+                            </p>
                         </div>
                     </div>
-
-                    <div class="rfid-status-box" id="rfidStatusBox" role="status" aria-live="polite">
-                        <div class="rfid-status-icon" id="rfidStatusIcon">
+                    <div
+                        class="rfid-status-box {% if edit_student and edit_student.rfid %}success{% endif %}"
+                        id="rfidStatusBox"
+                        role="status"
+                        aria-live="polite"
+                    >
+                        <div
+                            class="rfid-status-icon"
+                            id="rfidStatusIcon"
+                        >
+                            {% if edit_student and edit_student.rfid %}
+                            <i class="fa-solid fa-circle-check"></i>
+                            {% else %}
                             <i class="fa-solid fa-id-card"></i>
+                            {% endif %}
                         </div>
                         <div class="rfid-status-content">
-                            <strong id="rfidStatusTitle">Ready to scan</strong>
+                            <strong id="rfidStatusTitle">
+                                {% if edit_student and edit_student.rfid %}
+                                RFID card assigned
+                                {% else %}
+                                Ready to scan
+                                {% endif %}
+                            </strong>
                             <span id="rfidStatusText">
+                                {% if edit_student and edit_student.rfid %}
+                                UID: {{ edit_student.rfid }}
+                                {% else %}
                                 Tap the student's card on the scanner.
+                                {% endif %}
                             </span>
                         </div>
                     </div>
-
                     <div class="rfid-input-row">
                         <div class="input-wrapper rfid-input-wrapper">
                             <i class="fa-solid fa-fingerprint"></i>
-                            <input type="text" id="rfid" name="rfid"
-                             placeholder="RFID UID will appear here"
-                             readonly
-                             required>
+                            <input
+                                type="text"
+                                id="rfid"
+                                name="rfid"
+                                placeholder="RFID UID will appear here"
+                                value="{{ edit_student.rfid|default:'' }}"
+                                readonly
+                                {% if not edit_student %}required{% endif %}
+                            >
                         </div>
-                        <button type="button" class="clear-rfid-btn" id="clearRfidBtn" title="Clear RFID">
+                        <button
+                            type="button"
+                            class="clear-rfid-btn"
+                            id="clearRfidBtn"
+                            title="Clear RFID"
+                        >
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                 </div>
-
+                <!-- IMAGE + LRN -->
                 <div class="student-image-lrn-field">
                     <div class="form-group image-form-group">
                         <label for="studentImage">
-                            Upload Image <span class="required">*</span>
+                            Upload Image
+                            {% if edit_student %}
+                            <span class="optional">
+                                (Optional)
+                            </span>
+                            {% else %}
+                            <span class="required">*</span>
+                            {% endif %}
                         </label>
-
                         <div class="image-upload-wrapper">
-                            <div class="image-preview" id="imagePreview">
+                            <div
+                                class="image-preview"
+                                id="imagePreview"
+                            >
+                                {% if edit_student and edit_student.image %}
+                                <img
+                                    src="{{ edit_student.image.url }}"
+                                    alt="{{ edit_student.full_name }}"
+                                >
+                                {% else %}
                                 <i class="fa-solid fa-user"></i>
+                                {% endif %}
                             </div>
-
                             <div class="image-upload-content">
-                                <label for="studentImage" class="image-upload-btn">
+                                <label
+                                    for="studentImage"
+                                    class="image-upload-btn"
+                                >
                                     <i class="fa-solid fa-camera"></i>
-                                    <span>Choose File</span>
+                                    <span>
+                                        {% if edit_student %}
+                                        Change Image
+                                        {% else %}
+                                        Choose File
+                                        {% endif %}
+                                    </span>
                                 </label>
-
-                                <input type="file" id="studentImage"
-                                       name="studentImage" accept="image/*" required>
-
-                                <div class="file-name" id="fileName">No file chosen</div>
+                                <input
+                                    type="file"
+                                    id="studentImage"
+                                    name="studentImage"
+                                    accept="image/*"
+                                    {% if not edit_student %}required{% endif %}
+                                >
+                                <div
+                                    class="file-name"
+                                    id="fileName"
+                                >
+                                    {% if edit_student and edit_student.image %}
+                                    Current image
+                                    {% else %}
+                                    No file chosen
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="form-group lrn-form-group">
-                        <label for="lrn">LRN <span class="required">*</span></label>
+                        <label for="lrn">
+                            LRN
+                            <span class="required">*</span>
+                        </label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-id-card"></i>
-                            <input type="text" id="lrn" name="lrn"
-                                   placeholder="Enter LRN" required>
+                            <input
+                                type="text"
+                                id="lrn"
+                                name="lrn"
+                                placeholder="Enter LRN"
+                                value="{{ edit_student.lrn|default:'' }}"
+                                required
+                            >
                         </div>
                     </div>
                 </div>
-
+                <!-- PERSONAL DETAILS -->
                 <div class="personal-details-grid">
                     <div class="form-group">
-                        <label for="lastName">Last Name <span class="required">*</span></label>
-                        <div class="input-wrapper">
-                            <i class="fa-solid fa-user"></i>
-                            <input type="text" id="lastName" name="lastName"
-                                   placeholder="Enter last name" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="firstName">First Name <span class="required">*</span></label>
-                        <div class="input-wrapper">
-                            <i class="fa-solid fa-user"></i>
-                            <input type="text" id="firstName" name="firstName"
-                                   placeholder="Enter first name" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="middleName">
-                            Middle Name <span class="optional">(Optional)</span>
+                        <label for="lastName">
+                            Last Name
+                            <span class="required">*</span>
                         </label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-user"></i>
-                            <input type="text" id="middleName" name="middleName"
-                                   placeholder="Enter middle name">
+                            <input
+                                type="text"
+                                id="lastName"
+                                name="lastName"
+                                placeholder="Enter last name"
+                                value="{{ edit_student.last_name|default:'' }}"
+                                required
+                            >
                         </div>
                     </div>
-
+                    <div class="form-group">
+                        <label for="firstName">
+                            First Name
+                            <span class="required">*</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user"></i>
+                            <input
+                                type="text"
+                                id="firstName"
+                                name="firstName"
+                                placeholder="Enter first name"
+                                value="{{ edit_student.first_name|default:'' }}"
+                                required
+                            >
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="middleName">
+                            Middle Name
+                            <span class="optional">
+                                (Optional)
+                            </span>
+                        </label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user"></i>
+                            <input
+                                type="text"
+                                id="middleName"
+                                name="middleName"
+                                placeholder="Enter middle name"
+                                value="{{ edit_student.middle_name|default:'' }}"
+                            >
+                        </div>
+                    </div>
                     <div class="age-sex-field">
                         <div class="age-sex-wrapper">
                             <div class="form-group age-field">
-                                <label for="age">Age</label>
+                                <label for="age">
+                                    Age
+                                </label>
                                 <div class="input-wrapper">
                                     <i class="fa-solid fa-calendar-days"></i>
-                                    <input type="number" id="age" name="age"
-                                           min="1" max="100" placeholder="Age">
+                                    <input
+                                        type="number"
+                                        id="age"
+                                        name="age"
+                                        min="1"
+                                        max="100"
+                                        placeholder="Age"
+                                        value="{{ edit_student.age|default:'' }}"
+                                    >
                                 </div>
                             </div>
-
                             <div class="form-group sex-field">
-                                <label for="sex">Sex</label>
+                                <label for="sex">
+                                    Sex
+                                </label>
                                 <div class="input-wrapper select-wrapper">
                                     <i class="fa-solid fa-venus-mars"></i>
-                                    <select id="sex" name="sex">
-                                        <option value="">Select Sex</option>
-                                        <option value="Male">Male</option>
-                                        <option value="Female">Female</option>
+                                    <select
+                                        id="sex"
+                                        name="sex"
+                                        data-current="{{ edit_student.sex|default:'' }}"
+                                    >
+                                        <option value="">
+                                            Select Sex
+                                        </option>
+                                        <option value="Male">
+                                            Male
+                                        </option>
+                                        <option value="Female">
+                                            Female
+                                        </option>
                                     </select>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <label for="email">Email <span class="required">*</span></label>
+                        <label for="email">
+                            Email
+                            <span class="required">*</span>
+                        </label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-envelope"></i>
-                            <input type="email" id="email" name="email"
-                                   placeholder="Enter email address" required>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="Enter email address"
+                                value="{{ edit_student.email|default:'' }}"
+                                required
+                            >
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="contact">
-                            Contact Number <span class="required">*</span>
+                            Contact Number
+                            <span class="required">*</span>
                         </label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-phone"></i>
-                            <input type="tel" id="contact" name="contact"
-                                   placeholder="Enter contact number" required>
+                            <input
+                                type="tel"
+                                id="contact"
+                                name="contact"
+                                placeholder="Enter contact number"
+                                value="{{ edit_student.contact|default:'' }}"
+                                required
+                            >
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <label for="barangay">Barangay <span class="required">*</span></label>
+                        <label for="barangay">
+                            Barangay
+                            <span class="required">*</span>
+                        </label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-location-dot"></i>
-                            <input type="text" id="barangay" name="barangay"
-                                   placeholder="Enter barangay" required>
+                            <input
+                                type="text"
+                                id="barangay"
+                                name="barangay"
+                                placeholder="Enter barangay"
+                                value="{{ edit_student.barangay|default:'' }}"
+                                required
+                            >
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label for="municipality">
-                            Municipality <span class="required">*</span>
+                            Municipality
+                            <span class="required">*</span>
                         </label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-city"></i>
-                            <input type="text" id="municipality" name="municipality"
-                                   placeholder="Enter municipality" required>
+                            <input
+                                type="text"
+                                id="municipality"
+                                name="municipality"
+                                placeholder="Enter municipality"
+                                value="{{ edit_student.municipality|default:'' }}"
+                                required
+                            >
                         </div>
                     </div>
-
                     <div class="form-group">
-                        <label for="province">Province <span class="required">*</span></label>
+                        <label for="province">
+                            Province
+                            <span class="required">*</span>
+                        </label>
                         <div class="input-wrapper">
                             <i class="fa-solid fa-map"></i>
-                            <input type="text" id="province" name="province"
-                                   placeholder="Enter province" required>
+                            <input
+                                type="text"
+                                id="province"
+                                name="province"
+                                placeholder="Enter province"
+                                value="{{ edit_student.province|default:'' }}"
+                                required
+                            >
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-        <!-- PARENT / GUARDIAN INFORMATION -->
+        <!-- GUARDIAN INFORMATION -->
         <section class="form-section">
             <div class="section-title">
                 <i class="fa-solid fa-people-roof"></i>
-                <span>Parent / Guardian Information</span>
+                <span>
+                    Parent / Guardian Information
+                </span>
             </div>
-
             <div class="form-grid guardian-grid">
                 <div class="form-group">
                     <label for="guardianLastName">
-                        Last Name <span class="required">*</span>
+                        Last Name
+                        <span class="required">*</span>
                     </label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" id="guardianLastName" name="guardianLastName"
-                               placeholder="Enter last name" required>
+                        <input
+                            type="text"
+                            id="guardianLastName"
+                            name="guardianLastName"
+                            placeholder="Enter last name"
+                            required
+                        >
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="guardianFirstName">
-                        First Name <span class="required">*</span>
+                        First Name
+                        <span class="required">*</span>
                     </label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" id="guardianFirstName" name="guardianFirstName"
-                               placeholder="Enter first name" required>
+                        <input
+                            type="text"
+                            id="guardianFirstName"
+                            name="guardianFirstName"
+                            placeholder="Enter first name"
+                            required
+                        >
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="guardianMiddleName">
-                        Middle Name <span class="optional">(Optional)</span>
+                        Middle Name
+                        <span class="optional">
+                            (Optional)
+                        </span>
                     </label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-user"></i>
-                        <input type="text" id="guardianMiddleName" name="guardianMiddleName"
-                               placeholder="Enter middle name">
+                        <input
+                            type="text"
+                            id="guardianMiddleName"
+                            name="guardianMiddleName"
+                            placeholder="Enter middle name"
+                        >
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="relationship">
-                        Relationship <span class="required">*</span>
+                        Relationship
+                        <span class="required">*</span>
                     </label>
                     <div class="input-wrapper select-wrapper">
                         <i class="fa-solid fa-people-arrows"></i>
-                        <select id="relationship" name="relationship" required>
-                            <option value="" selected disabled>Select relationship</option>
-                            <option value="Mother">Mother</option>
-                            <option value="Father">Father</option>
-                            <option value="Guardian">Guardian</option>
-                            <option value="Grandparent">Grandparent</option>
-                            <option value="Sibling">Sibling</option>
-                            <option value="Other">Other</option>
+                        <select
+                            id="relationship"
+                            name="relationship"
+                            data-current="{{ edit_student.parent_relationship|default:'' }}"
+                            required
+                        >
+                            <option
+                                value=""
+                                disabled
+                            >
+                                Select relationship
+                            </option>
+                            <option value="Mother">
+                                Mother
+                            </option>
+                            <option value="Father">
+                                Father
+                            </option>
+                            <option value="Guardian">
+                                Guardian
+                            </option>
+                            <option value="Grandparent">
+                                Grandparent
+                            </option>
+                            <option value="Sibling">
+                                Sibling
+                            </option>
+                            <option value="Other">
+                                Other
+                            </option>
                         </select>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="guardianContact">
-                        Contact Number <span class="required">*</span>
+                        Contact Number
+                        <span class="required">*</span>
                     </label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-phone"></i>
-                        <input type="tel" id="guardianContact" name="guardianContact"
-                               placeholder="Enter contact number" required>
+                        <input
+                            type="tel"
+                            id="guardianContact"
+                            name="guardianContact"
+                            placeholder="Enter contact number"
+                            value="{{ edit_student.parent_contact|default:'' }}"
+                            required
+                        >
                     </div>
                 </div>
             </div>
         </section>
-
         <!-- CLASS ASSIGNMENT -->
         <section class="form-section assignment-section">
             <div class="section-title">
                 <i class="fa-solid fa-school"></i>
-                <span>Class Assignment</span>
+                <span>
+                    Class Assignment
+                </span>
             </div>
-
             <div class="form-grid class-grid">
                 <div class="form-group">
                     <label for="department">
-                        Department <span class="required">*</span>
+                        Department
+                        <span class="required">*</span>
                     </label>
                     <div class="input-wrapper select-wrapper">
                         <i class="fa-solid fa-building"></i>
-                        <select id="department" name="department" required>
-                            <option value="" selected disabled>Select department</option>
-                            <option value="SHS">Senior High School (SHS)</option>
-                            <option value="JHS">Junior High School (JHS)</option>
+                        <select
+                            id="department"
+                            name="department"
+                            data-current="{{ edit_student.department|default:admin_dept|default:'' }}"
+                            required
+                        >
+                            <option
+                                value=""
+                                disabled
+                            >
+                                Select department
+                            </option>
+                            <option value="SHS">
+                                Senior High School (SHS)
+                            </option>
+                            <option value="JHS">
+                                Junior High School (JHS)
+                            </option>
                         </select>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label for="grade">Grade <span class="required">*</span></label>
+                    <label for="grade">
+                        Grade
+                        <span class="required">*</span>
+                    </label>
                     <div class="input-wrapper select-wrapper">
                         <i class="fa-solid fa-layer-group"></i>
-                        <select id="grade" name="grade" required>
-                            <option value="" selected disabled>Select grade</option>
-                            <option value="Grade 7">Grade 7</option>
-                            <option value="Grade 8">Grade 8</option>
-                            <option value="Grade 9">Grade 9</option>
-                            <option value="Grade 10">Grade 10</option>
-                            <option value="Grade 11">Grade 11</option>
-                            <option value="Grade 12">Grade 12</option>
+                        <select
+                            id="grade"
+                            name="grade"
+                            data-current="{{ edit_student.grade|default:'' }}"
+                            required
+                        >
+                            <option
+                                value=""
+                                disabled
+                            >
+                                Select grade
+                            </option>
+                            <option value="Grade 7">
+                                Grade 7
+                            </option>
+                            <option value="Grade 8">
+                                Grade 8
+                            </option>
+                            <option value="Grade 9">
+                                Grade 9
+                            </option>
+                            <option value="Grade 10">
+                                Grade 10
+                            </option>
+                            <option value="Grade 11">
+                                Grade 11
+                            </option>
+                            <option value="Grade 12">
+                                Grade 12
+                            </option>
                         </select>
                     </div>
                 </div>
-
-                <!-- SECTION — DROPDOWN (galing sa Class table) -->
                 <div class="form-group">
                     <label for="section">
-                        Section <span class="required">*</span>
+                        Section
+                        <span class="required">*</span>
                     </label>
                     <div class="input-wrapper select-wrapper">
                         <i class="fa-solid fa-users"></i>
-                        <select id="section" name="section" required>
-                            <option value="" selected disabled>
+                        <select
+                            id="section"
+                            name="section"
+                            data-current="{{ edit_student.section|default:'' }}"
+                            required
+                        >
+                            <option
+                                value=""
+                                disabled
+                            >
                                 Select section
                             </option>
                         </select>
                     </div>
                 </div>
-
-                <!-- ADVISER — READONLY (auto-fill mula sa Class) -->
                 <div class="form-group">
-                    <label for="adviser">Adviser</label>
+                    <label for="adviser">
+                        Adviser
+                    </label>
                     <div class="input-wrapper">
                         <i class="fa-solid fa-chalkboard-user"></i>
-                        <input type="text" id="adviser" name="adviser"
-                               placeholder="Auto-detected from section"
-                               readonly>
+                        <input
+                            type="text"
+                            id="adviser"
+                            name="adviser"
+                            placeholder="Auto-detected from section"
+                            value="{% if edit_student.adviser %}{{ edit_student.adviser.first_name }} {{ edit_student.adviser.last_name }}{% endif %}"
+                            readonly
+                        >
                     </div>
                 </div>
             </div>
         </section>
-
+        <!-- ACTIONS -->
         <div class="form-actions">
-            <button type="button" class="form-btn btn-cancel" id="cancelBtn">
-                <i class="fa-solid fa-xmark"></i> Cancel
+            <button
+                type="button"
+                class="form-btn btn-cancel"
+                id="cancelBtn"
+            >
+                <i class="fa-solid fa-xmark"></i>
+                Cancel
             </button>
-            <button type="button" class="form-btn btn-clear" id="clearBtn">
-                <i class="fa-solid fa-eraser"></i> Clear
+            {% if not edit_student %}
+            <button
+                type="button"
+                class="form-btn btn-clear"
+                id="clearBtn"
+            >
+                <i class="fa-solid fa-eraser"></i>
+                Clear
             </button>
-            <button type="submit" class="form-btn btn-save">
-                <i class="fa-solid fa-user-plus"></i> Register Student
+            {% endif %}
+            <button
+                type="submit"
+                class="form-btn btn-save"
+            >
+                {% if edit_student %}
+                <i class="fa-solid fa-floppy-disk"></i>
+                Update Student
+                {% else %}
+                <i class="fa-solid fa-user-plus"></i>
+                Register Student
+                {% endif %}
             </button>
         </div>
     </form>
 </div>
-
-{# JSON data ng Classes para sa JS dropdown #}
+{% if not edit_student %}
+<div class="student-import-modal" id="importConfirmModal">
+<div class="student-import-modal-box">
+<div class="student-import-modal-icon confirm"><i class="fa-solid fa-file-excel"></i></div>
+<h3>Import Students?</h3>
+<p id="importConfirmFile"></p>
+<p class="student-import-note">Students from this Excel file will be saved to the database.</p>
+<div class="student-import-actions">
+<button type="button" class="student-import-cancel" id="cancelImportBtn">Cancel</button>
+<button type="button" class="student-import-confirm" id="confirmImportBtn"><i class="fa-solid fa-file-import"></i>Import Students</button>
+</div>
+</div>
+</div>
+<div class="student-import-modal" id="importResultModal">
+<div class="student-import-modal-box student-import-result-box">
+<div class="student-import-modal-icon result" id="importResultIcon"><i class="fa-solid fa-check"></i></div>
+<h3 id="importResultTitle">Import Complete</h3>
+<p id="importResultMessage"></p>
+<div class="student-import-summary">
+<div class="student-import-summary-item"><span>Total</span><strong id="importTotalCount">0</strong></div>
+<div class="student-import-summary-item success"><span>Saved</span><strong id="importSavedCount">0</strong></div>
+<div class="student-import-summary-item failed"><span>Not Saved</span><strong id="importFailedCount">0</strong></div>
+</div>
+<div class="student-import-errors" id="importErrorsSection">
+<div class="student-import-errors-title"><i class="fa-solid fa-triangle-exclamation"></i><span>Not Saved</span></div>
+<div class="student-import-error-list" id="importErrorList"></div>
+</div>
+<div class="student-import-actions">
+<button type="button" class="student-import-confirm" id="closeImportResultBtn">Done</button>
+</div>
+</div>
+</div>
+{% endif %}
 {{ classes_json|json_script:"classesData" }}
-
+{% if edit_student %}
+<script id="editStudentData" type="application/json">
+{
+    "id": "{{ edit_student.id|escapejs }}",
+    "parent_name": "{{ edit_student.parent_name|default:''|escapejs }}",
+    "sex": "{{ edit_student.sex|default:''|escapejs }}",
+    "relationship": "{{ edit_student.parent_relationship|default:''|escapejs }}",
+    "department": "{{ edit_student.department|default:''|escapejs }}",
+    "grade": "{{ edit_student.grade|default:''|escapejs }}",
+    "section": "{{ edit_student.section|default:''|escapejs }}"
+}
+</script>
+{% endif %}
 {% endblock %}
-
-
 {% block extra_js %}
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    "use strict";
-
-    const form = document.getElementById("registerStudentForm");
-    const rfidInput = document.getElementById("rfid");
-    const clearRfidBtn = document.getElementById("clearRfidBtn");
-    const rfidStatusBox = document.getElementById("rfidStatusBox");
-    const rfidStatusIcon = document.getElementById("rfidStatusIcon");
-    const rfidStatusTitle = document.getElementById("rfidStatusTitle");
-    const rfidStatusText = document.getElementById("rfidStatusText");
-
-    const studentImage = document.getElementById("studentImage");
-    const imagePreview = document.getElementById("imagePreview");
-    const fileName = document.getElementById("fileName");
-
-    // =========================================
-    // CLASS DATA — galing sa Django
-    // =========================================
-    const classesDataEl = document.getElementById("classesData");
-    let classes = [];
-    try {
-        classes = JSON.parse(classesDataEl.textContent || "[]");
-    } catch (err) {
-        console.error("Invalid classes data:", err);
-        classes = [];
-    }
-
-    const departmentSelect = document.getElementById("department");
-    const gradeSelect      = document.getElementById("grade");
-    const sectionSelect    = document.getElementById("section");
-    const adviserInput     = document.getElementById("adviser");
-
-    // =========================================
-    // SECTION DROPDOWN — base sa Grade
-    // =========================================
-    function updateSections() {
-        const grade = gradeSelect.value;
-        const currentSection = sectionSelect.value;
-
-        sectionSelect.innerHTML = '<option value="" disabled selected>Select section</option>';
-        adviserInput.value = "";
-
-        if (!grade) return;
-
-        const filtered = classes.filter(c => c.grade === grade);
-
-        if (!filtered.length) {
-            const opt = document.createElement("option");
-            opt.value = "";
-            opt.disabled = true;
-            opt.textContent = "No sections available for " + grade;
-            sectionSelect.appendChild(opt);
-            return;
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        "use strict";
+        const form =
+            document.getElementById(
+                "registerStudentForm"
+            );
+        const rfidInput =
+            document.getElementById(
+                "rfid"
+            );
+        const clearRfidBtn =
+            document.getElementById(
+                "clearRfidBtn"
+            );
+        const rfidStatusBox =
+            document.getElementById(
+                "rfidStatusBox"
+            );
+        const rfidStatusIcon =
+            document.getElementById(
+                "rfidStatusIcon"
+            );
+        const rfidStatusTitle =
+            document.getElementById(
+                "rfidStatusTitle"
+            );
+        const rfidStatusText =
+            document.getElementById(
+                "rfidStatusText"
+            );
+        const studentImage =
+            document.getElementById(
+                "studentImage"
+            );
+        const imagePreview =
+            document.getElementById(
+                "imagePreview"
+            );
+        const fileName =
+            document.getElementById(
+                "fileName"
+            );
+        const departmentSelect =
+            document.getElementById(
+                "department"
+            );
+        const gradeSelect =
+            document.getElementById(
+                "grade"
+            );
+        const sectionSelect =
+            document.getElementById(
+                "section"
+            );
+        const adviserInput =
+            document.getElementById(
+                "adviser"
+            );
+        const sexSelect =
+            document.getElementById(
+                "sex"
+            );
+        const relationshipSelect =
+            document.getElementById(
+                "relationship"
+            );
+        const editDataElement =
+            document.getElementById(
+                "editStudentData"
+            );
+        const isEditMode =
+            !!editDataElement;
+        let editData = null;
+        if (editDataElement) {
+            try {
+                editData =
+                    JSON.parse(
+                        editDataElement.textContent
+                    );
+            } catch (error) {
+                console.error(
+                    "Invalid edit student data:",
+                    error
+                );
+            }
         }
-
-        filtered.forEach(c => {
-            const opt = document.createElement("option");
-            opt.value = c.section;
-            opt.textContent = c.section;
-            opt.dataset.teacher = c.teacher || "";
-            sectionSelect.appendChild(opt);
-        });
-
-        if (currentSection && filtered.some(c => c.section === currentSection)) {
-            sectionSelect.value = currentSection;
+        /* =================================================
+           CLASSES
+           ================================================= */
+        const classesDataEl =
+            document.getElementById(
+                "classesData"
+            );
+        let classes = [];
+        try {
+            classes =
+                JSON.parse(
+                    classesDataEl.textContent ||
+                    "[]"
+                );
+        } catch (error) {
+            console.error(
+                "Invalid classes data:",
+                error
+            );
+            classes = [];
+        }
+        /* =================================================
+           SELECT HELPER
+           ================================================= */
+        function selectValueIgnoreCase(
+            select,
+            value
+        ) {
+            if (
+                !select ||
+                !value
+            ) {
+                return;
+            }
+            const target =
+                String(value)
+                    .trim()
+                    .toLowerCase();
+            Array.from(
+                select.options
+            ).some(
+                function (option) {
+                    if (
+                        String(
+                            option.value
+                        )
+                        .trim()
+                        .toLowerCase() ===
+                        target
+                    ) {
+                        select.value =
+                            option.value;
+                        return true;
+                    }
+                    return false;
+                }
+            );
+        }
+        /* =================================================
+           DEPARTMENT → GRADE
+           ================================================= */
+        function filterGrades() {
+            const dept =
+                departmentSelect.value;
+            const options =
+                gradeSelect.querySelectorAll(
+                    "option"
+                );
+            options.forEach(
+                function (option) {
+                    if (!option.value) {
+                        return;
+                    }
+                    const gradeNumber =
+                        parseInt(
+                            option.value.replace(
+                                "Grade ",
+                                ""
+                            ),
+                            10
+                        );
+                    let allowed = true;
+                    if (
+                        dept === "JHS" &&
+                        gradeNumber > 10
+                    ) {
+                        allowed = false;
+                    }
+                    if (
+                        dept === "SHS" &&
+                        gradeNumber < 11
+                    ) {
+                        allowed = false;
+                    }
+                    option.style.display =
+                        allowed
+                            ? ""
+                            : "none";
+                    option.disabled =
+                        !allowed;
+                }
+            );
+            if (
+                gradeSelect.value
+            ) {
+                const selectedGradeNumber =
+                    parseInt(
+                        gradeSelect.value.replace(
+                            "Grade ",
+                            ""
+                        ),
+                        10
+                    );
+                if (
+                    (
+                        dept === "JHS" &&
+                        selectedGradeNumber > 10
+                    )
+                    ||
+                    (
+                        dept === "SHS" &&
+                        selectedGradeNumber < 11
+                    )
+                ) {
+                    gradeSelect.value = "";
+                }
+            }
+        }
+        /* =================================================
+           SECTIONS
+           ================================================= */
+        function updateSections(
+            selectedSection = ""
+        ) {
+            const department =
+                departmentSelect.value;
+            const grade =
+                gradeSelect.value;
+            sectionSelect.innerHTML =
+                '<option value="" disabled>Select section</option>';
+            adviserInput.value = "";
+            if (
+                !department ||
+                !grade
+            ) {
+                return;
+            }
+            const filtered =
+                classes.filter(
+                    function (item) {
+                        return (
+                            String(
+                                item.department ||
+                                ""
+                            ).toUpperCase() ===
+                            department.toUpperCase()
+                            &&
+                            String(
+                                item.grade ||
+                                ""
+                            ) === grade
+                        );
+                    }
+                );
+            if (!filtered.length) {
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+                option.value = "";
+                option.disabled = true;
+                option.textContent =
+                    "No sections available for " +
+                    grade;
+                sectionSelect.appendChild(
+                    option
+                );
+                return;
+            }
+            filtered.forEach(
+                function (item) {
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+                    option.value =
+                        item.section;
+                    option.textContent =
+                        item.section;
+                    option.dataset.teacher =
+                        item.teacher || "";
+                    sectionSelect.appendChild(
+                        option
+                    );
+                }
+            );
+            if (selectedSection) {
+                selectValueIgnoreCase(
+                    sectionSelect,
+                    selectedSection
+                );
+            }
             autoFillAdviser();
         }
-    }
-
-    // =========================================
-    // AUTO-FILL ADVISER
-    // =========================================
-    function autoFillAdviser() {
-        const selectedOption = sectionSelect.options[sectionSelect.selectedIndex];
-        if (!selectedOption || !selectedOption.value) {
-            adviserInput.value = "";
-            return;
-        }
-        const teacherName = selectedOption.dataset.teacher || "";
-        adviserInput.value = teacherName || "No adviser assigned";
-    }
-
-    gradeSelect.addEventListener("change", updateSections);
-    sectionSelect.addEventListener("change", autoFillAdviser);
-    updateSections();
-
-    // =========================================
-    // DEPARTMENT → GRADE filtering
-    // =========================================
-    departmentSelect.addEventListener("change", function () {
-        const dept = this.value;
-        const gradeOptions = gradeSelect.querySelectorAll("option");
-
-        gradeOptions.forEach(opt => {
-            if (!opt.value) return;
-            const gradeNum = parseInt(opt.value.replace("Grade ", ""), 10);
-
-            if (dept === "JHS" && gradeNum > 10) {
-                opt.style.display = "none";
-                opt.disabled = true;
-            } else if (dept === "SHS" && gradeNum < 11) {
-                opt.style.display = "none";
-                opt.disabled = true;
-            } else {
-                opt.style.display = "";
-                opt.disabled = false;
+        /* =================================================
+           ADVISER
+           ================================================= */
+        function autoFillAdviser() {
+            const selectedOption =
+                sectionSelect.options[
+                    sectionSelect.selectedIndex
+                ];
+            if (
+                !selectedOption ||
+                !selectedOption.value
+            ) {
+                adviserInput.value = "";
+                return;
             }
-        });
-
-        if (gradeSelect.value) {
-            const gradeNum = parseInt(gradeSelect.value.replace("Grade ", ""), 10);
-            if ((dept === "JHS" && gradeNum > 10) ||
-                (dept === "SHS" && gradeNum < 11)) {
+            const teacher =
+                selectedOption.dataset.teacher ||
+                "";
+            adviserInput.value =
+                teacher ||
+                "No adviser assigned";
+        }
+        /* =================================================
+           INITIAL EDIT VALUES
+           ================================================= */
+        function initializeEditMode() {
+            if (
+                !isEditMode ||
+                !editData
+            ) {
+                const defaultDepartment =
+                    departmentSelect.dataset.current;
+                if (defaultDepartment) {
+                    selectValueIgnoreCase(
+                        departmentSelect,
+                        defaultDepartment
+                    );
+                    filterGrades();
+                }
+                updateSections();
+                return;
+            }
+            selectValueIgnoreCase(
+                departmentSelect,
+                editData.department
+            );
+            filterGrades();
+            selectValueIgnoreCase(
+                gradeSelect,
+                editData.grade
+            );
+            updateSections(
+                editData.section
+            );
+            selectValueIgnoreCase(
+                sexSelect,
+                editData.sex
+            );
+            selectValueIgnoreCase(
+                relationshipSelect,
+                editData.relationship
+            );
+            /* =============================================
+               SPLIT PARENT NAME
+               ============================================= */
+            const parentName =
+                String(
+                    editData.parent_name ||
+                    ""
+                )
+                .trim();
+            const parentParts =
+                parentName
+                    ? parentName.split(/\s+/)
+                    : [];
+            let guardianFirst = "";
+            let guardianMiddle = "";
+            let guardianLast = "";
+            if (
+                parentParts.length === 1
+            ) {
+                guardianFirst =
+                    parentParts[0];
+            } else if (
+                parentParts.length === 2
+            ) {
+                guardianFirst =
+                    parentParts[0];
+                guardianLast =
+                    parentParts[1];
+            } else if (
+                parentParts.length >= 3
+            ) {
+                guardianFirst =
+                    parentParts[0];
+                guardianLast =
+                    parentParts[
+                        parentParts.length - 1
+                    ];
+                guardianMiddle =
+                    parentParts
+                        .slice(
+                            1,
+                            -1
+                        )
+                        .join(" ");
+            }
+            document.getElementById(
+                "guardianFirstName"
+            ).value =
+                guardianFirst;
+            document.getElementById(
+                "guardianMiddleName"
+            ).value =
+                guardianMiddle;
+            document.getElementById(
+                "guardianLastName"
+            ).value =
+                guardianLast;
+        }
+        /* =================================================
+           EVENTS
+           ================================================= */
+        departmentSelect.addEventListener(
+            "change",
+            function () {
+                filterGrades();
                 gradeSelect.value = "";
                 updateSections();
             }
-        }
-    });
-
-    // =========================================
-    // RFID AUTO-CAPTURE (walang button)
-    // =========================================
-    let rfidBuffer = "";
-    let rfidScanTimer = null;
-    const RFID_TIMEOUT = 150;   // ms — bilis ng typing ng scanner
-    const RFID_MIN_LENGTH = 4;  // minimum na haba ng UID
-
-    function setRfidStatus(type, title, message) {
-        rfidStatusBox.classList.remove("scanning", "success", "error");
-        if (type) rfidStatusBox.classList.add(type);
-
-        const icons = {
-            scanning: "fa-wifi",
-            success: "fa-circle-check",
-            error: "fa-circle-exclamation"
-        };
-        const iconName = icons[type] || "fa-id-card";
-        rfidStatusIcon.innerHTML = '<i class="fa-solid ' + iconName + '"></i>';
-        rfidStatusTitle.textContent = title;
-        rfidStatusText.textContent = message;
-    }
-
-    function resetRfidStatus() {
-        setRfidStatus("", "Ready to scan", "Tap the student's card on the scanner.");
-    }
-
-    function commitRfid() {
-        const uid = rfidBuffer.trim();
-        rfidBuffer = "";
-        clearTimeout(rfidScanTimer);
-
-        if (!uid) return;
-        if (uid.length < RFID_MIN_LENGTH) return;
-
-        // Check duplicate sa ibang fields? (optional)
-        rfidInput.value = uid;
-        setRfidStatus(
-            "success",
-            "RFID card detected",
-            "UID: " + uid + " — assigned to this student."
         );
-    }
-
-    // Global keydown listener — laging naka-listen
-    document.addEventListener("keydown", function (event) {
-        // Huwag harangin kung nasa ibang input/textarea/select ang focus
-        const tag = (event.target.tagName || "").toLowerCase();
-        const isFormField = tag === "input" || tag === "textarea" ||
-                            tag === "select" || event.target.isContentEditable;
-
-        // Kung ang focus ay nasa RFID input mismo, hayaan lang
-        if (event.target === rfidInput) {
-            return;
-        }
-
-        // Kung nasa ibang form field, huwag harangin (para makapag-type ang user)
-        if (isFormField) {
-            return;
-        }
-
-        // Enter = end ng RFID scan
-        if (event.key === "Enter") {
-            if (rfidBuffer.trim()) {
-                event.preventDefault();
-                commitRfid();
+        gradeSelect.addEventListener(
+            "change",
+            function () {
+                updateSections();
             }
-            return;
-        }
-
-        // Tanggapin lang ang printable characters
-        if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
-            rfidBuffer += event.key;
-
-            // Ipakita ang "scanning" status habang dumarating ang digits
-            if (rfidBuffer.length === 1) {
-                setRfidStatus("scanning", "Receiving RFID...", "Hold on, reading card...");
+        );
+        sectionSelect.addEventListener(
+            "change",
+            autoFillAdviser
+        );
+        /* =================================================
+           RFID
+           ================================================= */
+        let rfidBuffer = "";
+        let rfidScanTimer = null;
+        const RFID_TIMEOUT = 150;
+        const RFID_MIN_LENGTH = 4;
+        function setRfidStatus(
+            type,
+            title,
+            message
+        ) {
+            rfidStatusBox.classList.remove(
+                "scanning",
+                "success",
+                "error"
+            );
+            if (type) {
+                rfidStatusBox.classList.add(
+                    type
+                );
             }
-
-            clearTimeout(rfidScanTimer);
-            rfidScanTimer = setTimeout(commitRfid, RFID_TIMEOUT);
+            const icons = {
+                scanning:
+                    "fa-wifi",
+                success:
+                    "fa-circle-check",
+                error:
+                    "fa-circle-exclamation"
+            };
+            const iconName =
+                icons[type] ||
+                "fa-id-card";
+            rfidStatusIcon.innerHTML =
+                '<i class="fa-solid ' +
+                iconName +
+                '"></i>';
+            rfidStatusTitle.textContent =
+                title;
+            rfidStatusText.textContent =
+                message;
         }
-    });
-
-    // Clear RFID button
-    clearRfidBtn.addEventListener("click", function () {
-        rfidInput.value = "";
-        rfidBuffer = "";
-        clearTimeout(rfidScanTimer);
-        resetRfidStatus();
-        rfidInput.focus();
-    });
-
-    // =========================================
-    // IMAGE PREVIEW
-    // =========================================
-    studentImage.addEventListener("change", function () {
-        const file = this.files[0];
-
-        if (!file) {
-            imagePreview.innerHTML = '<i class="fa-solid fa-user"></i>';
-            fileName.textContent = "No file chosen";
-            return;
+        function resetRfidStatus() {
+            setRfidStatus(
+                "",
+                "Ready to scan",
+                "Tap the student's card on the scanner."
+            );
         }
-
-        fileName.textContent = file.name;
-
-        if (!file.type.startsWith("image/")) {
-            imagePreview.innerHTML = '<i class="fa-solid fa-user"></i>';
-            return;
+        function commitRfid() {
+            const uid =
+                rfidBuffer.trim();
+            rfidBuffer = "";
+            clearTimeout(
+                rfidScanTimer
+            );
+            if (!uid) {
+                return;
+            }
+            if (
+                uid.length <
+                RFID_MIN_LENGTH
+            ) {
+                return;
+            }
+            rfidInput.value =
+                uid;
+            setRfidStatus(
+                "success",
+                "RFID card detected",
+                "UID: " +
+                uid +
+                " — assigned to this student."
+            );
         }
-
-        const reader = new FileReader();
-        reader.onload = function (event) {
-            const img = document.createElement("img");
-            img.src = event.target.result;
-            img.alt = "Student image preview";
-            imagePreview.replaceChildren(img);
-        };
-        reader.readAsDataURL(file);
-    });
-
-    // =========================================
-    // CLEAR / CANCEL
-    // =========================================
-    function clearForm() {
-        form.reset();
-        rfidBuffer = "";
-        clearTimeout(rfidScanTimer);
-        imagePreview.innerHTML = '<i class="fa-solid fa-user"></i>';
-        fileName.textContent = "No file chosen";
-        updateSections();
-        resetRfidStatus();
+        document.addEventListener(
+            "keydown",
+            function (event) {
+                const tag =
+                    (
+                        event.target.tagName ||
+                        ""
+                    )
+                    .toLowerCase();
+                const isFormField =
+                    tag === "input" ||
+                    tag === "textarea" ||
+                    tag === "select" ||
+                    event.target.isContentEditable;
+                if (
+                    event.target ===
+                    rfidInput
+                ) {
+                    return;
+                }
+                if (isFormField) {
+                    return;
+                }
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
+                    if (
+                        rfidBuffer.trim()
+                    ) {
+                        event.preventDefault();
+                        commitRfid();
+                    }
+                    return;
+                }
+                if (
+                    event.key.length === 1 &&
+                    !event.ctrlKey &&
+                    !event.altKey &&
+                    !event.metaKey
+                ) {
+                    rfidBuffer +=
+                        event.key;
+                    if (
+                        rfidBuffer.length === 1
+                    ) {
+                        setRfidStatus(
+                            "scanning",
+                            "Receiving RFID...",
+                            "Hold on, reading card..."
+                        );
+                    }
+                    clearTimeout(
+                        rfidScanTimer
+                    );
+                    rfidScanTimer =
+                        setTimeout(
+                            commitRfid,
+                            RFID_TIMEOUT
+                        );
+                }
+            }
+        );
+        clearRfidBtn.addEventListener(
+            "click",
+            function () {
+                rfidInput.value = "";
+                rfidBuffer = "";
+                clearTimeout(
+                    rfidScanTimer
+                );
+                resetRfidStatus();
+            }
+        );
+        /* =================================================
+           IMAGE PREVIEW
+           ================================================= */
+        studentImage.addEventListener(
+            "change",
+            function () {
+                const file =
+                    this.files[0];
+                if (!file) {
+                    if (!isEditMode) {
+                        imagePreview.innerHTML =
+                            '<i class="fa-solid fa-user"></i>';
+                        fileName.textContent =
+                            "No file chosen";
+                    }
+                    return;
+                }
+                fileName.textContent =
+                    file.name;
+                if (
+                    !file.type.startsWith(
+                        "image/"
+                    )
+                ) {
+                    return;
+                }
+                const reader =
+                    new FileReader();
+                reader.onload =
+                    function (event) {
+                        const image =
+                            document.createElement(
+                                "img"
+                            );
+                        image.src =
+                            event.target.result;
+                        image.alt =
+                            "Student image preview";
+                        imagePreview.replaceChildren(
+                            image
+                        );
+                    };
+                reader.readAsDataURL(
+                    file
+                );
+            }
+        );
+        /* =================================================
+           CLEAR
+           ================================================= */
+        function clearForm() {
+            form.reset();
+            rfidBuffer = "";
+            clearTimeout(
+                rfidScanTimer
+            );
+            imagePreview.innerHTML =
+                '<i class="fa-solid fa-user"></i>';
+            fileName.textContent =
+                "No file chosen";
+            resetRfidStatus();
+            filterGrades();
+            updateSections();
+        }
+        const clearBtn =
+            document.getElementById(
+                "clearBtn"
+            );
+        if (clearBtn) {
+            clearBtn.addEventListener(
+                "click",
+                clearForm
+            );
+        }
+        /* =================================================
+           CANCEL
+           ================================================= */
+        document
+            .getElementById(
+                "cancelBtn"
+            )
+            .addEventListener(
+                "click",
+                function () {
+                    if (isEditMode) {
+                        window.location.href =
+                            "{% url 'admin_students' %}";
+                        return;
+                    }
+                    if (
+                        confirm(
+                            "Are you sure you want to cancel? All entered information will be cleared."
+                        )
+                    ) {
+                        clearForm();
+                    }
+                }
+            );
+        /* =================================================
+           SUBMIT
+           ================================================= */
+        form.addEventListener(
+            "submit",
+            function (event) {
+                if (
+                    !isEditMode &&
+                    !rfidInput.value.trim()
+                ) {
+                    event.preventDefault();
+                    setRfidStatus(
+                        "error",
+                        "RFID required",
+                        "Please tap the RFID card first."
+                    );
+                    return;
+                }
+                if (
+                    !form.reportValidity()
+                ) {
+                    event.preventDefault();
+                    return;
+                }
+                const submitBtn =
+                    form.querySelector(
+                        ".btn-save"
+                    );
+                if (submitBtn) {
+                    submitBtn.disabled =
+                        true;
+                    if (isEditMode) {
+                        submitBtn.innerHTML =
+                            '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+                    } else {
+                        submitBtn.innerHTML =
+                            '<i class="fa-solid fa-spinner fa-spin"></i> Registering...';
+                    }
+                }
+            }
+        );
+        /* =================================================
+           INITIALIZE
+           ================================================= */
+        initializeEditMode();
     }
-
-    document.getElementById("clearBtn").addEventListener("click", clearForm);
-
-    document.getElementById("cancelBtn").addEventListener("click", function () {
-        if (confirm("Are you sure you want to cancel? All entered information will be cleared.")) {
-            clearForm();
-        }
-    });
-
-    // =========================================
-    // SUBMIT
-    // =========================================
-    form.addEventListener("submit", function (event) {
-        if (!rfidInput.value.trim()) {
-            event.preventDefault();
-            setRfidStatus("error", "RFID required", "Please tap the RFID card first.");
-            rfidInput.focus();
-            return;
-        }
-
-        if (!form.reportValidity()) {
-            event.preventDefault();
-            return;
-        }
-
-        const submitBtn = form.querySelector(".btn-save");
-        if (submitBtn) {
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registering...';
-        }
-    });
+);
+/* EXCEL IMPORT */
+const importStudentBtn=document.getElementById("importStudentBtn");
+const studentExcelFile=document.getElementById("studentExcelFile");
+const importStudentForm=document.getElementById("importStudentForm");
+const importConfirmModal=document.getElementById("importConfirmModal");
+const importConfirmFile=document.getElementById("importConfirmFile");
+const cancelImportBtn=document.getElementById("cancelImportBtn");
+const confirmImportBtn=document.getElementById("confirmImportBtn");
+const importResultModal=document.getElementById("importResultModal");
+const importResultIcon=document.getElementById("importResultIcon");
+const importResultTitle=document.getElementById("importResultTitle");
+const importResultMessage=document.getElementById("importResultMessage");
+const importTotalCount=document.getElementById("importTotalCount");
+const importSavedCount=document.getElementById("importSavedCount");
+const importFailedCount=document.getElementById("importFailedCount");
+const importErrorsSection=document.getElementById("importErrorsSection");
+const importErrorList=document.getElementById("importErrorList");
+const closeImportResultBtn=document.getElementById("closeImportResultBtn");
+if(importStudentBtn&&studentExcelFile&&importStudentForm){
+const originalImportButton=importStudentBtn.innerHTML;
+function openImportModal(modal){
+modal.classList.add("show");
+document.body.style.overflow="hidden";
+}
+function closeImportModal(modal){
+modal.classList.remove("show");
+document.body.style.overflow="";
+}
+function resetImportButton(){
+importStudentBtn.disabled=false;
+importStudentBtn.innerHTML=originalImportButton;
+}
+function showImportResult(data){
+const total=Number(data.total)||0;
+const saved=Number(data.saved)||0;
+const failed=Number(data.failed)||0;
+const errors=Array.isArray(data.errors)?data.errors:[];
+importTotalCount.textContent=total;
+importSavedCount.textContent=saved;
+importFailedCount.textContent=failed;
+importResultMessage.textContent=data.message||"Import finished.";
+importResultIcon.classList.remove("failed","warning");
+if(saved>0&&failed===0){
+importResultTitle.textContent="Import Successful";
+importResultIcon.className="student-import-modal-icon result";
+importResultIcon.innerHTML='<i class="fa-solid fa-check"></i>';
+}else if(saved>0&&failed>0){
+importResultTitle.textContent="Import Completed";
+importResultIcon.className="student-import-modal-icon result warning";
+importResultIcon.innerHTML='<i class="fa-solid fa-triangle-exclamation"></i>';
+}else{
+importResultTitle.textContent="Import Failed";
+importResultIcon.className="student-import-modal-icon result failed";
+importResultIcon.innerHTML='<i class="fa-solid fa-xmark"></i>';
+}
+importErrorList.innerHTML="";
+if(errors.length){
+importErrorsSection.classList.add("show");
+errors.forEach(function(error){
+const item=document.createElement("div");
+item.className="student-import-error-item";
+if(typeof error==="string"){
+item.textContent=error;
+}else{
+const row=document.createElement("div");
+row.className="student-import-error-row";
+row.textContent=error.row&&error.row!=="-"?"Row "+error.row:"Import Error";
+item.appendChild(row);
+if(error.student&&error.student!=="-"){
+const student=document.createElement("div");
+student.className="student-import-error-student";
+student.textContent=error.student;
+item.appendChild(student);
+}
+const reason=document.createElement("div");
+reason.textContent=error.reason||"Unknown error.";
+item.appendChild(reason);
+}
+importErrorList.appendChild(item);
 });
+}else{
+importErrorsSection.classList.remove("show");
+}
+openImportModal(importResultModal);
+}
+async function importStudents(){
+closeImportModal(importConfirmModal);
+const formData=new FormData(importStudentForm);
+importStudentBtn.disabled=true;
+importStudentBtn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i><span>Importing...</span>';
+try{
+const response=await fetch(importStudentForm.action,{
+method:"POST",
+body:formData,
+headers:{"X-Requested-With":"XMLHttpRequest"},
+credentials:"same-origin"
+});
+const contentType=response.headers.get("content-type")||"";
+if(!contentType.includes("application/json")){
+throw new Error("The server returned an invalid response.");
+}
+const data=await response.json();
+resetImportButton();
+studentExcelFile.value="";
+showImportResult(data);
+}catch(error){
+resetImportButton();
+studentExcelFile.value="";
+showImportResult({
+success:false,
+message:"Student import could not be completed.",
+total:0,
+saved:0,
+failed:0,
+errors:[{row:"-",student:"-",reason:error.message||"Unable to connect to the server."}]
+});
+}
+}
+importStudentBtn.addEventListener("click",function(){
+if(importStudentBtn.disabled)return;
+studentExcelFile.value="";
+studentExcelFile.click();
+});
+studentExcelFile.addEventListener("change",function(){
+const file=this.files[0];
+if(!file)return;
+const extension=file.name.split(".").pop().toLowerCase();
+if(extension!=="xlsx"){
+this.value="";
+showImportResult({
+success:false,
+message:"Invalid Excel file.",
+total:0,
+saved:0,
+failed:0,
+errors:[{row:"-",student:"-",reason:"Please select a valid Excel (.xlsx) file."}]
+});
+return;
+}
+importConfirmFile.textContent=file.name;
+openImportModal(importConfirmModal);
+});
+cancelImportBtn.addEventListener("click",function(){
+closeImportModal(importConfirmModal);
+studentExcelFile.value="";
+});
+confirmImportBtn.addEventListener("click",function(){
+if(!studentExcelFile.files.length){
+closeImportModal(importConfirmModal);
+return;
+}
+importStudents();
+});
+closeImportResultBtn.addEventListener("click",function(){
+closeImportModal(importResultModal);
+});
+importConfirmModal.addEventListener("click",function(event){
+if(event.target===importConfirmModal){
+closeImportModal(importConfirmModal);
+studentExcelFile.value="";
+}
+});
+importResultModal.addEventListener("click",function(event){
+if(event.target===importResultModal)closeImportModal(importResultModal);
+});
+}
 </script>
 {% endblock %}

@@ -335,12 +335,13 @@ Classes - RFID Attendance Management System
 
 
                 <input
-                    type="text"
-                    id="addSectionName"
-                    placeholder="e.g. Einstein, Mabini, STEM A"
-                    autocomplete="off"
-                    required
-                >
+    type="text"
+    id="addSectionName"
+    placeholder="e.g. EINSTEIN, MABINI, STEM A"
+    autocomplete="off"
+    oninput="this.value = this.value.toUpperCase()"
+    required
+>
 
 
                 <!-- ACTIONS -->
@@ -594,11 +595,12 @@ Classes - RFID Attendance Management System
 
 
                 <input
-                    type="text"
-                    id="editSectionName"
-                    autocomplete="off"
-                    required
-                >
+    type="text"
+    id="editSectionName"
+    autocomplete="off"
+    oninput="this.value = this.value.toUpperCase()"
+    required
+>
 
 
                 <div class="classes-modal-actions">
@@ -2167,9 +2169,10 @@ document.addEventListener(
 
 
                     const sectionName =
-                        $("addSectionName")
-                            .value
-                            .trim();
+    $("addSectionName")
+        .value
+        .trim()
+        .toUpperCase();
 
 
                     if (
@@ -2625,9 +2628,10 @@ document.addEventListener(
 
 
                     const newSectionName =
-                        $("editSectionName")
-                            .value
-                            .trim();
+    $("editSectionName")
+        .value
+        .trim()
+        .toUpperCase();
 
 
                     const currentSection =

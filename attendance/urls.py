@@ -118,4 +118,9 @@ path(
     views.mark_admin_notifications_read,
     name="mark_admin_notifications_read"
 ),
+path(
+    "admin/import-students/",
+    views.import_students,
+    name="import_students"
+),
 ]

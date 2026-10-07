@@ -1066,17 +1066,13 @@ body.modal-open {
 ===================================================== */
 
 @media (max-width: 480px) {
-
     .class-record-page {
         padding: 15px 12px 30px;
     }
-
     .class-record-card {
         padding: 16px;
     }
-
     .class-record-card > .card-header {
         margin: -16px -16px 18px;
     }
-
 }

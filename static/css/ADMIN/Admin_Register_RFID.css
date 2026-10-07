@@ -1,21 +1,16 @@
-
 /* =========================================================
    REGISTER STUDENT - PAGE CONTENT
    ========================================================= */
-
 .register-student-content {
     padding: 20px 32px 40px;
 }
-
 /* PAGE INTRO */
-
 .register-student-content .page-intro {
     display: flex;
     align-items: center;
     gap: 14px;
     margin-bottom: 18px;
 }
-
 .register-student-content .intro-icon {
     width: 48px;
     height: 48px;
@@ -28,21 +23,17 @@
     justify-content: center;
     font-size: 20px;
 }
-
 .register-student-content .intro-text h3 {
     font-size: 17px;
     font-weight: 700;
     color: var(--dark);
     margin-bottom: 3px;
 }
-
 .register-student-content .intro-text p {
     font-size: 11px;
     color: var(--gray);
 }
-
 /* FORM CARD AND SECTIONS */
-
 .register-student-content .form-card {
     background: var(--white);
     border: 1px solid var(--border);
@@ -50,19 +41,15 @@
     box-shadow: 0 2px 8px rgba(33, 37, 41, 0.04);
     overflow: hidden;
 }
-
 .register-student-content .form-section {
     padding: 22px 24px 24px;
 }
-
 .register-student-content .form-section + .form-section {
     border-top: 1px solid var(--border);
 }
-
 .register-student-content .assignment-section {
     background: #fcfcfe;
 }
-
 .register-student-content .section-title {
     display: flex;
     align-items: center;
@@ -72,7 +59,6 @@
     font-weight: 700;
     color: var(--dark);
 }
-
 .register-student-content .section-title i {
     width: 29px;
     height: 29px;
@@ -84,30 +70,24 @@
     color: var(--primary-purple);
     font-size: 13px;
 }
-
 /* FORM GRIDS */
-
 .register-student-content .form-grid {
     display: grid;
     gap: 17px 24px;
 }
-
 .register-student-content .personal-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     align-items: start;
     gap: 18px 24px;
 }
-
 .register-student-content .rfid-card-field {
     grid-column: 1 / 3;
     grid-row: 1;
 }
-
 .register-student-content .student-image-lrn-field {
     grid-column: 3 / 5;
     grid-row: 1;
 }
-
 .register-student-content .personal-details-grid {
     grid-column: 1 / -1;
     display: grid;
@@ -116,17 +96,13 @@
     align-items: start;
     min-width: 0;
 }
-
 .register-student-content .guardian-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
-
 .register-student-content .class-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
 }
-
 /* RFID CARD */
-
 .register-student-content .rfid-card-field {
     min-width: 0;
     padding: 16px;
@@ -136,7 +112,6 @@
     height: fit-content;
     align-self: start;
 }
-
 .register-student-content .rfid-card-header {
     display: flex;
     align-items: center;
@@ -144,7 +119,6 @@
     gap: 16px;
     margin-bottom: 12px;
 }
-
 .register-student-content .rfid-card-header label {
     display: block;
     margin-bottom: 3px;
@@ -152,18 +126,14 @@
     font-weight: 600;
     color: var(--gray-dark);
 }
-
 .register-student-content .required {
     color: #dc3545;
 }
-
 .register-student-content .rfid-help {
     font-size: 9px;
     color: var(--gray);
 }
-
 /* RFID SCAN BUTTON */
-
 .register-student-content .scan-rfid-btn {
     flex-shrink: 0;
     min-height: 38px;
@@ -182,12 +152,10 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
 .register-student-content .scan-rfid-btn:hover {
     background: rgba(111, 66, 193, 0.14);
     border-color: rgba(111, 66, 193, 0.35);
 }
-
 .register-student-content .scan-rfid-btn.scanning {
     background: linear-gradient(
         90deg,
@@ -198,9 +166,7 @@
     color: var(--white);
     box-shadow: 0 4px 10px rgba(111, 66, 193, 0.18);
 }
-
 /* RFID STATUS */
-
 .register-student-content .rfid-status-box {
     min-height: 54px;
     margin-bottom: 10px;
@@ -213,22 +179,18 @@
     gap: 10px;
     transition: all 0.2s ease;
 }
-
 .register-student-content .rfid-status-box.scanning {
     border-color: rgba(111, 66, 193, 0.3);
     background: rgba(111, 66, 193, 0.035);
 }
-
 .register-student-content .rfid-status-box.success {
     border-color: rgba(25, 135, 84, 0.25);
     background: rgba(25, 135, 84, 0.04);
 }
-
 .register-student-content .rfid-status-box.error {
     border-color: rgba(220, 53, 69, 0.25);
     background: rgba(220, 53, 69, 0.04);
 }
-
 .register-student-content .rfid-status-icon {
     width: 34px;
     height: 34px;
@@ -241,57 +203,46 @@
     justify-content: center;
     font-size: 14px;
 }
-
 .register-student-content .rfid-status-box.scanning .rfid-status-icon {
     background: rgba(111, 66, 193, 0.1);
     color: var(--primary-purple);
 }
-
 .register-student-content .rfid-status-box.success .rfid-status-icon {
     background: rgba(25, 135, 84, 0.1);
     color: #198754;
 }
-
 .register-student-content .rfid-status-content {
     min-width: 0;
     display: flex;
     flex-direction: column;
 }
-
 .register-student-content .rfid-status-content strong {
     font-size: 10px;
     font-weight: 600;
     color: var(--dark);
 }
-
 .register-student-content .rfid-status-content span {
     margin-top: 2px;
     font-size: 9px;
     color: var(--gray);
 }
-
 /* RFID INPUT */
-
 .register-student-content .rfid-input-row {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-
 .register-student-content .rfid-input-wrapper {
     flex: 1;
 }
-
 .register-student-content .rfid-input-wrapper input {
     font-weight: 600;
     letter-spacing: 0.3px;
     background: #f8f9fa;
 }
-
 .register-student-content .rfid-input-wrapper input:focus {
     background: var(--white);
 }
-
 .register-student-content .clear-rfid-btn {
     width: 43px;
     height: 43px;
@@ -303,41 +254,33 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
 .register-student-content .clear-rfid-btn:hover {
     border-color: #ced4da;
     background: #f8f9fa;
     color: #dc3545;
 }
-
 body.rfid-scan-active .register-student-content .rfid-card-field {
     box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.06);
 }
-
 /* STUDENT IMAGE AND LRN */
-
 .register-student-content .student-image-lrn-field {
     min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 0;
 }
-
 .register-student-content .student-image-lrn-field .form-group {
     margin: 0;
 }
-
 .register-student-content .image-upload-wrapper {
     display: flex;
     align-items: flex-start;
     gap: 10px;
     min-height: 110px;
 }
-
 .register-student-content .student-image-lrn-field .image-upload-wrapper {
     min-height: 0;
 }
-
 .register-student-content .image-preview {
     width: 100px;
     height: 100px;
@@ -352,13 +295,11 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     color: var(--gray-light);
     font-size: 30px;
 }
-
 .register-student-content .image-preview img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
 .register-student-content .image-upload-content {
     min-width: 0;
     display: flex;
@@ -366,11 +307,9 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     align-items: flex-start;
     gap: 5px;
 }
-
 .register-student-content .image-upload-content input[type="file"] {
     display: none;
 }
-
 .register-student-content .image-upload-btn {
     width: 145px;
     height: 56px;
@@ -390,7 +329,6 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     cursor: pointer;
     text-align: center;
 }
-
 .register-student-content .image-upload-btn i,
 .register-student-content .image-upload-btn span {
     display: inline-flex;
@@ -399,13 +337,11 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     padding: 0;
     line-height: 1;
 }
-
 .register-student-content .image-upload-btn:hover {
     border-color: var(--primary-purple);
     color: var(--primary-purple);
     background: rgba(111, 66, 193, 0.04);
 }
-
 .register-student-content .file-name {
     max-width: 180px;
     font-size: 9px;
@@ -414,13 +350,10 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
 /* FORM LABELS */
-
 .register-student-content .form-group {
     min-width: 0;
 }
-
 .register-student-content .form-group label {
     display: block;
     margin-bottom: 7px;
@@ -428,21 +361,17 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     font-weight: 600;
     color: var(--gray-dark);
 }
-
 .register-student-content .form-group label small,
 .register-student-content .form-group label .optional {
     color: var(--gray-light);
     font-size: 9px;
     font-weight: 400;
 }
-
 /* INPUTS AND SELECTS */
-
 .register-student-content .input-wrapper {
     position: relative;
     width: 100%;
 }
-
 .register-student-content .input-wrapper > i {
     position: absolute;
     left: 13px;
@@ -453,7 +382,6 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     pointer-events: none;
     z-index: 1;
 }
-
 .register-student-content .input-wrapper input,
 .register-student-content .input-wrapper select {
     width: 100%;
@@ -468,24 +396,20 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     outline: none;
     transition: all 0.2s ease;
 }
-
 .register-student-content .input-wrapper input::placeholder {
     color: var(--gray-light);
 }
-
 .register-student-content .input-wrapper input:focus,
 .register-student-content .input-wrapper select:focus {
     border-color: var(--primary-purple);
     box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.08);
 }
-
 .register-student-content .input-wrapper select {
     appearance: none;
     -webkit-appearance: none;
     padding-right: 32px;
     cursor: pointer;
 }
-
 .register-student-content .select-wrapper::after {
     content: "\f078";
     position: absolute;
@@ -498,20 +422,16 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     font-size: 10px;
     pointer-events: none;
 }
-
 /* AGE AND SEX */
-
 .register-student-content .age-sex-field {
     min-width: 0;
 }
-
 .register-student-content .age-sex-wrapper {
     display: grid;
     grid-template-columns: 72px minmax(0, 1fr);
     gap: 10px;
     width: 100%;
 }
-
 .register-student-content .age-field,
 .register-student-content .sex-field,
 .register-student-content .age-sex-wrapper .input-wrapper,
@@ -519,20 +439,16 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
 .register-student-content .age-sex-wrapper select {
     min-width: 0;
 }
-
 .register-student-content #age::-webkit-inner-spin-button,
 .register-student-content #age::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
-
 .register-student-content #age {
     -moz-appearance: textfield;
     appearance: textfield;
 }
-
 /* FORM ACTIONS */
-
 .register-student-content .form-actions {
     min-height: 78px;
     padding: 16px 24px;
@@ -543,7 +459,6 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     border-top: 1px solid var(--border);
     background: var(--white);
 }
-
 .register-student-content .form-btn {
     height: 39px;
     padding: 0 16px;
@@ -558,28 +473,23 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     cursor: pointer;
     transition: all 0.2s ease;
 }
-
 .register-student-content .btn-cancel {
     background: var(--white);
     border: 1px solid #dee2e6;
     color: var(--gray-dark);
 }
-
 .register-student-content .btn-cancel:hover {
     background: #f8f9fa;
     border-color: #ced4da;
 }
-
 .register-student-content .btn-clear {
     background: rgba(111, 66, 193, 0.08);
     border: 1px solid rgba(111, 66, 193, 0.15);
     color: var(--primary-purple);
 }
-
 .register-student-content .btn-clear:hover {
     background: rgba(111, 66, 193, 0.14);
 }
-
 .register-student-content .btn-save {
     background: linear-gradient(
         90deg,
@@ -590,50 +500,41 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
     color: var(--white);
     box-shadow: 0 4px 10px rgba(111, 66, 193, 0.18);
 }
-
 .register-student-content .btn-save:hover {
     transform: translateY(-1px);
     box-shadow: 0 6px 14px rgba(111, 66, 193, 0.24);
 }
-
 /* =========================================================
    RESPONSIVE DESIGN
    ========================================================= */
-
 @media (max-width: 1100px) {
     .register-student-content .class-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
-
 @media (max-width: 1000px) {
     .register-student-content .personal-details-grid,
     .register-student-content .guardian-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
-
 @media (max-width: 900px) {
     .register-student-content .personal-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
     .register-student-content .rfid-card-field {
         grid-column: 1;
         grid-row: 1;
     }
-
     .register-student-content .student-image-lrn-field {
         grid-column: 2;
         grid-row: 1;
     }
-
     .register-student-content .personal-details-grid {
         grid-column: 1 / -1;
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
-
 @media (max-width: 850px) {
     .register-student-content .personal-details-grid,
     .register-student-content .guardian-grid,
@@ -641,27 +542,22 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
-
 @media (max-width: 650px) {
     .register-student-content {
         padding: 18px 18px 30px;
     }
-
     .register-student-content .form-section {
         padding: 18px;
     }
-
     .register-student-content .form-actions {
         padding: 14px 18px;
     }
-
     .register-student-content .personal-grid,
     .register-student-content .personal-details-grid,
     .register-student-content .guardian-grid,
     .register-student-content .class-grid {
         grid-template-columns: 1fr;
     }
-
     .register-student-content .rfid-card-field,
     .register-student-content .student-image-lrn-field,
     .register-student-content .personal-details-grid {
@@ -669,28 +565,277 @@ body.rfid-scan-active .register-student-content .rfid-card-field {
         grid-row: auto;
     }
 }
-
 @media (max-width: 480px) {
     .register-student-content .rfid-card-header {
         align-items: flex-start;
         flex-direction: column;
         gap: 10px;
     }
-
     .register-student-content .scan-rfid-btn {
         width: 100%;
     }
-
     .register-student-content .form-actions {
         flex-wrap: wrap;
     }
-
     .register-student-content .form-btn {
         flex: 1;
     }
-
     .register-student-content .age-sex-wrapper {
         grid-template-columns: 65px minmax(0, 1fr);
         gap: 8px;
     }
+}
+.page-intro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.intro-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.intro-actions {
+    margin-left: auto;
+}
+.import-student-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 10px;
+    background: #166534;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+.import-student-btn:hover {
+    background: #14532d;
+    transform: translateY(-1px);
+}
+.import-student-btn i {
+    font-size: 17px;
+}
+@media (max-width: 700px) {
+    .page-intro {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .intro-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+    .import-student-btn {
+        width: 100%;
+    }
+}
+/* IMPORT MODAL */
+.student-import-modal{
+position:fixed;
+inset:0;
+z-index:99999;
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+background:rgba(15,23,42,.55);
+backdrop-filter:blur(3px);
+}
+.student-import-modal.show{
+display:flex;
+}
+.student-import-modal-box{
+width:100%;
+max-width:430px;
+max-height:90vh;
+overflow-y:auto;
+padding:28px;
+border-radius:18px;
+background:#fff;
+box-shadow:0 20px 60px rgba(15,23,42,.2);
+text-align:center;
+animation:studentImportModalIn .18s ease;
+}
+.student-import-result-box{
+max-width:560px;
+}
+@keyframes studentImportModalIn{
+from{
+opacity:0;
+transform:translateY(12px) scale(.98);
+}
+to{
+opacity:1;
+transform:translateY(0) scale(1);
+}
+}
+.student-import-modal-icon{
+width:58px;
+height:58px;
+margin:0 auto 16px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:24px;
+}
+.student-import-modal-icon.confirm,
+.student-import-modal-icon.result{
+color:#166534;
+background:#dcfce7;
+}
+.student-import-modal-icon.result.failed{
+color:#991b1b;
+background:#fee2e2;
+}
+.student-import-modal-icon.result.warning{
+color:#92400e;
+background:#fef3c7;
+}
+.student-import-modal-box h3{
+margin:0 0 8px;
+font-size:21px;
+font-weight:700;
+color:#172033;
+}
+.student-import-modal-box p{
+margin:0 0 8px;
+font-size:14px;
+line-height:1.5;
+color:#64748b;
+}
+.student-import-note{
+margin-top:8px!important;
+}
+.student-import-actions{
+display:flex;
+justify-content:flex-end;
+gap:10px;
+margin-top:22px;
+}
+.student-import-actions button{
+min-height:42px;
+padding:0 18px;
+border:0;
+border-radius:9px;
+font-family:inherit;
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+transition:all .2s ease;
+}
+.student-import-cancel{
+color:#475569;
+background:#e2e8f0;
+}
+.student-import-cancel:hover{
+background:#cbd5e1;
+}
+.student-import-confirm{
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+color:#fff;
+background:#ea580c;
+}
+.student-import-confirm:hover{
+background:#c2410c;
+}
+.student-import-summary{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+margin-top:20px;
+}
+.student-import-summary-item{
+padding:14px 10px;
+border:1px solid #e2e8f0;
+border-radius:12px;
+background:#f8fafc;
+}
+.student-import-summary-item span{
+display:block;
+margin-bottom:5px;
+font-size:12px;
+font-weight:600;
+color:#64748b;
+}
+.student-import-summary-item strong{
+display:block;
+font-size:24px;
+color:#172033;
+}
+.student-import-summary-item.success strong{
+color:#15803d;
+}
+.student-import-summary-item.failed strong{
+color:#dc2626;
+}
+.student-import-errors{
+display:none;
+margin-top:18px;
+text-align:left;
+}
+.student-import-errors.show{
+display:block;
+}
+.student-import-errors-title{
+display:flex;
+align-items:center;
+gap:7px;
+margin-bottom:9px;
+font-size:13px;
+font-weight:700;
+color:#b91c1c;
+}
+.student-import-error-list{
+max-height:220px;
+overflow-y:auto;
+border:1px solid #fecaca;
+border-radius:10px;
+background:#fff7f7;
+}
+.student-import-error-item{
+padding:10px 12px;
+border-bottom:1px solid #fee2e2;
+font-size:12px;
+line-height:1.45;
+color:#7f1d1d;
+}
+.student-import-error-item:last-child{
+border-bottom:0;
+}
+.student-import-error-row{
+font-weight:700;
+}
+.student-import-error-student{
+font-weight:600;
+}
+#importStudentBtn:disabled{
+cursor:not-allowed;
+opacity:.75;
+transform:none;
+}
+@media(max-width:520px){
+.student-import-modal-box{
+padding:22px 16px;
+}
+.student-import-summary{
+grid-template-columns:1fr;
+}
+.student-import-actions{
+flex-direction:column-reverse;
+}
+.student-import-actions button{
+width:100%;
+}
 }
